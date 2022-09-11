@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 
-// const MONGO_URL = `mongodb+srv://stepby:Stepby123@cluster0.onb7tvx.mongodb.net/stepby?retryWrites=true&w=majority`
 const MONGO_URL = process.env.MONGO_URL
 
 const connect = async () => {
