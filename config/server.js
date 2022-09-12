@@ -1,5 +1,6 @@
 require('dotenv').config({ path: "config/.env"})
 const swaggerDocs =require("../swagger/swagger")
+const logger = require("../logger/logger")
 
 const express = require("express")
 // const bodyParser = require("body-parser")
@@ -16,9 +17,20 @@ PORT = process.env.PORT || 5001
 
 const mainRouter = require("./mainRoutes")
 
+
 app.use("/", mainRouter)
 
 require("../data/db").connect()
+const check =()=>{
+    try{
+        throw new Error
+    }catch(err){
+        logger.error("kkkk",err)
+    }
+    
+}
+check()
+
 
 swaggerDocs(app, PORT)
 
