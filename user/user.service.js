@@ -35,7 +35,9 @@ const newClient = async (data)=> {
 const editBiz = async (data) => {
     const {firstName, lastName, businessName } = data;
     if(!firstName || !lastName || !businessName) throw new Error("missing data");
-    await userModel.update({firstName,lastName, businessName});
+    const biz = await userModel.read(data);
+    console.log("biz: ", biz);
+    return await userModel.update(data);
 }
 
 module.exports = {register, login, newClient, editBiz};
