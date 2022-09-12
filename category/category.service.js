@@ -4,12 +4,14 @@ async function create(data){
 
     if (!data)
     throw {code: 400, message: "missing category name" };
+    
     const exsist = await categoryControl.readOne(data)
     if(exsist) 
     throw({code: 405, message: "category already exists"});
 
     const category = await categoryControl.create(data)
     return category;
+
 }
 
 async function read(){
@@ -57,13 +59,14 @@ async function del(_id){
 
     if (!_id)
     throw {code: 400, message: "ID not provided" };
-    
+
     const exsist = await categoryControl.readOne({_id})
     if(!exsist) 
     throw({code: 404, message: "category not found" });
 
     const category = await categoryControl.del({_id})
     return category;
+
 }
 
 module.exports = { create, read, readOne, update, del }

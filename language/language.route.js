@@ -1,12 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const categoryService = require('./category.service')
+const languageService = require('./language.service')
 const { authJWT } = require('../auth/auth')
 
-router.get('/:id', authJWT, async (req, res) => {
+router.get('/:code', async (req, res) => {
     try {
-        const category = await categoryService.readOne(req.params.id);
-        res.send(category)
+        const language = await languageService.readOne(req.params.code);
+        res.send(language)
     }
     catch (error) {
         if (error.code && error.code < 1000) {
@@ -17,10 +17,10 @@ router.get('/:id', authJWT, async (req, res) => {
       }
 })
 
-router.get('/', authJWT, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const category = await categoryService.read();
-        res.send(category)
+        const language = await languageService.read();
+        res.send(language)
     }
     catch (error) {
         if (error.code && error.code < 1000) {
@@ -31,10 +31,10 @@ router.get('/', authJWT, async (req, res) => {
       }
 })
 
-router.post('/', authJWT, async (req, res) => {
-    try {
-        const category = await categoryService.create(req.body);
-        res.send(category)
+router.post('/', async (req, res) => {
+    try { 
+        const language = await languageService.create(req.body);
+        res.send(language)
     }
     catch (error) {
         if (error.code && error.code < 1000) {
@@ -45,10 +45,10 @@ router.post('/', authJWT, async (req, res) => {
       }
 })
 
-router.put('/:id', authJWT, async (req, res) => {
+router.put('/:code', async (req, res) => {
     try {
-        const category = await categoryService.update(req.params.id, req.body);
-        res.send(category)
+        const language = await languageService.update(req.params.code, req.body);
+        res.send(language)
     }
     catch (error) {
         if (error.code && error.code < 1000) {
@@ -59,10 +59,10 @@ router.put('/:id', authJWT, async (req, res) => {
       }
 })
 
-router.delete('/:id', authJWT, async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
-        const category = await categoryService.del(req.params.id);
-        res.send(category)
+        const language = await languageService.del(req.params.id);
+        res.send(language)
     }
     catch (error) {
         if (error.code && error.code < 1000) {
