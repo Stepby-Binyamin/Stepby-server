@@ -29,10 +29,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["biz", "client", "admin"]
     },
-    project: {
+    project: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "project",
-    },
+    }],
     createDate: {
         type: Date,
         default: Date.now,
