@@ -1,6 +1,7 @@
 const express = require('express');
 const userService = require("../user/user.service");
 
+// const userController = require("./user.control")
 const router = express.Router();
 
 
@@ -36,10 +37,10 @@ router.put('editbiz', async (res,req) => {
    *       200:
    *         description: App is up and running
    */
-router.use("/all", (req , res)=>{
+router.use("/all", (req, res) => {
     console.log("nehorai");
     res.send("Welcome")
 })
 
 
-module.exports= router
+module.exports = router

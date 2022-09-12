@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-require("./user.data")
+// require("./user.data")
 require("./category.data")
 
 const projectSchema = new mongoose.Schema({
