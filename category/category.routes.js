@@ -16,6 +16,8 @@ router.get('/:id', async (req, res) => {
       }
 })
 
+// 631efffb3fcfe842440f7175
+
 router.get('/', async (req, res) => {
     try {
         const category = await categoryService.read();
