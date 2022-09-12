@@ -65,7 +65,6 @@ async function verifyCode(req) {
   if (await bcrypt.compare(code, DBcode.code)) {
     const existUser = await userModel.readOne({ phoneNumber: phoneNumber })
 
-
     const result = 
     { newUser: existUser ? false : true,
      token: existUser ? await jwt.createToken(existUser._id) 

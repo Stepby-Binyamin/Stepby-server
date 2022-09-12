@@ -22,7 +22,7 @@ const projectSchema = new mongoose.Schema({
     },
     categories: [{
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'categories'
+        ref: 'category'
     }],
     status: {
         type: String,
