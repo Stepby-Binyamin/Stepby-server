@@ -1,4 +1,4 @@
-const projectData = require('../data/project.data')
+const { projectData } = require('../data/project.data')
 
 async function create(data) {
     return await projectData.create(data);

@@ -1,4 +1,7 @@
 const tamplateService = require("./template.service");
+const express = require("express");
+const router = express.Router();
+
 
 router.post('/createTemplate', async (req, res) => {
     try {
@@ -29,6 +32,15 @@ router.post('/duplicateTemplate', async (req, res) => {
 
     }
 })
+router.put('/newStep', async (req, res) => {
+    try {
+        res.send(await tamplateService.createStep(req.body));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
 
 router.delete('/deleteTemplate', async (req, res) => {
     try {
@@ -39,3 +51,4 @@ router.delete('/deleteTemplate', async (req, res) => {
 
     }
 })
+module.exports = router;
