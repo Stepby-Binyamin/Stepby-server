@@ -29,7 +29,7 @@ router.post('/check-code', async (req,res)=>{
 
 router.post('/send-code', async (req, res) => {
     try {
-        // const result = await sendSMS(req.body.phone)
+        const result = await sendSMS(req.body.phone)
         if (result.status !== 0) throw {message: result.message, status: 406 }
             res.send(result)
     } catch (err) {
