@@ -12,8 +12,9 @@ async function readOne(filter, proj) {
 async function update(filter, newData) {
     return await projectData.findOneAndUpdate(filter, newData, { new: true });
 }
-async function deleteTemplate(filter) {
+async function remove(filter) {
     return await update(filter, { isActive: false });
 }
 
-module.exports = { create, read, readOne, update, deleteTemplate };
+
+module.exports = { create, read, readOne, update, remove };

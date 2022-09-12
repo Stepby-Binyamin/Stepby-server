@@ -51,4 +51,36 @@ router.delete('/deleteTemplate', async (req, res) => {
 
     }
 })
+
+router.delete('/deleteStep', async (req, res) => {
+    try {
+        res.send(await tamplateService.deleteStep(req.body));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
+router.post('/duplicateStep', async (req, res) => {
+    try {
+        res.send(await tamplateService.duplicateStep(req.body));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
+router.get('/templateByUser/:userId', async (req, res) => {
+    try {
+        console.log(req.params.userId);
+        res.send(await tamplateService.templateByUser(req.params.userId));
+
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
 module.exports = router;
