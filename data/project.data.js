@@ -21,9 +21,8 @@ const projectSchema = new mongoose.Schema({
         required: true,
     },
     categories: [{
-        type: [Number],
-        // type: mongoose.SchemaTypes.ObjectId,
-        // ref: 'categories'
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'category'
     }],
     status: {
         type: String,
