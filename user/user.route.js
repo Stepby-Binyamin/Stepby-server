@@ -1,6 +1,18 @@
-const express = require("express")
-const router = express.Router()
+const express = require('express');
+const playlistLogic = require("../user/user.service");
 
+const router = express.Router();
+
+
+
+router.post('/register', async (res, req) => {
+    try {
+        await playlistLogic.register(res.body);
+        req.send("new biz was created");
+    } catch (error) {
+        req.send(error.message);
+    }
+});
 
 // const userController = require("./user.control")
 /**
@@ -18,7 +30,6 @@ router.use("/all", (req , res)=>{
     console.log("nehorai");
     res.send("Welcome")
 })
-
 
 
 module.exports= router
