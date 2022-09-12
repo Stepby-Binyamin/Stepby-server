@@ -4,7 +4,7 @@ const axios = require('axios')
 const jwt = require('./jwt')
 const bcrypt = require('bcrypt')
 const { getXML, xmlHeaders } = require('./xml')
-const {userModel} = require('../user/user.model')
+const userModel = require('../user/user.model')
 
 
 const sendSMS = async (phoneNumber) => {
@@ -63,8 +63,7 @@ async function verifyCode(req) {
   console.log(await bcrypt.compare(code, DBcode.code));
 
   if (await bcrypt.compare(code, DBcode.code)) {
-    const existUser = await userModel.findOne({ phoneNumber: phoneNumber })
-
+    const existUser = await userModel.readOne({ phoneNumber: phoneNumber })
 
     const result = 
     { newUser: existUser ? false : true,
