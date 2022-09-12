@@ -12,8 +12,11 @@ async function readOne(filter, proj){
 async function update(filter, newData){
     return await languageModel.updateOne(filter, newData)
 }
+async function updateAll(filter, newData){
+    return await languageModel.updateMany(filter, newData)
+}
 async function del(data){
     return await languageModel.deleteOne(data)
 }
 
-module.exports = { create, read, readOne, update, del }
+module.exports = { create, read, readOne, update, updateAll, del }

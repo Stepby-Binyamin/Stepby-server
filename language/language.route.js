@@ -45,9 +45,37 @@ router.post('/', async (req, res) => {
       }
 })
 
-router.put('/:code', async (req, res) => {
+router.put('/langSet/:code', async (req, res) => {
     try {
         const language = await languageService.update(req.params.code, req.body);
+        res.send(language)
+    }
+    catch (error) {
+        if (error.code && error.code < 1000) {
+          res.status(error.code).send(error.message)
+        } else {
+          res.status(500).send("something went wrong")
+        }
+      }
+})
+
+router.put('/:code', async (req, res) => {
+    try { 
+        const language = await languageService.updateWordInOne(req.params.code, req.body);
+        res.send(language)
+    }
+    catch (error) {
+        if (error.code && error.code < 1000) {
+          res.status(error.code).send(error.message)
+        } else {
+          res.status(500).send("something went wrong")
+        }
+      }
+})
+
+router.put('/', async (req, res) => {
+    try {
+        const language = await languageService.updateWordInAll( req.body);
         res.send(language)
     }
     catch (error) {
