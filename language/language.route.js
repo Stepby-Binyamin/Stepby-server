@@ -61,7 +61,7 @@ router.put('/langSet/:code', async (req, res) => {
 
 router.put('/:code', async (req, res) => {
     try { 
-        const language = await languageService.updateWordInOne(req.params.code, req.body);
+        const language = await languageService.addWordsInOne(req.params.code, req.body);
         res.send(language)
     }
     catch (error) {
@@ -73,9 +73,10 @@ router.put('/:code', async (req, res) => {
       }
 })
 
-router.put('/', async (req, res) => {
-    try {
-        const language = await languageService.updateWordInAll( req.body);
+//remove 1 word  / code: language-code  /body:{key: "wordKey to be removed"}
+router.put('/remove/:code', async (req, res) => {  
+    try { 
+        const language = await languageService.removeWordInOne(req.params.code, req.body.key);
         res.send(language)
     }
     catch (error) {
