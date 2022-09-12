@@ -2,11 +2,14 @@ const  mongoose = require ('mongoose');
 
 //TODO: need to check whether to add 'fullName' field (for the user-client).
 const userSchema = new mongoose.Schema({
-    firstName: {
+    firstName: { // for biz
         type: String,
     },
-    lastName: {
+    lastName: { // for biz
         type: String,
+    },
+    fullName: { // for user - client
+        type: String, 
     },
     email: {
         type: String,
@@ -18,18 +21,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    categories: { 
+    categories: [{ 
         type: mongoose.Schema.Types.ObjectId,
         ref: "categories",
-    },
+    }],
     permissions: {
         type: String,
         enum: ["biz", "client", "admin"]
     },
-    project: [{
+    project: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "project",
-    }],
+    },
     createDate: {
         type: Date,
         default: Date.now,

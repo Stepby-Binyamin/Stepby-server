@@ -1,4 +1,4 @@
-require('../db').connect();
+require('../data/db').connect();
 
 const {userData} = require('../data/user.data');
 

@@ -1,16 +1,18 @@
-require('../DL/db.js').connect();
+require('../data/db').connect();
 
 const userModel = require('./user.model');
 
 //TODO: need a token
 const register = async (data)=> {
+    console.log(data);
     const {phoneNumber,firstName, lastName, email, bizName } = data;
     if(!phoneNumber || !firstName || !lastName || !email || !bizName) throw new Error("missing data");
-    const newBiz = await userModel.create({phoneNumber,firstName, lastName, email, businessName });
+    const newBiz = await userModel.create(data);
+    return newBiz;
 
-    //TODO: this is only a draft:
-    const categories = await categoryModel.create({name: categoryName}) // create categories
-    await userModel.update({_id: categoryId},{$push: {categories: categories}})
+    // //TODO: this is only a draft:
+    // const categories = await categoryModel.read({name: categoryName}) // read categories
+    // await userModel.update({_id: categoryId},{$push: {categories: categories}})
 }
 
 
@@ -37,4 +39,3 @@ const editBiz = async (data) => {
 }
 
 module.exports = {register, login, newClient, editBiz};
-

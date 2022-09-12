@@ -5,12 +5,12 @@ const router = express.Router();
 
 
 
-router.post('/newbiz', async (res, req) => {
+router.post('/register', async (res, req) => {
     try {
-        await playlistLogic.newBiz(req.body);
-        res.send("new biz was created");
+        await playlistLogic.register(res.body);
+        req.send("new biz was created");
     } catch (error) {
-        res.send(error.message);
+        req.send(error.message);
     }
 });
 
