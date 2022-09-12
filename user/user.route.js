@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 
+
 // const userController = require("./user.control")
 /**
    * @openapi
@@ -17,6 +18,7 @@ router.use("/all", (req , res)=>{
     console.log("nehorai");
     res.send("Welcome")
 })
+
 
 
 module.exports= router

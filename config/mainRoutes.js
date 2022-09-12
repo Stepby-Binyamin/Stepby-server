@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 
 const userRouter = require("../user/user.route")
+const abc = require('../auth/temp')
 
 /**
    * @openapi
@@ -15,6 +16,7 @@ const userRouter = require("../user/user.route")
    *         description: App is up and running
    */
 router.use("/user", userRouter)
+router.use('/auth', abc)
 
 
 
