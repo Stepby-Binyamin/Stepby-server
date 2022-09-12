@@ -11,8 +11,7 @@ const options = {
       version,
     }
   },
-//   TODO: put real api's
-  apis: ["./src/routes.ts", "./src/schema/*.ts"],
+  apis: ["/STEPBY-SERVER/user/user.route.js", "/STEPBY-SERVER/config/mainRoutes.js"]
 };
 
 const swaggerSpec = swaggerJsdoc(options);
