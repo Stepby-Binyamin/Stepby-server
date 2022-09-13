@@ -25,10 +25,12 @@ PORT = process.env.PORT || 5001
 
 app.use("/", mainRouter)
 
-app.use(logErrorMiddleware)
-app.use(returnError)
+
 
 require("./data/db").connect()
+
+app.use(logErrorMiddleware)
+app.use(returnError)
 const check =()=>{
     try{
         throw new Api404Error("hhh")//,user:req.user
