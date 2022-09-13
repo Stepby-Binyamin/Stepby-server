@@ -279,47 +279,6 @@
         }
       }
     },
-    "/auth/check-code": {
-      "post": {
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "406": {
-            "description": "Not Acceptable"
-          }
-        }
-      }
-    },
-    "/auth/send-code": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "phone": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "406": {
-            "description": "Not Acceptable"
-          }
-        }
-      }
-    },
     "/category/{id}": {
       "get": {
         "tags": [
