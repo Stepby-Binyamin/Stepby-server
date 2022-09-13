@@ -39,6 +39,7 @@ router.put('editbiz', async (res,req) => {
    */
 router.use("/all", (req, res) => {
     console.log("nehorai");
+    
     res.send("Welcome")
 })
 
