@@ -1,1 +1,2 @@
-teste01,kdsnfdsjklfjkhf,,sdfhajk,testeteste,sei la,brubru,undefined
+{"question":"מי המתחרה העיקרי שלך באינטרנט?","answer":"teste01","project":"projectName","step":1,"date":"2022-09-13T07:08:54.181Z"},
+{"question":"מי המתחרה העיקרי שלך באינטרנט?","answer":"teste02","project":"projectName","step":1,"date":"2022-09-13T07:08:59.388Z"}
