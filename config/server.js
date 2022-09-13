@@ -25,7 +25,7 @@ const check =()=>{
     try{
         throw new Error
     }catch(err){
-        logger.error("kkkk",err)
+        logger.error({})
     }
     
 }
