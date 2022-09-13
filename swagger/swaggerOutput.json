@@ -11,6 +11,45 @@
     "http"
   ],
   "paths": {
+    "/user/check-code": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "406": {
+            "description": "Not Acceptable"
+          }
+        }
+      }
+    },
+    "/user/send-code": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "406": {
+            "description": "Not Acceptable"
+          }
+        }
+      }
+    },
+    "/user/newclient": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/user/register": {
       "post": {
         "tags": [
@@ -25,12 +64,45 @@
         }
       }
     },
-    "/usereditbiz": {
+    "/user/login": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/editbiz": {
       "put": {
         "tags": [
           "Users"
         ],
         "description": "make changes on business",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/removebiz": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/getallbiz": {
+      "post": {
+        "description": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -192,23 +264,7 @@
     "/auth/check-code": {
       "post": {
         "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "example": "any"
-                },
-                "phoneNumber": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -248,7 +304,10 @@
     },
     "/category/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "get category",
         "parameters": [
           {
             "name": "id",
@@ -278,7 +337,10 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "edit category",
         "parameters": [
           {
             "name": "id",
@@ -308,7 +370,10 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "delete category",
         "parameters": [
           {
             "name": "id",
@@ -340,7 +405,10 @@
     },
     "/category/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "get all categories",
         "parameters": [
           {
             "name": "authorization",
@@ -364,7 +432,10 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "create new category",
         "parameters": [
           {
             "name": "authorization",
@@ -390,7 +461,10 @@
     },
     "/language/{code}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "get language dictionary",
         "parameters": [
           {
             "name": "code",
@@ -409,7 +483,10 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "add word to language dictionary",
         "parameters": [
           {
             "name": "code",
@@ -430,7 +507,10 @@
     },
     "/language/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "get all languages dictionaries",
         "parameters": [],
         "responses": {
           "200": {
@@ -442,7 +522,10 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "add new language",
         "parameters": [],
         "responses": {
           "200": {
@@ -456,7 +539,10 @@
     },
     "/language/langSet/{code}": {
       "put": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "edit language titles",
         "parameters": [
           {
             "name": "code",
@@ -477,7 +563,10 @@
     },
     "/language/remove/{code}": {
       "put": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "remove word from language dictionary",
         "parameters": [
           {
             "name": "code",
@@ -510,7 +599,10 @@
     },
     "/language/{id}": {
       "delete": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "remove language from database",
         "parameters": [
           {
             "name": "id",
