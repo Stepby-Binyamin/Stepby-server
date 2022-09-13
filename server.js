@@ -1,5 +1,6 @@
 require('dotenv').config({ path: "config/.env"})
-const swaggerDocs =require("../swagger/swagger")
+const swaggerFile =require("./swagger/swaggerOutput.json"),
+swaggerUi = require("swagger-ui-express")
 
 const express = require("express")
 // const bodyParser = require("body-parser")
@@ -14,12 +15,12 @@ app.use(express.json())
 
 PORT = process.env.PORT || 5001
 
-const mainRouter = require("./mainRoutes")
-
+const mainRouter = require("./config/mainRoutes")
 app.use("/", mainRouter)
 
-require("../data/db").connect()
+require("./data/db").connect()
 
-swaggerDocs(app, PORT)
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
 
 app.listen(PORT, ()=> console.log(`Server is running at Port ${PORT}`))

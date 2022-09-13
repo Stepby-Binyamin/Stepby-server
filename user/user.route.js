@@ -1,6 +1,7 @@
 const express = require('express');
 const userService = require("../user/user.service");
 
+// const userController = require("./user.control")
 const router = express.Router();
 
 
@@ -94,6 +95,7 @@ router.post('/getallbiz', async (res, req) => {
    */
 router.use("/all", (req, res) => {
     console.log("nehorai");
+    
     res.send("Welcome")
 })
 

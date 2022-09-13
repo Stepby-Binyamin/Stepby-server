@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const categoryService = require('./category.service')
+const { authJWT } = require('../auth/auth')
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authJWT, async (req, res) => {
     try {
         const category = await categoryService.readOne(req.params.id);
         res.send(category)
@@ -16,9 +17,7 @@ router.get('/:id', async (req, res) => {
       }
 })
 
-// 631efffb3fcfe842440f7175
-
-router.get('/', async (req, res) => {
+router.get('/', authJWT, async (req, res) => {
     try {
         const category = await categoryService.read();
         res.send(category)
@@ -32,7 +31,7 @@ router.get('/', async (req, res) => {
       }
 })
 
-router.post('/', async (req, res) => {
+router.post('/', authJWT, async (req, res) => {
     try {
         const category = await categoryService.create(req.body);
         res.send(category)
@@ -46,7 +45,7 @@ router.post('/', async (req, res) => {
       }
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authJWT, async (req, res) => {
     try {
         const category = await categoryService.update(req.params.id, req.body);
         res.send(category)
@@ -60,7 +59,7 @@ router.put('/:id', async (req, res) => {
       }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authJWT, async (req, res) => {
     try {
         const category = await categoryService.del(req.params.id);
         res.send(category)

@@ -4,7 +4,8 @@ const axios = require('axios')
 const jwt = require('./jwt')
 const bcrypt = require('bcrypt')
 const { getXML, xmlHeaders } = require('./xml')
-const userModel = require('../user/user.model');
+
+const userModel = require('../user/user.model')
 
 const sendSMS = async (phoneNumber) => {
   const code = generateCode(4)
@@ -55,16 +56,20 @@ async function checkExistUser(phone) {
 
 async function verifyCode(data) {
   const { code, phoneNumber } = data;
+
   const DBcode = await codeModel.findOne({ phoneNumber: phoneNumber })
   if (!DBcode) return { message: 'invalid phone number', status: 406 }
   console.log(await bcrypt.compare(code, DBcode.code));
   if (await bcrypt.compare(code, DBcode.code)) {
     const existUser = await userModel.readOne({ phoneNumber: phoneNumber })
+
     const result =
     { newUser: existUser ? false : true,
      token: existUser ? await jwt.createToken(existUser._id)
+
      : await jwt.createToken(phoneNumber, "5m") }
     return result
+
   } else {
     return { message: 'invalid code', status: 406 }
   }
