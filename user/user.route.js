@@ -4,9 +4,8 @@ const router = express.Router()
 // const userController = require("./user.control")
 
 router.get("/all", (req , res)=>{
-    // #swagger.summary = 'summary'
-    // #swagger.tags = ['Users']
-    // #swagger.description = 'Some description...'
+    // #swagger.tags = ['User']
+    // #swagger.description = 'get all users'
     console.log("nehorai");
     
     res.send("Welcome")

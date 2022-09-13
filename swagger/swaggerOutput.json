@@ -14,10 +14,9 @@
     "/user/all": {
       "get": {
         "tags": [
-          "Users"
+          "User"
         ],
-        "summary": "summary",
-        "description": "Some description...",
+        "description": "get all users",
         "parameters": [],
         "responses": {
           "200": {
