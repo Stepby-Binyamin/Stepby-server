@@ -1,5 +1,5 @@
 class BaseError extends Error {
-    constructor (name, statusCode, isOperational, description,user) {
+    constructor (mes,name, statusCode, isOperational, description,user) {
     super(description)
    
     Object.setPrototypeOf(this, new.target.prototype)
@@ -8,6 +8,7 @@ class BaseError extends Error {
     this.isOperational = isOperational
     Error.captureStackTrace(this)
     this.user=user
+    this.mes = mes
     }
    }
    

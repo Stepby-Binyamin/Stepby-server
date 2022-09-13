@@ -29,10 +29,10 @@ app.use(returnError)
 require("../data/db").connect()
 const check =()=>{
     try{
-        throw new Api404Error({name: "ghg"})//,user:req.user
+        throw new Api404Error("hhh")//,user:req.user
     }catch(err){
-        // console.log(err)
-        logger.error(err)
+        console.log(err)
+        logger.error({e:err})
     }
     
 }

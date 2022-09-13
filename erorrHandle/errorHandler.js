@@ -4,7 +4,9 @@ const BaseError = require('./baseError')
 function logError (err) {
  logger.error(err)
 }
-
+// function errorHandler (err, req, res, next) {
+//     res.status(500).send('Error!')
+//   }
 
 function logErrorMiddleware (err, req, res, next) {
     logger.error(err)
