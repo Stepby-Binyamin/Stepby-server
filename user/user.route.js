@@ -6,6 +6,8 @@ const router = express.Router();
 
 
 router.post('/check-code', async (req,res)=>{
+    //   #swagger.tags= ['Users']
+    // #swagger.description = "verify the sms-code of the biz user"
     try{
       const result = await userService.verify(req.body)
       console.log({result});
@@ -19,6 +21,8 @@ router.post('/check-code', async (req,res)=>{
 
 
 router.post('/send-code', async (req, res) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description = "send SMS code to biz user"
     try {
       const result =  await userService.sms(req.body)
         if (result.status !== 0) throw {message: result.message, status: 406 }
@@ -29,7 +33,9 @@ router.post('/send-code', async (req, res) => {
 
 });
 
-router.post('/newclient', async (res, req) => {
+router.post('/new-client', async (res, req) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description = "create a new client"
     console.log("newclient");
     try {
         const newClient = await userService.newClient(res.body);
@@ -39,6 +45,8 @@ router.post('/newclient', async (res, req) => {
     }});
 
 router.post('/register', async (res, req) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description = "registration of biz user"
     try {
         await userService.register(res.body);
         req.send("new biz was created");
@@ -48,6 +56,8 @@ router.post('/register', async (res, req) => {
 });
 
 router.post('/login', async (res, req) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description = "login of biz user"
     try {
         await userService.login(res.body);
         req.send("logged in");
@@ -57,14 +67,19 @@ router.post('/login', async (res, req) => {
 });
 
 router.put('/editbiz', async (res, req) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description = "edit details of biz user"
     try {
-        await userService.editBiz(res.body);
+       const biz =  await userService.editBiz(res.body);
+       req.send(biz);
     } catch (error) {
         req.send(error.message);
     }
 })
 
 router.post('/removebiz', async (res,req) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description = "remove biz user from DB (actually isActive: false)"
     try{
        const removed =  await userService.removeBiz(res.body);
        req.send(removed);
@@ -73,7 +88,9 @@ router.post('/removebiz', async (res,req) => {
     }
 });
 
-router.post('/getallbiz', async (res, req) => {
+router.get('/getallbiz', async (res, req) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description = "get all the active biz's"
     try{
         const allbiz = await userService.getAllBiz();
         req.send(allbiz);
@@ -81,6 +98,7 @@ router.post('/getallbiz', async (res, req) => {
 
     }
 });
+
 // const userController = require("./user.control")
 /**
    * @openapi
