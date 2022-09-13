@@ -1,4 +1,9 @@
 require('dotenv').config({ path: "config/.env"})
+// const swaggerDocs =require("./swagger/swagger")
+const logger = require("./logger/logger")
+const mainRouter = require("./config/mainRoutes")
+const Api404Error = require('./erorrHandle/api404Error')
+const {logErrorMiddleware,returnError} = require ('./erorrHandle/errorHandler.js')
 const swaggerFile =require("./swagger/swaggerOutput.json"),
 swaggerUi = require("swagger-ui-express")
 
@@ -15,10 +20,28 @@ app.use(express.json())
 
 PORT = process.env.PORT || 5001
 
-const mainRouter = require("./config/mainRoutes")
+
+
+
 app.use("/", mainRouter)
 
+
+
 require("./data/db").connect()
+
+app.use(logErrorMiddleware)
+app.use(returnError)
+const check =()=>{
+    try{
+        throw new Api404Error("hhh")//,user:req.user
+    }catch(err){
+        console.log(err)
+        logger.error({e:err})
+    }
+    
+}
+check()
+
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
