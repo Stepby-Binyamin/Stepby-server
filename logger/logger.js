@@ -10,10 +10,11 @@ const { appendFileSync, existsSync, mkdirSync } = require("fs")
     
     const celler ="Location undefine"
     if(e){
-        e=e.stack.split('\n')[1].trim().split("Stepby-server")[1]
+        e=e.stack.split('\n')[1].trim().split("Stepby-server")[1].replace(")","")
+        
     }
     let mes= `${getDate()} ERROR: ${message} ${e} user:${user}`
-   console.log(mes)
+   console.log(`%c${mes}`,"color: red")
    
    if(writeToFile){
     writeToFile(mes)
