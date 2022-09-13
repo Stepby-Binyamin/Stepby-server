@@ -7,6 +7,8 @@ const router = express.Router();
 
 
 router.post('/register', async (res, req) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description= 'register'
     try {
         await userService.register(res.body);
         req.send("new biz was created");
@@ -16,6 +18,8 @@ router.post('/register', async (res, req) => {
 });
 
 router.put('editbiz', async (res,req) => {
+    //   #swagger.tags= ['Users']
+    // #swagger.description= 'make changes on business'
     try{
         await userService.editBiz(res.body);
     }catch(error){
@@ -26,22 +30,7 @@ router.put('editbiz', async (res,req) => {
 
 
 // const userController = require("./user.control")
-/**
-   * @openapi
-   * /all:
-   *  get:
-   *     tags:
-   *     - all
-   *     description: Responds if the app is up and running
-   *     responses:
-   *       200:
-   *         description: App is up and running
-   */
-router.use("/all", (req, res) => {
-    console.log("nehorai");
-    
-    res.send("Welcome")
-})
+
 
 
 module.exports = router
