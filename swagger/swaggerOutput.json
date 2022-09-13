@@ -13,7 +13,10 @@
   "paths": {
     "/user/check-code": {
       "post": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "description": "verify the sms-code of the biz user",
         "parameters": [],
         "responses": {
           "200": {
@@ -27,7 +30,10 @@
     },
     "/user/send-code": {
       "post": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "description": "send SMS code to biz user",
         "parameters": [],
         "responses": {
           "200": {
@@ -39,9 +45,12 @@
         }
       }
     },
-    "/user/newclient": {
+    "/user/new-client": {
       "post": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "description": "create a new client",
         "parameters": [],
         "responses": {
           "200": {
@@ -55,7 +64,7 @@
         "tags": [
           "Users"
         ],
-        "description": "register",
+        "description": "registration of biz user",
         "parameters": [],
         "responses": {
           "200": {
@@ -66,7 +75,10 @@
     },
     "/user/login": {
       "post": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "description": "login of biz user",
         "parameters": [],
         "responses": {
           "200": {
@@ -80,7 +92,7 @@
         "tags": [
           "Users"
         ],
-        "description": "make changes on business",
+        "description": "edit details of biz user",
         "parameters": [],
         "responses": {
           "200": {
@@ -91,7 +103,10 @@
     },
     "/user/removebiz": {
       "post": {
-        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "description": "remove biz user from DB (actually isActive: false)",
         "parameters": [],
         "responses": {
           "200": {
@@ -101,8 +116,11 @@
       }
     },
     "/user/getallbiz": {
-      "post": {
-        "description": "",
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "get all the active biz's",
         "parameters": [],
         "responses": {
           "200": {
@@ -619,6 +637,57 @@
             "description": "Internal Server Error"
           }
         }
+      }
+    },
+    "/project/createProject": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "create project from template",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/project/replaceSteps": {
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "change index of steps",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/project/deleteProject/{projectId}": {
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "delete project",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
       }
     }
   }

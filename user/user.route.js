@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 router.post('/check-code', async (req,res)=>{
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "verify the sms-code of the biz user"
     try{
       const result = await userService.verify(req.body)
@@ -21,7 +21,7 @@ router.post('/check-code', async (req,res)=>{
 
 
 router.post('/send-code', async (req, res) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "send SMS code to biz user"
     try {
       const result =  await userService.sms(req.body)
@@ -34,7 +34,7 @@ router.post('/send-code', async (req, res) => {
 });
 
 router.post('/new-client', async (res, req) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "create a new client"
     console.log("newclient");
     try {
@@ -45,7 +45,7 @@ router.post('/new-client', async (res, req) => {
     }});
 
 router.post('/register', async (res, req) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "registration of biz user"
 
     try {
@@ -57,7 +57,7 @@ router.post('/register', async (res, req) => {
 });
 
 router.post('/login', async (res, req) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "login of biz user"
     try {
         await userService.login(res.body);
@@ -68,7 +68,7 @@ router.post('/login', async (res, req) => {
 });
 
 router.put('/editbiz', async (res, req) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "edit details of biz user"
 
     try {
@@ -80,7 +80,7 @@ router.put('/editbiz', async (res, req) => {
 })
 
 router.post('/removebiz', async (res,req) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "remove biz user from DB (actually isActive: false)"
     try{
        const removed =  await userService.removeBiz(res.body);
@@ -91,7 +91,7 @@ router.post('/removebiz', async (res,req) => {
 });
 
 router.get('/getallbiz', async (res, req) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "get all the active biz's"
     try{
         const allbiz = await userService.getAllBiz();

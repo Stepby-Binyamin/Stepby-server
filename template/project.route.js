@@ -2,11 +2,6 @@ const express = require("express");
 const router = express.Router();
 const projectService = require("./template.service");
 
-router.get("/", (req, res) => {
-
-    res.send("project");
-});
-
 
 router.post("/createProject", async (req, res) => {
     // #swagger.tags = ['Projects']
