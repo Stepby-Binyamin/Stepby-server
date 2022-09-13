@@ -1,28 +1,28 @@
 require('../data/db').connect();
 const jwt = require('../auth/jwt');
-const {sendSMS, verifyCode} = require('../auth/verification');
+const { sendSMS, verifyCode } = require('../auth/verification');
 
 const userModel = require('./user.model');
 
 const verify = async (data) => {
-    const {phoneNumber, code} = data;
-    if(!phoneNumber || !code) throw new Error('error');
+    const { phoneNumber, code } = data;
+    if (!phoneNumber || !code) throw new Error('error');
     return verifyCode(data);
 }
 
 
 const sms = async (data) => {
-    const {phoneNumber} = data;
-    if(!phoneNumber) throw new Error('error');
+    const { phoneNumber } = data;
+    if (!phoneNumber) throw new Error('error');
     return sendSMS(phoneNumber);
 }
 
 
-//TODO: need a token
+//TODO: check category not duplicate
 const register = async (data) => {
     console.log(data);
     const { phoneNumber, firstName, lastName, email, bizName, categories } = data; // categories is array of _id
-    //create a function that push each empty var into array.
+    //TODO: create a function that push each empty var into array.
     if (!phoneNumber || !firstName || !lastName || !email || !bizName) throw new Error("missing data:" + []);
     const newBiz = await userModel.create({ phoneNumber, firstName, lastName, email, bizName, categories, permissions: "biz" });
     // await userModel.update({_id: newBiz},{$push: {categories: categories}}) 
@@ -49,13 +49,16 @@ const newClient = async (data) => {
 }
 
 
+//TODO: check category not duplicate
 const editBiz = async (data) => {
     const { firstName, lastName, businessName, categories } = data;
-    if (!firstName || !lastName || !businessName, !categories) throw new Error("missing data");
-    await userModel.read({ _id: data._id }); // TODO: 
-    const biz = await userModel.update({ _id: data._id }, data);
+    if (!firstName || !lastName || !businessName || !categories) throw new Error("missing data");
+    const foundUser = await userModel.read({ _id: data._id });
+    if (!foundUser) throw new Error("error");
+    const updatedUser = await userModel.update({ _id: data._id }, data, { new: true });
     console.log("biz: ", biz);
-    return biz;
+    const formatedUser = { firstName: updatedUser.firstName, lastName: updatedUser.lastName, businessName: updatedUser.businessName, categories: updatedUser.categories }
+    return formatedUser;
 }
 
 
@@ -68,10 +71,15 @@ const removeBiz = async (id) => {
 
 //only for admin
 const getAllBiz = async () => {
-    const allBiz = await userModel.read({});
+    const allBiz = await userModel.read({ permissions: "biz" });
     if (!allBiz) throw new Error("error occured");
     return allBiz;
 }
 
+const getAllClientsByBiz = async (data) => {
+    const { _id } = data;
 
-module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz,sms,verify };
+
+}
+
+module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify };

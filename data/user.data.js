@@ -27,7 +27,8 @@ const userSchema = new mongoose.Schema({
     }],
     permissions: {
         type: String,
-        enum: ["biz", "client", "admin"]
+        enum: ["biz", "client", "admin"],
+        require: true
     },
     project: [{
         type: mongoose.Schema.Types.ObjectId,
