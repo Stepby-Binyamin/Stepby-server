@@ -1,9 +1,11 @@
 require('dotenv').config({ path: "config/.env"})
-const swaggerDocs =require("../swagger/swagger")
-const logger = require("../logger/logger")
-const mainRouter = require("./mainRoutes")
-const Api404Error = require('../erorrHandle/api404Error')
-const {logErrorMiddleware,returnError} = require ('../erorrHandle/errorHandler.js')
+// const swaggerDocs =require("./swagger/swagger")
+const logger = require("./logger/logger")
+const mainRouter = require("./config/mainRoutes")
+const Api404Error = require('./erorrHandle/api404Error')
+const {logErrorMiddleware,returnError} = require ('./erorrHandle/errorHandler.js')
+const swaggerFile =require("./swagger/swaggerOutput.json"),
+swaggerUi = require("swagger-ui-express")
 
 const express = require("express")
 // const bodyParser = require("body-parser")
@@ -26,7 +28,7 @@ app.use("/", mainRouter)
 app.use(logErrorMiddleware)
 app.use(returnError)
 
-require("../data/db").connect()
+require("./data/db").connect()
 const check =()=>{
     try{
         throw new Api404Error("hhh")//,user:req.user
@@ -39,6 +41,7 @@ const check =()=>{
 check()
 
 
-swaggerDocs(app, PORT)
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
 
 app.listen(PORT, ()=> console.log(`Server is running at Port ${PORT}`))

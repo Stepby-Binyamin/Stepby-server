@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-require("./user.data")
+// require("./user.data")
 require("./category.data")
 
 const projectSchema = new mongoose.Schema({
@@ -22,7 +22,7 @@ const projectSchema = new mongoose.Schema({
     },
     categories: [{
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'categories'
+        ref: 'category'
     }],
     status: {
         type: String,
