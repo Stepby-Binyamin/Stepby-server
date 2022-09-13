@@ -6,10 +6,10 @@ async function create(data){
     return await userData.create(data);
  }
  async function read(filter,proj){
-    return await userData.find(filter,proj);
+    return await userData.find(filter,proj).populate({path: 'clients',select:['fullName']});;
  }
  async function readOne(filter,proj){
-    return await userData.findOne(filter,proj);
+    return await userData.findOne(filter,proj).populate({path: 'clients',select:['fullName']});;
  }
  async function update(filter,newData){
     return await userData.updateOne(filter, newData);

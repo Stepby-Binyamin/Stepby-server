@@ -27,11 +27,16 @@ const userSchema = new mongoose.Schema({
     }],
     permissions: {
         type: String,
-        enum: ["biz", "client", "admin"]
+        enum: ["biz", "client", "admin"],
+        require: true
     },
     project: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "project",
+    }],
+    clients: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
     }],
     createDate: {
         type: Date,
