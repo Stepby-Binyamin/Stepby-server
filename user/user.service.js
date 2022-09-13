@@ -38,10 +38,11 @@ const login = async (data) => {
 
 }
 
-const newClient = async (data) => {
+const newClient = async (data,user) => {
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
     const client = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
+    await userModel.update({_id: user._id},{$push: {clients: client}});
     return client;
 }
 
@@ -71,10 +72,10 @@ const getAllBiz = async () => {
     return allBiz;
 }
 
-const getAllClientsByBiz = async (data, user) => {
-    const clients = await userModel.read({_id: user._id},{permissions: "client"})
-
-
+const getAllClientsByBiz = async (user) => {
+    const clients = await userModel.readOne({_id: user._id ,permissions: "biz"});
+    console.log(clients.clients);
+    return clients.clients;
 }
 
 module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz };

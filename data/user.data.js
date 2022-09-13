@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "project",
     }],
+    clients: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
+    }],
     createDate: {
         type: Date,
         default: Date.now,

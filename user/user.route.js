@@ -36,12 +36,12 @@ router.post('/send-code', async (req, res) => {
 });
 
 
-router.post('/new-client', async (req, res) => {
+router.post('/new-client',[authJWT],async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "create a new client"
     console.log("newclient");
     try {
-        const newClient = await userService.newClient(req.body);
+        const newClient = await userService.newClient(req.body,req.user);
         res.send(newClient);
     } catch (error) {
         res.send(error.message);
@@ -98,23 +98,23 @@ router.post('/remove-biz',[authJWT], async (req, res) => {
 
 router.get('/get-all-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
-    // #swagger.description = "get all the active biz's"
+    // #swagger.description = "get all active bizs"
     try {
         const allbiz = await userService.getAllBiz();
         res.send(allbiz);
     } catch (error) {
-
+        res.send(error.message);
     }
 });
 
-router.get('/get-my-clients',[authJWT], async (req, res) => {
+router.get('/get-my-clients',[authJWT] , async (req, res) => {
     // #swagger.tags= ['Users']
-    // #swagger.description = "get all clients per biz"
+    // #swagger.description = "get all biz's clients"
     try{
-        const x = await userService.getAllClientsByBiz(req.body);
+        const x = await userService.getAllClientsByBiz(req.user);
         res.send(x);
     }catch(error){
-
+        res.send(error.message);
     }
 });
 
