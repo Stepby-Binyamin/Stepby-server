@@ -38,30 +38,29 @@ const login = async (data) => {
 
 }
 
-const newClient = async (data) => {
+const newClient = async (data,user) => {
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
     const client = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
+    await userModel.update({_id: user._id},{$push: {clients: client}});
     return client;
 }
 
 
-//TODO: check category not duplicate
-const editBiz = async (data) => {
-    
-    const { firstName, lastName, businessName, categories } = data;
-    if (!firstName || !lastName || !businessName || !categories) throw new Error("missing data");
-    const foundUser = await userModel.read({ _id: data.id });
-    if (!foundUser) throw new Error("error");
-    const updatedUser = await userModel.update({ _id: data.id }, data, { new: true });
-    const formatedUser = { firstName: updatedUser.firstName, lastName: updatedUser.lastName, businessName: updatedUser.businessName, categories: updatedUser.categories }
-    return formatedUser;
+const editBiz = async (data,user) => {
+    // const { firstName, lastName, bizName, categories } = data;
+    const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
+    console.log("foundUser: ", foundUser);
+    if (!foundUser) throw new Error("user not found");
+    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data, { new: true });
+    return acknowledged;
 }
 
-
-const removeBiz = async (id) => {
+const removeBiz = async (data,user) => {
     console.log("delete");
-    const deleted = await userModel.del({ _id: id._id });
+    const foundUser = await userModel.read({_id: user._id});
+    if(!foundUser) throw new Error("user not found");
+    const deleted = await userModel.del({ _id: user._id });
     return deleted;
 }
 
@@ -73,10 +72,10 @@ const getAllBiz = async () => {
     return allBiz;
 }
 
-const getAllClientsByBiz = async (data) => {
-    const { _id } = data;
-
-
+const getAllClientsByBiz = async (user) => {
+    const clients = await userModel.readOne({_id: user._id ,permissions: "biz"});
+    console.log(clients.clients);
+    return clients.clients;
 }
 
-module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify };
+module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz };

@@ -3,7 +3,7 @@ const { readOne } = require("../user/user.model");
 
 
 const authJWT = async (req, res, next) => {
-    const newToken = jwt.sign({ _id: "631f535f76a1bb19c3e0e309" }, process.env.JWT_SECRET, { expiresIn: "10h" })
+    const newToken = jwt.sign({ _id: "632085869afc4c17167de3e0" }, process.env.JWT_SECRET, { expiresIn: "10h" })
     //TODO: delete --- || `Bearer ${newToken}`; ---  before production.
 
     const authHeader = req.headers.authorization || `Bearer ${newToken}`;
