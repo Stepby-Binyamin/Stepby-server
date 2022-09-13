@@ -18,14 +18,11 @@ const sms = async (data) => {
 }
 
 
-//TODO: check category not duplicate
 const register = async (data) => {
-    console.log(data);
     const { phoneNumber, firstName, lastName, email, bizName, categories } = data; // categories is array of _id
     //TODO: create a function that push each empty var into array.
     if (!phoneNumber || !firstName || !lastName || !email || !bizName) throw new Error("missing data:" + []);
     const newBiz = await userModel.create({ phoneNumber, firstName, lastName, email, bizName, categories, permissions: "biz" });
-    // await userModel.update({_id: newBiz},{$push: {categories: categories}}) 
     const token = jwt.createToken(newBiz);
     return token;
 }
@@ -51,12 +48,12 @@ const newClient = async (data) => {
 
 //TODO: check category not duplicate
 const editBiz = async (data) => {
+    
     const { firstName, lastName, businessName, categories } = data;
     if (!firstName || !lastName || !businessName || !categories) throw new Error("missing data");
-    const foundUser = await userModel.read({ _id: data._id });
+    const foundUser = await userModel.read({ _id: data.id });
     if (!foundUser) throw new Error("error");
-    const updatedUser = await userModel.update({ _id: data._id }, data, { new: true });
-    console.log("biz: ", biz);
+    const updatedUser = await userModel.update({ _id: data.id }, data, { new: true });
     const formatedUser = { firstName: updatedUser.firstName, lastName: updatedUser.lastName, businessName: updatedUser.businessName, categories: updatedUser.categories }
     return formatedUser;
 }
