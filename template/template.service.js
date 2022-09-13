@@ -94,16 +94,43 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
     return ("ok")
 }
 
-const replaceSteps = async (data) => {
-    const { projectId, firstStepId, secondStepId } = data;
-    const project = await projectData.readOne({ _id: projectId })
-    const firstStepIndex = project.steps
-
+const downSteps = async ({ templateId, stepIndex }) => {
+    const stepsLenght = await templateData.readOne({ _id: templateId }, "steps")
+    if (stepIndex < 0 || stepIndex >= stepsLenght.steps.length - 1) {
+        throw { message: "error" }
+    }
+    await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
+    await templateData.update({ _id: templateId, "steps.index": stepIndex + 1 }, { $set: { "steps.$.index": stepIndex } })
+    await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
+    return await templateData.readOne({ _id: templateId })
 }
 
-const templateByUser = async (userId) => {
-    return await templateData.read({ creatorId: userId })
+const templateByUser = async (userId, isTemplate) => {
+    return await templateData.read({ isTemplate, creatorId: userId })
 
 }
+const categoriesByUser = async (userId) => {
+    const category = await userModel.read({ _id: userId }, "categories")
+    const categories = category[0].categories
+    let templateByCategory = []
 
-module.exports = { createTemplate, createProject, createTemplateAdmin, templateByUser, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep };
+    for (i of categories) {
+        templateByCategory = templateByCategory.concat(await templateData.read({ isTemplate: true, categories: { $in: i.toString() } }))
+    }
+    let templateArr = []
+    let flag = false
+    for (i of templateByCategory) {
+        for (j of templateArr) {
+            if (i._id.toString() == j._id.toString()) {
+                flag = true
+            }
+        }
+        if (!flag) {
+            templateArr.push(i)
+        }
+        flag = false
+    }
+    return templateArr
+}
+
+module.exports = { createTemplate, createProject, categoriesByUser, createTemplateAdmin, templateByUser, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep };
