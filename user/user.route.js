@@ -6,6 +6,7 @@ const userService = require("../user/user.service");
 const router = express.Router();
 
 
+
 router.post('/check-code', async (req, res) => {
     //   #swagger.tags= ['Users']
     // #swagger.description = "verify the sms-code of the biz user"
@@ -22,7 +23,7 @@ router.post('/check-code', async (req, res) => {
 
 
 router.post('/send-code', async (req, res) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "send SMS code to biz user"
     try {
         const result = await userService.sms(req.body)
@@ -33,6 +34,7 @@ router.post('/send-code', async (req, res) => {
     }
 
 });
+
 
 router.post('/new-client', async (req, res) => {
     //   #swagger.tags= ['Users']
@@ -58,6 +60,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
 router.post('/login', async (req, res) => {
     //   #swagger.tags= ['Users']
     // #swagger.description = "login of biz user"
@@ -68,6 +71,7 @@ router.post('/login', async (req, res) => {
         req.send(error.message);
     }
 });
+
 
 router.put('/edit-biz', [authJWT], async (req, res) => {
     //   #swagger.tags= ['Users']
@@ -80,6 +84,7 @@ router.put('/edit-biz', [authJWT], async (req, res) => {
     }
 })
 
+
 router.post('/remove-biz', async (req, res) => {
     //   #swagger.tags= ['Users']
     // #swagger.description = "remove biz user from DB (actually isActive: false)"
@@ -90,6 +95,7 @@ router.post('/remove-biz', async (req, res) => {
         req.send(error.message);
     }
 });
+
 
 router.get('/get-all-biz', async (req, res) => {
     //   #swagger.tags= ['Users']
