@@ -638,6 +638,57 @@
           }
         }
       }
+    },
+    "/project/createProject": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "create project from template",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/project/replaceSteps": {
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "change index of steps",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/project/deleteProject/{projectId}": {
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "delete project",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
+      }
     }
   }
 }
