@@ -83,4 +83,30 @@ router.get('/templateByUser/:userId', async (req, res) => {
 
     }
 })
+
+router.get('/categoriesByUser/:userId', async (req, res) => {
+    try {
+        // console.log(req.params.userId);
+        res.send(await tamplateService.categoriesByUser(req.params.userId));
+
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
+router.put("/downSteps/:templateId", async (req, res) => {
+    try {
+        res.send(await tamplateService.downSteps({ templateId: req.params.templateId, stepIndex: req.body.stepIndex }));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
+
+
+
 module.exports = router;
