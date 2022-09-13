@@ -6,7 +6,7 @@ const authJWT = (req, res, next) => {
     if (authHeader) {
         console.log(authHeader);
         const token = authHeader.split(" ")[1];
-        jwt.verify(token, process.env.SECRET_JWT, (err, verifyToken) => {
+        jwt.verify(token, process.env.JWT_SECRET, (err, verifyToken) => {
             if (err) {
                 return res.sendStatus(403);
             }
