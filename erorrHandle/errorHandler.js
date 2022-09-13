@@ -5,8 +5,9 @@ function logError (err) {
  logger.error(err)
 }
 
+
 function logErrorMiddleware (err, req, res, next) {
- logError(err)
+    logger.error(err)
  next(err)
 }
 
@@ -25,5 +26,5 @@ module.exports = {
  logError,
  logErrorMiddleware,
  returnError,
- isOperationalError
+ isOperationalError,
 }

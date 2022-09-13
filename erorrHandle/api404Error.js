@@ -6,9 +6,10 @@ class Api404Error extends BaseError {
  name,
  statusCode = httpStatusCodes.NOT_FOUND,
  description = 'Not found.',
- isOperational = true
+ isOperational = true,
+ user,
  ) {
- super(name, statusCode, isOperational, description)
+ super(name, statusCode, isOperational, description,user)
  }
 }
 
