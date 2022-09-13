@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 router.post('/check-code', async (req, res) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "verify the sms-code of the biz user"
     try {
         const result = await userService.verify(req.body)
@@ -22,7 +22,7 @@ router.post('/check-code', async (req, res) => {
 
 
 router.post('/send-code', async (req, res) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "send SMS code to biz user"
     try {
         const result = await userService.sms(req.body)
@@ -35,72 +35,82 @@ router.post('/send-code', async (req, res) => {
 });
 
 router.post('/new-client', async (req, res) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "create a new client"
     console.log("newclient");
     try {
         const newClient = await userService.newClient(req.body);
-        req.send(newClient);
+        res.send(newClient);
     } catch (error) {
-        req.send(error.message);
+        res.send(error.message);
     }
 });
 
 router.post('/register', async (req, res) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "registration of biz user"
 
     try {
         await userService.register(req.body);
-        req.send("new biz was created");
+        res.send("new biz was created");
     } catch (error) {
-        req.send(error.message);
+        res.send(error.message);
     }
 });
 
 router.post('/login', async (req, res) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "login of biz user"
     try {
         await userService.login(req.body);
-        req.send("logged in");
+        res.send("logged in");
     } catch (error) {
-        req.send(error.message);
+        res.send(error.message);
     }
 });
 
 router.put('/edit-biz', [authJWT], async (req, res) => {
-    //   #swagger.tags= ['Users']
+    // #swagger.tags= ['Users']
     // #swagger.description = "edit details of biz user"
     try {
-        const editedBiz = await userService.editBiz(req.body, req.user._id);
-        req.send(editedBiz);
+        const acknowledged = await userService.editBiz(req.body, req.user);
+        res.send(acknowledged);
     } catch (error) {
-        req.send(error.message);
+        res.send(error.message);
     }
 })
 
-router.post('/remove-biz', async (req, res) => {
-    //   #swagger.tags= ['Users']
-    // #swagger.description = "remove biz user from DB (actually isActive: false)"
+router.post('/remove-biz',[authJWT], async (req, res) => {
+    // #swagger.tags= ['Users']
+    // #swagger.description = "deactivate biz user from DB"
     try {
-        const removed = await userService.removeBiz(req.body);
-        req.send(removed);
+        const removed = await userService.removeBiz(req.body,req.user);
+        res.send(removed);
     } catch (error) {
-        req.send(error.message);
+        res.send(error.message);
     }
 });
 
-router.get('/get-all-biz', async (req, res) => {
-    //   #swagger.tags= ['Users']
+router.get('/get-all-biz', [authJWT], async (req, res) => {
+    // #swagger.tags= ['Users']
     // #swagger.description = "get all the active biz's"
     try {
         const allbiz = await userService.getAllBiz();
-        req.send(allbiz);
+        res.send(allbiz);
     } catch (error) {
 
     }
 });
 
+router.get('/get-my-clients',[authJWT], async (req, res) => {
+    // #swagger.tags= ['Users']
+    // #swagger.description = "get all clients per biz"
+    try{
+        const x = await userService.getAllClientsByBiz(req.body);
+        res.send(x);
+    }catch(error){
 
-module.exports = router
+    }
+});
+
+module.exports = router;

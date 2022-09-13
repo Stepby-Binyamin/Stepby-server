@@ -46,22 +46,20 @@ const newClient = async (data) => {
 }
 
 
-//TODO: check category not duplicate
-const editBiz = async (data) => {
-    
-    const { firstName, lastName, businessName, categories } = data;
-    if (!firstName || !lastName || !businessName || !categories) throw new Error("missing data");
-    const foundUser = await userModel.read({ _id: data.id });
-    if (!foundUser) throw new Error("error");
-    const updatedUser = await userModel.update({ _id: data.id }, data, { new: true });
-    const formatedUser = { firstName: updatedUser.firstName, lastName: updatedUser.lastName, businessName: updatedUser.businessName, categories: updatedUser.categories }
-    return formatedUser;
+const editBiz = async (data,user) => {
+    // const { firstName, lastName, bizName, categories } = data;
+    const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
+    console.log("foundUser: ", foundUser);
+    if (!foundUser) throw new Error("user not found");
+    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data, { new: true });
+    return acknowledged;
 }
 
-
-const removeBiz = async (id) => {
+const removeBiz = async (data,user) => {
     console.log("delete");
-    const deleted = await userModel.del({ _id: id._id });
+    const foundUser = await userModel.read({_id: user._id});
+    if(!foundUser) throw new Error("user not found");
+    const deleted = await userModel.del({ _id: user._id });
     return deleted;
 }
 
@@ -73,10 +71,10 @@ const getAllBiz = async () => {
     return allBiz;
 }
 
-const getAllClientsByBiz = async (data) => {
-    const { _id } = data;
+const getAllClientsByBiz = async (data, user) => {
+    const clients = await userModel.read({_id: user._id},{permissions: "client"})
 
 
 }
 
-module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify };
+module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz };
