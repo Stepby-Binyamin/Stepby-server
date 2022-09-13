@@ -62,9 +62,19 @@ router.delete('/deleteStep', async (req, res) => {
     }
 })
 
-router.post('/duplicateStep', async (req, res) => {
+router.put('/duplicateStep', async (req, res) => {
     try {
         res.send(await tamplateService.duplicateStep(req.body));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
+router.put('/dataToStep', async (req, res) => {
+    try {
+        res.send(await tamplateService.dataToStep(req.body));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
