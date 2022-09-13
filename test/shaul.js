@@ -1,4 +1,3 @@
-// stam test by shaul, can be deleted
 
 const express = require("express")
 const router = express.Router()

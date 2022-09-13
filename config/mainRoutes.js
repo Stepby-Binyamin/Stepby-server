@@ -24,6 +24,8 @@ router.use('/auth', abc)
 router.use('/category', categoryRouter)
 router.use('/language', languageRouter)
 
-
+//shaul tests
+const shaulRouter = require("../test/shaul")
+router.use("/shaul", shaulRouter)
 
 module.exports = router
