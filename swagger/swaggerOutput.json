@@ -11,12 +11,46 @@
     "http"
   ],
   "paths": {
-    "/user/register": {
+    "/user/check-code": {
       "post": {
         "tags": [
           "Users"
         ],
-        "description": "register",
+        "description": "verify the sms-code of the biz user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "406": {
+            "description": "Not Acceptable"
+          }
+        }
+      }
+    },
+    "/user/send-code": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "send SMS code to biz user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "406": {
+            "description": "Not Acceptable"
+          }
+        }
+      }
+    },
+    "/user/new-client": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "create a new client",
         "parameters": [],
         "responses": {
           "200": {
@@ -25,12 +59,68 @@
         }
       }
     },
-    "/usereditbiz": {
+    "/user/register": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "registration of biz user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "login of biz user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/editbiz": {
       "put": {
         "tags": [
           "Users"
         ],
-        "description": "make changes on business",
+        "description": "edit details of biz user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/removebiz": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "remove biz user from DB (actually isActive: false)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/user/getallbiz": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "get all the active biz's",
         "parameters": [],
         "responses": {
           "200": {
@@ -189,66 +279,12 @@
         }
       }
     },
-    "/auth/check-code": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "example": "any"
-                },
-                "phoneNumber": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "406": {
-            "description": "Not Acceptable"
-          }
-        }
-      }
-    },
-    "/auth/send-code": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "phone": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "406": {
-            "description": "Not Acceptable"
-          }
-        }
-      }
-    },
     "/category/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "get category",
         "parameters": [
           {
             "name": "id",
@@ -278,7 +314,10 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "edit category",
         "parameters": [
           {
             "name": "id",
@@ -308,7 +347,10 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "delete category",
         "parameters": [
           {
             "name": "id",
@@ -340,7 +382,10 @@
     },
     "/category/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "get all categories",
         "parameters": [
           {
             "name": "authorization",
@@ -364,7 +409,10 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": [
+          "Category"
+        ],
+        "description": "create new category",
         "parameters": [
           {
             "name": "authorization",
@@ -390,7 +438,10 @@
     },
     "/language/{code}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "get language dictionary",
         "parameters": [
           {
             "name": "code",
@@ -409,7 +460,10 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "add word to language dictionary",
         "parameters": [
           {
             "name": "code",
@@ -430,7 +484,10 @@
     },
     "/language/": {
       "get": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "get all languages dictionaries",
         "parameters": [],
         "responses": {
           "200": {
@@ -442,7 +499,10 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "add new language",
         "parameters": [],
         "responses": {
           "200": {
@@ -456,7 +516,10 @@
     },
     "/language/langSet/{code}": {
       "put": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "edit language titles",
         "parameters": [
           {
             "name": "code",
@@ -477,7 +540,10 @@
     },
     "/language/remove/{code}": {
       "put": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "remove word from language dictionary",
         "parameters": [
           {
             "name": "code",
@@ -510,7 +576,10 @@
     },
     "/language/{id}": {
       "delete": {
-        "description": "",
+        "tags": [
+          "Language"
+        ],
+        "description": "remove language from database",
         "parameters": [
           {
             "name": "id",
@@ -527,6 +596,57 @@
             "description": "Internal Server Error"
           }
         }
+      }
+    },
+    "/project/createProject": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "create project from template",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/project/replaceSteps": {
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "change index of steps",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/project/deleteProject/{projectId}": {
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "delete project",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {}
       }
     }
   }

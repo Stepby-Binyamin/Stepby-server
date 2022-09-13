@@ -5,14 +5,14 @@ const userRouter = require("../user/user.route")
 const templateRouter = require("../template/template.route")
 const categoryRouter = require('../category/category.routes')
 const languageRouter = require('../language/language.route')
-const abc = require('../auth/temp')
+const projectRoute = require('../template/project.route')
 
 
 router.use("/user", userRouter)
 router.use("/template", templateRouter)
-router.use('/auth', abc)
 router.use('/category', categoryRouter)
 router.use('/language', languageRouter)
+router.use('/project', projectRoute)
 
 
 

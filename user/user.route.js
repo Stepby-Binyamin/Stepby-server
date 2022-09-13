@@ -6,6 +6,7 @@ const userService = require("../user/user.service");
 const router = express.Router();
 
 
+
 router.post('/check-code', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "verify the sms-code of the biz user"
@@ -34,6 +35,7 @@ router.post('/send-code', async (req, res) => {
 
 });
 
+
 router.post('/new-client', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "create a new client"
@@ -58,6 +60,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
 router.post('/login', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "login of biz user"
@@ -68,6 +71,7 @@ router.post('/login', async (req, res) => {
         res.send(error.message);
     }
 });
+
 
 router.put('/edit-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
@@ -90,6 +94,7 @@ router.post('/remove-biz',[authJWT], async (req, res) => {
         res.send(error.message);
     }
 });
+
 
 router.get('/get-all-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
