@@ -4,7 +4,7 @@ const axios = require('axios')
 const jwt = require('./jwt')
 const bcrypt = require('bcrypt')
 const { getXML, xmlHeaders } = require('./xml')
-
+const userModel = require('../user/user.model');
 
 const sendSMS = async (phoneNumber) => {
   const code = generateCode(4)
@@ -53,32 +53,22 @@ async function checkExistUser(phone) {
 
 }
 
-async function verifyCode(req) {
- 
-  const { code, phoneNumber } = req.body
+async function verifyCode(data) {
+  const { code, phoneNumber } = data;
   const DBcode = await codeModel.findOne({ phoneNumber: phoneNumber })
   if (!DBcode) return { message: 'invalid phone number', status: 406 }
-
   console.log(await bcrypt.compare(code, DBcode.code));
-
   if (await bcrypt.compare(code, DBcode.code)) {
-  const existUser = await codeModel.findOne({ phoneNumber: phoneNumber })
-
-  if (existUser) {
-    const token = await jwt.createToken(existUser._id)
-    const result = { newUser: false, token: token }
+    const existUser = await userModel.readOne({ phoneNumber: phoneNumber })
+    const result =
+    { newUser: existUser ? false : true,
+     token: existUser ? await jwt.createToken(existUser._id)
+     : await jwt.createToken(phoneNumber, "5m") }
     return result
   } else {
-    const token = await jwt.createToken(phoneNumber)
-    const result = { newUser: true, token: token }
-    return result
+    return { message: 'invalid code', status: 406 }
   }
-} else{
-  return { message: 'invalid code', status: 406 }
 }
-
-}
-
 
 const checkValidNumber = async (phoneNumber = '123') => {
   if (phoneNumber[0] !== '0' || phoneNumber[1] !== '5' || phoneNumber.length !== 10) return { message: 'invalid phone number', status: 406 }
