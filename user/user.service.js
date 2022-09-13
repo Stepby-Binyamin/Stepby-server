@@ -78,4 +78,6 @@ const getAllClientsByBiz = async (user) => {
     return clients.clients;
 }
 
+
+
 module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz };
