@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     },
     categories: [{ 
         type: mongoose.Schema.Types.ObjectId,
-        ref: "categories",
+        ref: "category",
     }],
     permissions: {
         type: String,
