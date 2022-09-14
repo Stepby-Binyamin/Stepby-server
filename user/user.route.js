@@ -118,4 +118,8 @@ router.get('/get-my-clients',[authJWT] , async (req, res) => {
     }
 });
 
+router.get('/get-user',[authJWT] , async (req, res) => {
+    res.send(req.user);
+});
+
 module.exports = router;

@@ -1,4 +1,3 @@
-require('../data/db').connect();
 const jwt = require('../auth/jwt');
 const { sendSMS, verifyCode } = require('../auth/verification');
 
@@ -38,16 +37,16 @@ const login = async (data) => {
 
 }
 
-const newClient = async (data,user) => {
+const newClient = async (data, user) => {
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
     const client = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
-    await userModel.update({_id: user._id},{$push: {clients: client}});
+    await userModel.update({ _id: user._id }, { $push: { clients: client } });
     return client;
 }
 
 
-const editBiz = async (data,user) => {
+const editBiz = async (data, user) => {
     // const { firstName, lastName, bizName, categories } = data;
     const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
     console.log("foundUser: ", foundUser);
@@ -56,10 +55,10 @@ const editBiz = async (data,user) => {
     return acknowledged;
 }
 
-const removeBiz = async (data,user) => {
+const removeBiz = async (data, user) => {
     console.log("delete");
-    const foundUser = await userModel.read({_id: user._id});
-    if(!foundUser) throw new Error("user not found");
+    const foundUser = await userModel.read({ _id: user._id });
+    if (!foundUser) throw new Error("user not found");
     const deleted = await userModel.del({ _id: user._id });
     return deleted;
 }
@@ -73,9 +72,11 @@ const getAllBiz = async () => {
 }
 
 const getAllClientsByBiz = async (user) => {
-    const clients = await userModel.readOne({_id: user._id ,permissions: "biz"});
+    const clients = await userModel.readOne({ _id: user._id, permissions: "biz" });
     console.log(clients.clients);
     return clients.clients;
 }
+
+
 
 module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz };
