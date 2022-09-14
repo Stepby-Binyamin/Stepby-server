@@ -7,7 +7,8 @@ const userModel = require('./user.model');
 const verify = async (data) => {
     const { phoneNumber, code } = data;
     if (!phoneNumber || !code) throw new Error('error');
-    return verifyCode(data);
+    const result = verifyCode(data);
+    return result
 }
 
 
@@ -52,7 +53,7 @@ const editBiz = async (data,user) => {
     const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
     console.log("foundUser: ", foundUser);
     if (!foundUser) throw new Error("user not found");
-    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data, { new: true });
+    const acknowledged = await userModel.update({ _id: foundUser._id, permissions: "biz" }, data, { new: true });
     return acknowledged;
 }
 
