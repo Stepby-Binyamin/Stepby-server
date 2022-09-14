@@ -7,9 +7,14 @@ const router = express.Router();
 
 
 
+//false all user and token
+// true;
 router.post('/check-code', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "verify the sms-code of the biz user"
+    // #swagger.parameters['phoneNumber'] = {description:'user's phone number'}
+    // #swagger.parameters['code'] = {description:'code sent by 019 sistem in the login'}
+
     try {
         const result = await userService.verify(req.body)
         console.log({ result });
@@ -25,6 +30,7 @@ router.post('/check-code', async (req, res) => {
 router.post('/send-code', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "send SMS code to biz user"
+    // #swagger.parameters['phoneNumber'] = {description:''}
     try {
         const result = await userService.sms(req.body)
         if (result.status !== 0) throw { message: result.message, status: 406 }
@@ -32,14 +38,18 @@ router.post('/send-code', async (req, res) => {
     } catch (err) {
         res.status(err.status || 406).send(err.message)
     }
-
+    
 });
 
 
 router.post('/new-client',[authJWT],async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "create a new client"
-    console.log("newclient");
+    // #swagger.parameters['fullName'] = {description:'user details'}
+    // #swagger.parameters['phoneNumber'] = {description:'user details'}
+    // #swagger.parameters['email'] = {description:'user details'}
+    // #swagger.parameters['user'] = {description:'user token'}
+
     try {
         const newClient = await userService.newClient(req.body,req.user);
         res.send(newClient);
@@ -51,7 +61,13 @@ router.post('/new-client',[authJWT],async (req, res) => {
 router.post('/register', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "registration of biz user"
-
+    // #swagger.parameters['firstName '] = {description:'user details'}
+    // #swagger.parameters['lastName'] = {description:'user details'}
+    // #swagger.parameters['bizName'] = {description:'user details'}
+    // #swagger.parameters['categories'] = {description:'user details'}
+    // #swagger.parameters['phoneNumber'] = {description:'user details'}
+    // #swagger.parameters['fullName'] = {description:'user details'}
+    // #swagger.parameters['email'] = {description:'user details'}
     try {
         await userService.register(req.body);
         res.send("new biz was created");
@@ -61,8 +77,10 @@ router.post('/register', async (req, res) => {
 });
 
 
+//probably redundant function
 router.post('/login', async (req, res) => {
     // #swagger.tags= ['Users']
+    // #swagger.parameters['phoneNumber'] = {description:'user details'}
     // #swagger.description = "login of biz user"
     try {
         await userService.login(req.body);
@@ -76,13 +94,18 @@ router.post('/login', async (req, res) => {
 router.put('/edit-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "edit details of biz user"
+    // #swagger.parameters['user'] = {description:'user token'}
+    // #swagger.parameters['firstName '] = {description:'user details'}
+    // #swagger.parameters['lastName'] = {description:'user details'}
+    // #swagger.parameters['bizName'] = {description:'user details'}
+    // #swagger.parameters['categories'] = {description:'user details'}
     try {
         const acknowledged = await userService.editBiz(req.body, req.user);
         res.send(acknowledged);
     } catch (error) {
         res.send(error.message);
     }
-})
+});
 
 router.post('/remove-biz',[authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
@@ -96,6 +119,7 @@ router.post('/remove-biz',[authJWT], async (req, res) => {
 });
 
 
+//only for admin
 router.get('/get-all-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "get all active bizs"
