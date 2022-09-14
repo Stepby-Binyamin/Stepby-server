@@ -1,5 +1,7 @@
 const languageControl = require('./language.model')
 
+//TODO: in addWordsInOne check if word already exists
+
 async function create(data){
     
     if (data.code !== 0 && !data.code )
