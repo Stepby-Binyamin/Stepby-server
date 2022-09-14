@@ -139,8 +139,4 @@ const projectById = async (projectId) => {
 
 }
 
-<<<<<<< HEAD
-module.exports = { createTemplate, createProject, categoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,getStepById };
-=======
-module.exports = { projectById, createTemplate, createProject, categoriesByUser, createTemplateAdmin, templateByUser, projectByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep };
->>>>>>> a6ee0afb4ab1fba03f351f56a708a178db997645
+module.exports = {  projectById, projectByUser ,createTemplate, createProject, categoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,getStepById };
