@@ -27,6 +27,19 @@ router.post("/createProject/:templateId",authJWT ,async (req, res) => {
     }
 });
 
+
+router.put('/newStep/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'create step'
+    try {
+        res.send(await projectService.createStep({ ...req.body, templateId: req.params.projectId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
 router.post('/duplicateProject/:projectId', authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
     // #swagger.description = 'duplicate project'
@@ -61,6 +74,18 @@ router.put("/replaceSteps", async (req, res) => {
         res
             .status(error.code || 500)
             .send({ message: error.message || "something wrong :(" });
+    }
+})
+
+router.delete('/deleteStep/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Project']
+    // #swagger.description = 'delete step'
+    try {
+        res.send(await projectService.deleteStep({ ...req.body, templateId: req.params.projectId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
     }
 })
 
