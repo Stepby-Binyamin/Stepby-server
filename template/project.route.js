@@ -22,10 +22,23 @@ router.post("/createProject/:templateId",authJWT ,async (req, res) => {
     } catch (error) {
         console.log(error.message);
         res
-        .status(error.code || 500)
-        .send({ message: error.message || "something wrong :(" });
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
     }
 });
+
+router.get('/projectByUser', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'get project by user'
+    try {
+        res.send(await projectService.projectByUser(req.user._id));
+
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
 
 router.put("/replaceSteps", async (req, res) => {
     // #swagger.tags = ['Projects']
@@ -35,8 +48,8 @@ router.put("/replaceSteps", async (req, res) => {
     } catch (error) {
         console.log(error.message);
         res
-        .status(error.code || 500)
-        .send({ message: error.message || "something wrong :(" });
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
     }
 })
 
@@ -50,7 +63,17 @@ router.delete("/deleteProject/:projectId", async (req, res) => {
         res
             .status(error.code || 500)
             .send({ message: error.message || "something wrong :(" });
-        }
+    }
 });
-    
+
+router.get('/projectById/:projectId', authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.projectById(req.params.projectId));
+
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
 module.exports = router;

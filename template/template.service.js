@@ -35,37 +35,32 @@ const createProject = async ({  user, projectName, templateId, isNewClient, clie
     }
     return "success"
 }
-const createTemplate = async ({ userId, templateName, isTemplate, projectName, templateId, isNewClient, clientId }) => {
-    if (!isTemplate) { createProject({ projectName, templateId, isNewClient, clientId }) }
-    else {
-        if (!userId) throw { message: "user undefind" };
-        if (!templateName) throw { message: "error template name" };
-        await templateData.create({ name: templateName, creatorId: userId, isTemplate })
+const createTemplate = async ({ userId, templateName }) => {
+    if (!templateName) throw { message: "error template name" };
+    await templateData.create({ name: templateName, creatorId: userId, isTemplate: true })
 
-        return ("ok")
-    }
+    return ("ok")
+
 }
 const createTemplateAdmin = async ({ userId, templateName, isTemplate, radio, categories, phoneNumber }) => {
-    if (!userId) throw { message: "user undefind" };
     if (!templateName) throw { message: "error template name" };
     if (radio) {
         await templateData.create({ name: templateName, creatorId: userId, categories, isTemplate })
     }
     else {
         const user = await userModel.readOne({ phoneNumber })
-        console.log(user);
         if (!user) throw { message: "error - user phone doesn't exist" }
         await templateData.create({ name: templateName, creatorId: userId, client: user._id, isTemplate })
     }
     return ("ok")
 }
-const duplicateTemplate = async ({ templateId }) => {
+const duplicateTemplate = async (templateId) => {
     const template = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")))
     const newTemplate = await templateData.create(template)
     await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}עותק(1)` })
     return ("ok")
 }
-const deleteTemplate = async ({ templateId }) => {
+const deleteTemplate = async (templateId) => {
     await templateData.remove({ _id: templateId })
     return ("ok")
 }
@@ -110,13 +105,15 @@ const downSteps = async ({ templateId, stepIndex }) => {
     await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
     return await templateData.readOne({ _id: templateId })
 }
-const templateByUser = async (userId, isTemplate) => {
-    return await templateData.read({ isTemplate, creatorId: userId })
+const templateByUser = async (userId) => {
+    return await templateData.read({ isTemplate: true, creatorId: userId })
+}
+const projectByUser = async (userId) => {
+    return await templateData.read({ isTemplate: false, creatorId: userId })
 
 }
-const categoriesByUser = async (userId) => {
-    const category = await userModel.read({ _id: userId }, "categories")
-    const categories = category[0].categories
+const categoriesByUser = async (user) => {
+    const categories = user.categories[0].categories
     let templateByCategory = []
 
     for (i of categories) {
@@ -137,5 +134,13 @@ const categoriesByUser = async (userId) => {
     }
     return templateArr
 }
+const projectById = async (projectId) => {
+    return await templateData.readOne({ _id: projectId })
 
+}
+
+<<<<<<< HEAD
 module.exports = { createTemplate, createProject, categoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,getStepById };
+=======
+module.exports = { projectById, createTemplate, createProject, categoriesByUser, createTemplateAdmin, templateByUser, projectByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep };
+>>>>>>> a6ee0afb4ab1fba03f351f56a708a178db997645
