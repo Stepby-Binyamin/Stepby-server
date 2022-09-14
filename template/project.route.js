@@ -1,24 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const projectService = require("./template.service");
-const { authJWT}= require("../auth/auth");
+const { authJWT } = require("../auth/auth");
 
-router.get("/getStepById/:projectId/:stepId", authJWT, async(req, res)=>{
-try {
-    res.send(await projectService.getStepById(req.params.projectId, req.params.stepId));
-} catch (error) {
-    console.log(error.message);
-    res
-        .status(error.code || 500)
-        .send({ message: error.message || "something wrong :(" });
-}
-});
-
-router.post("/createProject/:templateId",authJWT ,async (req, res) => {
-    // #swagger.tags = ['Projects']
-    // #swagger.description = 'create project from template'
+router.get("/getStepById/:projectId/:stepId", authJWT, async (req, res) => {
     try {
-        res.send(await projectService.createProject({...req.body, user:req.user , templateId:req.params.templateId}));
+        res.send(await projectService.getStepById(req.params.projectId, req.params.stepId));
     } catch (error) {
         console.log(error.message);
         res
@@ -26,6 +13,32 @@ router.post("/createProject/:templateId",authJWT ,async (req, res) => {
             .send({ message: error.message || "something wrong :(" });
     }
 });
+
+router.post("/createProject/:templateId", authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'create project from template'
+    try {
+        res.send(await projectService.createProject({ ...req.body, user: req.user, templateId: req.params.templateId }));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+});
+
+
+router.put('/newStep/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'create step'
+    try {
+        res.send(await projectService.createStep({ ...req.body, templateId: req.params.projectId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
 
 router.post('/duplicateProject/:projectId', authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
@@ -64,6 +77,18 @@ router.put("/replaceSteps", async (req, res) => {
     }
 })
 
+router.delete('/deleteStep/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Project']
+    // #swagger.description = 'delete step'
+    try {
+        res.send(await projectService.deleteStep({ ...req.body, templateId: req.params.projectId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
 router.delete("/deleteProject/:projectId", async (req, res) => {
     // #swagger.tags = ['Projects']
     // #swagger.description = 'delete project
@@ -81,6 +106,16 @@ router.get('/projectById/:projectId', authJWT, async (req, res) => {
     try {
         res.send(await projectService.projectById(req.params.projectId));
 
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
+router.put('/updateStep/:templateId', authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.updateStep({ ...req.body, templateId: req.params.templateId }));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);

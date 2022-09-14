@@ -40,8 +40,6 @@ const check =()=>{
     }
     
 }
-// check()
-
 
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
