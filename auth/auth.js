@@ -1,19 +1,19 @@
 const jwt = require("jsonwebtoken");
+const { readOne } = require("../user/user.model");
 
 
-const authJWT = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+const authJWT = async (req, res, next) => {
+    const newToken = jwt.sign({ _id: "631ee9f9d86c3d2ab5a08814" }, process.env.JWT_SECRET, { expiresIn: "10h" })
+    //TODO: delete --- || `Bearer ${newToken}`; ---  before production.
+
+    const authHeader = req.headers.authorization || `Bearer ${newToken}`;
+
     if (authHeader) {
-        console.log(authHeader);
         const token = authHeader.split(" ")[1];
-        jwt.verify(token, process.env.SECRET_JWT, (err, verifyToken) => {
-            if (err) {
-                return res.sendStatus(403);
-            }
-            req._id = verifyToken._id;
-            console.log(req._id);
-            next();
-        });
+        const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await readOne({ _id: verifyToken._id });
+
+        next();
     } else {
         res.sendStatus(401);
     }

@@ -5,6 +5,8 @@ const { authJWT } = require('../auth/auth')
 
 
 router.post('/createTemplate', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'create template'
     try {
         res.send(await tamplateService.createTemplate({ ...req.body, userId: req.user._id }));
     } catch (error) {
@@ -15,6 +17,8 @@ router.post('/createTemplate', authJWT, async (req, res) => {
 })
 
 router.post('/createTemplateAdmin', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'create template by admin'
     try {
         res.send(await tamplateService.createTemplateAdmin(req.body));
     } catch (error) {
@@ -25,6 +29,8 @@ router.post('/createTemplateAdmin', authJWT, async (req, res) => {
 })
 
 router.post('/duplicateTemplate', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'duplicate template'
     try {
         res.send(await tamplateService.duplicateTemplate(req.body));
     } catch (error) {
@@ -34,6 +40,8 @@ router.post('/duplicateTemplate', authJWT, async (req, res) => {
     }
 })
 router.put('/newStep', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'create step'
     try {
         res.send(await tamplateService.createStep(req.body));
     } catch (error) {
@@ -44,6 +52,10 @@ router.put('/newStep', authJWT, async (req, res) => {
 })
 
 router.delete('/deleteTemplate', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'delete template'
+    //  #swagger.parameters['id'] = { description: 'Some description...' }
+
     try {
         res.send(await tamplateService.deleteTemplate(req.body));
     } catch (error) {
@@ -54,6 +66,8 @@ router.delete('/deleteTemplate', authJWT, async (req, res) => {
 })
 
 router.delete('/deleteStep', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'delete step'
     try {
         res.send(await tamplateService.deleteStep(req.body));
     } catch (error) {
@@ -64,6 +78,8 @@ router.delete('/deleteStep', authJWT, async (req, res) => {
 })
 
 router.put('/duplicateStep', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'duplicate step'
     try {
         res.send(await tamplateService.duplicateStep(req.body));
     } catch (error) {
@@ -84,6 +100,8 @@ router.put('/dataToStep', authJWT, async (req, res) => {
 })
 
 router.get('/templateByUser/:userId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'get temolate by user'
     try {
         console.log(req.params.userId);
         res.send(await tamplateService.templateByUser(req.params.userId));
