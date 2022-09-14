@@ -11,7 +11,7 @@ const router = express.Router();
 // true;
 router.post('/check-code', async (req, res) => {
     // #swagger.tags= ['Users']
-    // #swagger.description = "verify the sms-code of the biz user"
+    // #swagger.description = "verify the sms-code of the biz user"9
     try {
         const result = await userService.verify(req.body)
         console.log({ result });
@@ -41,7 +41,6 @@ router.post('/send-code', async (req, res) => {
 router.post('/new-client',[authJWT],async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "create a new client"
-    console.log("newclient");
     try {
         const newClient = await userService.newClient(req.body,req.user);
         res.send(newClient);
