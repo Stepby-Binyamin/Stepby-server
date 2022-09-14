@@ -1,10 +1,22 @@
 const templateService = require("./template.service");
 const express = require("express");
 const router = express.Router();
-const { authJWT } = require('../auth/auth')
+const { authJWT}= require("../auth/auth");
 
 
-router.post('/createTemplate', authJWT, async (req, res) => {
+
+router.get("/getStepById/:templateId/:stepId", authJWT, async(req, res)=>{
+    try {
+        res.send(await tamplateService.getStepById(req.params.templateId, req.params.stepId));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+    });
+
+router.post('/createTemplate',authJWT,  async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template'
     try {

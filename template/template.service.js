@@ -1,10 +1,14 @@
 const templateData = require('./template.model')
 const userModel = require('../user/user.model');
 const { Mongoose } = require('mongoose');
+const {newClient}= require("../user/user.service")
 
-const createProject = async (data) => {
-    const { userId, projectName, templateId, isNewClient, clientId } = data;
-    if (!userId) throw { message: "userId is required" };
+const getStepById=async(projectId,stepId)=>{
+    const steps= await templateData.readOne({_id:projectId,"steps._id":stepId},{"steps.$":1})
+return steps.steps[0]
+};
+
+const createProject = async ({  user, projectName, templateId, isNewClient, clientId,fullName,phoneNumber, email}) => {
     if (!projectName) throw { message: "projectName is required" };
     if (!templateId) throw { message: "templateId is required" };
     if (isNewClient === undefined) throw { message: "isNewClient is required" };
@@ -17,11 +21,16 @@ const createProject = async (data) => {
 
     await templateData.update({ _id: newProject._id },
         {
-            creatorId: userId,
+            creatorId: user._id,
             name: projectName,
             isTemplate: false,
+            status:"new"
         });
-    if (!isNewClient) {
+    if (isNewClient) {
+        const client=newClient({fullName,phoneNumber, email},user)
+        await templateData.update({ _id: newProject._id }, { client: client._id });
+    }
+    else{
         await templateData.update({ _id: newProject._id }, { client: clientId });
     }
     return "success"
@@ -130,4 +139,4 @@ const projectById = async (projectId) => {
 
 }
 
-module.exports = { projectById, createTemplate, createProject, categoriesByUser, createTemplateAdmin, templateByUser, projectByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep };
+module.exports = {  projectById, projectByUser ,createTemplate, createProject, categoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,getStepById };
