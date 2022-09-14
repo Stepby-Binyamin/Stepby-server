@@ -55,7 +55,7 @@ const createTemplateAdmin = async ({ userId, templateName, isTemplate, radio, ca
     return ("ok")
 }
 const duplicateTemplate = async (templateId) => {
-      //TODO: עותק(1)
+    //TODO: עותק(1)
     const template = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")))
     const newTemplate = await templateData.create(template)
     await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}עותק(1)` })
@@ -142,4 +142,24 @@ const projectById = async (projectId) => {
 
 }
 
-module.exports = { projectById, projectByUser, createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep, getStepById };
+
+//לא גמור
+const updateStep = async ({ templateId, stepId, dataId, content }) => {
+    // const step = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
+    // const step1 = step.steps[0]
+    // console.log(step1);
+    await templateData.update({ _id: templateId, "steps._id": stepId, "steps.$.data._id": dataId }, { $set: { "steps.$.data.$.content": content } })
+    // await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
+
+    return "ok"
+}
+
+//לא גמור וגם אין ראוט
+const completeStep = async ({ templateId, stepId }) => {
+
+    await templateData.update({ _id: templateId, "steps._id": stepId }, { $set: { "steps.$.isAprove": true, "steps.$.opproveDate": Date.now() } })
+
+    return "ok"
+}
+
+module.exports = { projectById, projectByUser, createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep, getStepById, updateStep, completeStep };
