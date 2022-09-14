@@ -34,7 +34,14 @@
           "Users"
         ],
         "description": "send SMS code to biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "phoneNumber",
+            "description": "",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -51,10 +58,43 @@
           "Users"
         ],
         "description": "create a new client",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "fullName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "phoneNumber",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "description": "user token",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -65,7 +105,50 @@
           "Users"
         ],
         "description": "registration of biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "firstName ",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "lastName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "bizName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "categories",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "phoneNumber",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "fullName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -79,7 +162,14 @@
           "Users"
         ],
         "description": "login of biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "phoneNumber",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -87,44 +177,179 @@
         }
       }
     },
-    "/user/editbiz": {
+    "/user/edit-biz": {
       "put": {
         "tags": [
           "Users"
         ],
         "description": "edit details of biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "description": "user token",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "firstName ",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "lastName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "bizName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "categories",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
     },
-    "/user/removebiz": {
+    "/user/remove-biz": {
       "post": {
         "tags": [
           "Users"
         ],
-        "description": "remove biz user from DB (actually isActive: false)",
-        "parameters": [],
+        "description": "deactivate biz user from DB",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
     },
-    "/user/getallbiz": {
+    "/user/get-all-biz": {
       "get": {
         "tags": [
           "Users"
         ],
-        "description": "get all the active biz's",
-        "parameters": [],
+        "description": "get all active bizs",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/user/get-my-clients": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "get all biz's clients",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/user/get-user": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/getStepById/{templateId}/{stepId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "stepId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -135,7 +360,13 @@
           "Templates"
         ],
         "description": "create template",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -152,62 +383,10 @@
           "Templates"
         ],
         "description": "create template by admin",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/template/duplicateTemplate": {
-      "post": {
-        "tags": [
-          "Templates"
-        ],
-        "description": "duplicate template",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/template/newStep": {
-      "put": {
-        "tags": [
-          "Templates"
-        ],
-        "description": "create step",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/template/deleteTemplate": {
-      "delete": {
-        "tags": [
-          "Templates"
-        ],
-        "description": "delete template",
         "parameters": [
           {
-            "name": "id",
-            "description": "Some description...",
-            "in": "query",
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -221,13 +400,118 @@
         }
       }
     },
-    "/template/deleteStep": {
+    "/template/duplicateTemplate/{templateId}": {
+      "post": {
+        "tags": [
+          "Templates"
+        ],
+        "description": "duplicate template",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/newStep/{templateId}": {
+      "put": {
+        "tags": [
+          "Templates"
+        ],
+        "description": "create step",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/deleteTemplate/{templateId}": {
+      "delete": {
+        "tags": [
+          "Templates"
+        ],
+        "description": "delete template",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "description": "Some description...",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/deleteStep/{templateId}": {
       "delete": {
         "tags": [
           "Templates"
         ],
         "description": "delete step",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -238,13 +522,25 @@
         }
       }
     },
-    "/template/duplicateStep": {
-      "post": {
+    "/template/duplicateStep/{templateId}": {
+      "put": {
         "tags": [
           "Templates"
         ],
         "description": "duplicate step",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -255,17 +551,129 @@
         }
       }
     },
-    "/template/templateByUser/{userId}": {
+    "/template/dataToStep/{templateId}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/templateByUser": {
       "get": {
         "tags": [
           "Templates"
         ],
-        "description": "get temolate by user",
+        "description": "get template by user",
         "parameters": [
           {
-            "name": "userId",
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/categoriesByUser": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/downSteps/{templateId}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "templateId",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stepIndex": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/template/templateById/{templateId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -305,9 +713,6 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -337,9 +742,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -371,9 +773,6 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -400,9 +799,6 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -426,9 +822,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -598,19 +991,92 @@
         }
       }
     },
-    "/project/createProject": {
+    "/project/getStepById/{projectId}/{stepId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "stepId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/project/createProject/{templateId}": {
       "post": {
         "tags": [
           "Projects"
         ],
         "description": "create project from template",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/project/projectByUser": {
+      "get": {
+        "tags": [
+          "Templates"
+        ],
+        "description": "get project by user",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -647,6 +1113,46 @@
           }
         ],
         "responses": {}
+      }
+    },
+    "/project/projectById/{projectId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/shaul/files/upload": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
     }
   }
