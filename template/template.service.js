@@ -26,15 +26,12 @@ const createProject = async (data) => {
     }
     return "success"
 }
-const createTemplate = async ({ userId, templateName, isTemplate, projectName, templateId, isNewClient, clientId }) => {
-    if (!isTemplate) { createProject({ projectName, templateId, isNewClient, clientId }) }
-    else {
-        if (!userId) throw { message: "user undefind" };
-        if (!templateName) throw { message: "error template name" };
-        await templateData.create({ name: templateName, creatorId: userId, isTemplate })
+const createTemplate = async ({ userId, templateName }) => {
+    if (!templateName) throw { message: "error template name" };
+    await templateData.create({ name: templateName, creatorId: userId, isTemplate: true })
 
-        return ("ok")
-    }
+    return ("ok")
+
 }
 const createTemplateAdmin = async ({ userId, templateName, isTemplate, radio, categories, phoneNumber }) => {
     if (!userId) throw { message: "user undefind" };

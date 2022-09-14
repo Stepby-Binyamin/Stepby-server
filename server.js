@@ -31,6 +31,18 @@ require("./data/db").connect()
 app.use(logErrorMiddleware)
 app.use(returnError)
 
+const check =()=>{
+    try{
+        throw new Api404Error("hhh")//,user:req.user
+    }catch(err){
+        console.log(err)
+        logger.error({e:err})
+    }
+    
+}
+// check()
+
+
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
