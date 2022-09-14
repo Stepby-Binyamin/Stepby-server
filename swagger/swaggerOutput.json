@@ -34,7 +34,14 @@
           "Users"
         ],
         "description": "send SMS code to biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "phoneNumber",
+            "description": "",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -51,10 +58,43 @@
           "Users"
         ],
         "description": "create a new client",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "fullName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "phoneNumber",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "description": "user token",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -65,7 +105,50 @@
           "Users"
         ],
         "description": "registration of biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "firstName ",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "lastName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "bizName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "categories",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "phoneNumber",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "fullName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -79,7 +162,14 @@
           "Users"
         ],
         "description": "login of biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "phoneNumber",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -87,44 +177,144 @@
         }
       }
     },
-    "/user/editbiz": {
+    "/user/edit-biz": {
       "put": {
         "tags": [
           "Users"
         ],
         "description": "edit details of biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "user",
+            "description": "user token",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "firstName ",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "lastName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "bizName",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "categories",
+            "description": "user details",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
     },
-    "/user/removebiz": {
+    "/user/remove-biz": {
       "post": {
         "tags": [
           "Users"
         ],
-        "description": "remove biz user from DB (actually isActive: false)",
-        "parameters": [],
+        "description": "deactivate biz user from DB",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
     },
-    "/user/getallbiz": {
+    "/user/get-all-biz": {
       "get": {
         "tags": [
           "Users"
         ],
-        "description": "get all the active biz's",
-        "parameters": [],
+        "description": "get all active bizs",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/user/get-my-clients": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "get all biz's clients",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/user/get-user": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -239,11 +429,25 @@
       }
     },
     "/template/duplicateStep": {
-      "post": {
+      "put": {
         "tags": [
           "Templates"
         ],
         "description": "duplicate step",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/dataToStep": {
+      "put": {
+        "description": "",
         "parameters": [],
         "responses": {
           "200": {
@@ -279,6 +483,60 @@
         }
       }
     },
+    "/template/categoriesByUser/{userId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/template/downSteps/{templateId}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stepIndex": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/category/{id}": {
       "get": {
         "tags": [
@@ -304,9 +562,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -338,9 +593,6 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -371,9 +623,6 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -400,9 +649,6 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -426,9 +672,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -647,6 +890,33 @@
           }
         ],
         "responses": {}
+      }
+    },
+    "/shaul/files/upload": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
       }
     }
   }
