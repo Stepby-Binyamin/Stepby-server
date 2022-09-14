@@ -9,7 +9,6 @@ const error = ({ message, e = {}, user = null, writeToFile = false }) => {
     console.log(e)
     const celler = "Location undefine"
     if (e) {
-
         x = e?.stack?.split('\n')[3]?.trim()?.split("Stepby-server")[1]?.replace(")", "")
     }
     let mes = `${getDate()} ERROR: ${e.mes} code:${e.statusCode} ${x} user:${user}`
