@@ -7,6 +7,8 @@ const router = express.Router();
 
 
 
+//false all user and token
+// true;
 router.post('/check-code', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "verify the sms-code of the biz user"
@@ -74,6 +76,7 @@ router.post('/register', async (req, res) => {
 });
 
 
+//probably redundant function
 router.post('/login', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.parameters['phoneNumber'] = {description:'user details'}
@@ -101,7 +104,7 @@ router.put('/edit-biz', [authJWT], async (req, res) => {
     } catch (error) {
         res.send(error.message);
     }
-})
+});
 
 router.post('/remove-biz',[authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
@@ -115,6 +118,7 @@ router.post('/remove-biz',[authJWT], async (req, res) => {
 });
 
 
+//only for admin
 router.get('/get-all-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "get all active bizs"
