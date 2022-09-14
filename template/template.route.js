@@ -1,13 +1,14 @@
 const tamplateService = require("./template.service");
 const express = require("express");
 const router = express.Router();
+const { authJWT } = require('../auth/auth')
 
 
-router.post('/createTemplate', async (req, res) => {
+router.post('/createTemplate', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template'
     try {
-        res.send(await tamplateService.createTemplate(req.body));
+        res.send(await tamplateService.createTemplate({ ...req.body, userId: req.user._id }));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
@@ -15,7 +16,7 @@ router.post('/createTemplate', async (req, res) => {
     }
 })
 
-router.post('/createTemplateAdmin', async (req, res) => {
+router.post('/createTemplateAdmin', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template by admin'
     try {
@@ -27,7 +28,7 @@ router.post('/createTemplateAdmin', async (req, res) => {
     }
 })
 
-router.post('/duplicateTemplate', async (req, res) => {
+router.post('/duplicateTemplate', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'duplicate template'
     try {
@@ -38,7 +39,7 @@ router.post('/duplicateTemplate', async (req, res) => {
 
     }
 })
-router.put('/newStep', async (req, res) => {
+router.put('/newStep', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create step'
     try {
@@ -50,7 +51,7 @@ router.put('/newStep', async (req, res) => {
     }
 })
 
-router.delete('/deleteTemplate', async (req, res) => {
+router.delete('/deleteTemplate', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'delete template'
     //  #swagger.parameters['id'] = { description: 'Some description...' }
@@ -64,7 +65,7 @@ router.delete('/deleteTemplate', async (req, res) => {
     }
 })
 
-router.delete('/deleteStep', async (req, res) => {
+router.delete('/deleteStep', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'delete step'
     try {
@@ -76,8 +77,7 @@ router.delete('/deleteStep', async (req, res) => {
     }
 })
 
-
-router.put('/duplicateStep', async (req, res) => {
+router.put('/duplicateStep', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'duplicate step'
     try {
@@ -89,7 +89,7 @@ router.put('/duplicateStep', async (req, res) => {
     }
 })
 
-router.put('/dataToStep', async (req, res) => {
+router.put('/dataToStep', authJWT, async (req, res) => {
     try {
         res.send(await tamplateService.dataToStep(req.body));
     } catch (error) {
@@ -99,7 +99,7 @@ router.put('/dataToStep', async (req, res) => {
     }
 })
 
-router.get('/templateByUser/:userId', async (req, res) => {
+router.get('/templateByUser/:userId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get temolate by user'
     try {
@@ -113,7 +113,7 @@ router.get('/templateByUser/:userId', async (req, res) => {
     }
 })
 
-router.get('/categoriesByUser/:userId', async (req, res) => {
+router.get('/categoriesByUser/:userId', authJWT, async (req, res) => {
     try {
         // console.log(req.params.userId);
         res.send(await tamplateService.categoriesByUser(req.params.userId));
@@ -125,7 +125,7 @@ router.get('/categoriesByUser/:userId', async (req, res) => {
     }
 })
 
-router.put("/downSteps/:templateId", async (req, res) => {
+router.put("/downSteps/:templateId", authJWT, async (req, res) => {
     try {
         res.send(await tamplateService.downSteps({ templateId: req.params.templateId, stepIndex: req.body.stepIndex }));
     } catch (error) {
