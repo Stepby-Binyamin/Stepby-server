@@ -40,8 +40,8 @@ const createTemplate = async ({ userId, templateName }) => {
     await templateData.create({ name: templateName, creatorId: userId, isTemplate: true })
 
     return ("ok")
-
 }
+
 const createTemplateAdmin = async ({ userId, templateName, isTemplate, radio, categories, phoneNumber }) => {
     if (!templateName) throw { message: "error template name" };
     if (radio) {
@@ -72,7 +72,6 @@ const duplicateStep = async ({ stepId, templateId }) => {
     const template = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const step = template.steps[0]
     createStep({ templateId, stepName: step.name + "עותק(1)", description: step.description, isCreatorApprove: step.isCreatorApprove })
-
     return ("ok")
 }
 const createStep = async ({ templateId, stepName, description, isCreatorApprove }) => {

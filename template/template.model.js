@@ -16,5 +16,4 @@ async function remove(filter) {
     return await update(filter, { isActive: false });
 }
 
-
 module.exports = { create, read, readOne, update, remove };
