@@ -9,7 +9,7 @@ const fileLogic = require("./fileLogicAWS")
 
 router.post('/files/upload', upload.single("new_file"), async (req, res) => {
 
-    console.log("111", req.body.data);
+    console.log("111", req.body);
 
     try {
         const { file, body } = req

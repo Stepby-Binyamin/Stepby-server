@@ -30,6 +30,7 @@ const projectSchema = new mongoose.Schema({
     },
     lastApprove: {
         type: Date,
+        default: Date.now()
     },
     isActive: {
         type: Boolean,
@@ -53,6 +54,7 @@ const projectSchema = new mongoose.Schema({
         },
         isApprove: {
             type: Boolean,
+            default: false
         },
         approvedDate: {
             type: Date,
