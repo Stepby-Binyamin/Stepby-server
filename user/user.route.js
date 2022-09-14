@@ -14,6 +14,7 @@ router.post('/check-code', async (req, res) => {
     // #swagger.description = "verify the sms-code of the biz user"
     // #swagger.parameters['phoneNumber'] = {description:'user's phone number'}
     // #swagger.parameters['code'] = {description:'code sent by 019 sistem in the login'}
+
     try {
         const result = await userService.verify(req.body)
         console.log({ result });
@@ -48,7 +49,7 @@ router.post('/new-client',[authJWT],async (req, res) => {
     // #swagger.parameters['phoneNumber'] = {description:'user details'}
     // #swagger.parameters['email'] = {description:'user details'}
     // #swagger.parameters['user'] = {description:'user token'}
-    console.log("newclient");
+
     try {
         const newClient = await userService.newClient(req.body,req.user);
         res.send(newClient);
