@@ -27,6 +27,17 @@ router.post("/createProject/:templateId",authJWT ,async (req, res) => {
     }
 });
 
+router.post('/duplicateProject/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'duplicate project'
+    try {
+        res.send(await projectService.duplicateTemplate(req.params.projectId));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+    }
+})
+
 router.get('/projectByUser', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get project by user'

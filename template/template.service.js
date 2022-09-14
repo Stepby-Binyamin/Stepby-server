@@ -55,6 +55,7 @@ const createTemplateAdmin = async ({ userId, templateName, isTemplate, radio, ca
     return ("ok")
 }
 const duplicateTemplate = async (templateId) => {
+      //TODO: עותק(1)
     const template = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")))
     const newTemplate = await templateData.create(template)
     await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}עותק(1)` })
