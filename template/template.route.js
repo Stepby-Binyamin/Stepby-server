@@ -1,22 +1,22 @@
 const templateService = require("./template.service");
 const express = require("express");
 const router = express.Router();
-const { authJWT}= require("../auth/auth");
+const { authJWT } = require("../auth/auth");
 
 
 
-router.get("/getStepById/:templateId/:stepId", authJWT, async(req, res)=>{
+router.get("/getStepById/:templateId/:stepId", authJWT, async (req, res) => {
     try {
-        res.send(await tamplateService.getStepById(req.params.templateId, req.params.stepId));
+        res.send(await templateService.getStepById(req.params.templateId, req.params.stepId));
     } catch (error) {
         console.log(error.message);
         res
             .status(error.code || 500)
             .send({ message: error.message || "something wrong :(" });
     }
-    });
+});
 
-router.post('/createTemplate',authJWT,  async (req, res) => {
+router.post('/createTemplate', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template'
     try {
@@ -51,6 +51,7 @@ router.post('/duplicateTemplate/:templateId', authJWT, async (req, res) => {
 
     }
 })
+
 router.put('/newStep/:templateId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create step'
@@ -110,6 +111,7 @@ router.put('/dataToStep/:templateId', authJWT, async (req, res) => {
 
     }
 })
+
 router.get('/templateByUser', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get template by user'
@@ -125,7 +127,7 @@ router.get('/templateByUser', authJWT, async (req, res) => {
 
 router.get('/categoriesByUser', authJWT, async (req, res) => {
     try {
-        res.send(await templateService.categoriesByUser(req.user));
+        res.send(await templateService.templateByCategoriesByUser(req.user));
 
     } catch (error) {
         res.status(401).send("error");
@@ -144,6 +146,7 @@ router.put("/downSteps/:templateId", authJWT, async (req, res) => {
             .send({ message: error.message || "something wrong :(" });
     }
 })
+
 router.get('/templateById/:templateId', authJWT, async (req, res) => {
     try {
         res.send(await templateService.projectById(req.params.templateId));
@@ -154,6 +157,8 @@ router.get('/templateById/:templateId', authJWT, async (req, res) => {
 
     }
 })
+
+
 
 
 module.exports = router;
