@@ -56,7 +56,6 @@ const editBiz = async (data, user) => {
 }
 
 const removeBiz = async (data, user) => {
-    console.log("delete");
     const foundUser = await userModel.read({ _id: user._id });
     if (!foundUser) throw new Error("user not found");
     const deleted = await userModel.del({ _id: user._id });
