@@ -10,6 +10,29 @@ const verify = async (data) => {
     return result
 }
 
+const verifyBeforeSMS = async (token) => {
+    console.log(34, token);
+    token = token.split(" ")[1];
+    let verifyToken, result, activeUser;
+    console.log(39, token);
+    try {
+        verifyToken = await jwt.validateToken(token)
+    } catch (err) {
+        console.log(33333, err);
+    } finally {
+        console.log(12, verifyToken);
+
+        if (!verifyToken) {
+            console.log('lo tov')
+            return 401
+        }
+        console.log(10, verifyToken);
+        activeUser = await userModel.readOne({ _id: verifyToken._id });
+        result = activeUser ? activeUser : 401
+        console.log(17, result);
+        return result
+    }
+}
 
 const sms = async (data) => {
     const { phoneNumber } = data;
@@ -70,7 +93,7 @@ const editBiz = async (data, user) => {
     // if (!foundUser) throw new Error("user not found");
     const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data);
     console.log(acknowledged);
-    const result  = await userModel.readOne({ _id: user._id, permissions: "biz" });
+    const result = await userModel.readOne({ _id: user._id, permissions: "biz" });
     return result
 }
 
@@ -85,7 +108,7 @@ const removeBiz = async (data, user) => {
 
 //only for admin
 const getAllBiz = async (user) => {
-    if(user.permissions == "admin"){
+    if (user.permissions == "admin") {
         const allBiz = await userModel.read({ permissions: "biz" });
         if (!allBiz) throw new Error("error occured");
         return allBiz;
@@ -101,4 +124,4 @@ const getAllClientsByBiz = async (user) => {
 
 
 
-module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz };
+module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS };
