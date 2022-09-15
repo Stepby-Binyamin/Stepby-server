@@ -158,4 +158,26 @@ router.put('/updateStep/:templateId', authJWT, async (req, res) => {
 
     }
 })
+
+router.put("/currentStep/:projectId", authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.currentStep({ projectId: req.params.projectId, stepId: req.body.stepId }));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
+
+router.put("/completeStep/:projectId", authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.completeStep({ projectId: req.params.projectId, stepId: req.body.stepId }));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
 module.exports = router;
