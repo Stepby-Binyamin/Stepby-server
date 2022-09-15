@@ -69,7 +69,7 @@ const editBiz = async (data, user) => {
     // if (!foundUser) throw new Error("user not found");
     const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data, { new: true });
     console.log(acknowledged);
-    const result  = await userModel.read({ _id: user._id, permissions: "biz" });
+    const result  = await userModel.readOne({ _id: user._id, permissions: "biz" });
     return result
 }
 
