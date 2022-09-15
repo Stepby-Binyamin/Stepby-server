@@ -2,6 +2,7 @@ const templateService = require("./template.service");
 const express = require("express");
 const router = express.Router();
 const { authJWT } = require("../auth/auth");
+const { Router } = require("express");
 
 
 
@@ -169,8 +170,6 @@ router.get('/templateById/:templateId', authJWT, async (req, res) => {
 
     }
 })
-
-
 
 
 module.exports = router;

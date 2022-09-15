@@ -27,7 +27,14 @@ const register = async (data) => {
     return token;
 }
 
-
+const createAdmin = async(data)=>{
+    const { phoneNumber, firstName, lastName, email} = data;
+    if (!phoneNumber || !firstName || !lastName || !email) throw new Error("missing data");
+    const newBiz = await userModel.create({ phoneNumber, firstName, lastName, email, permissions: "admin" });
+    const token = jwt.createToken(newBiz);
+    return token;
+}
+// createAdmin({ phoneNumber: "0525381648", firstName:"doron" , lastName: "admin", email: "admin@dd"}) //createted admin
 //TODO: need a token
 const login = async (data) => {
     const { phoneNumber } = data;
@@ -101,4 +108,4 @@ const getAllClientsByBiz = async (user) => {
 
 
 
-module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz };
+module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz ,createAdmin };
