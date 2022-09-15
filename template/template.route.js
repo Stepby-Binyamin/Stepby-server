@@ -51,6 +51,7 @@ router.post('/duplicateTemplate/:templateId', authJWT, async (req, res) => {
 
     }
 })
+
 router.put('/newStep/:templateId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create step'
@@ -110,6 +111,7 @@ router.put('/dataToStep/:templateId', authJWT, async (req, res) => {
 
     }
 })
+
 router.get('/templateByUser', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get template by user'
@@ -144,6 +146,7 @@ router.put("/downSteps/:templateId", authJWT, async (req, res) => {
             .send({ message: error.message || "something wrong :(" });
     }
 })
+
 router.get('/templateById/:templateId', authJWT, async (req, res) => {
     try {
         res.send(await templateService.projectById(req.params.templateId));
