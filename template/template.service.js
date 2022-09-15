@@ -42,6 +42,17 @@ const createTemplate = async ({ userId, templateName }) => {
     return ("ok")
 
 }
+
+const renameTemplate=async ({ templateId,newName })=>{
+    await templateData.update({_id:templateId},{$set:{name:newName}})
+    return ("ok")
+}
+
+const doneProject=async (projectId) => {
+    await templateData.update({_id:projectId},{$set:{status:"done"}})
+    return ("ok")
+}
+
 const createTemplateAdmin = async ({ userId, templateName, isTemplate, radio, categories, phoneNumber }) => {
     if (!templateName) throw { message: "error template name" };
     if (radio) {
@@ -55,7 +66,7 @@ const createTemplateAdmin = async ({ userId, templateName, isTemplate, radio, ca
     return ("ok")
 }
 const duplicateTemplate = async (templateId) => {
-    //TODO: עותק(1)
+    //TODO: duplicate-second
     const template = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")))
     const newTemplate = await templateData.create(template)
     await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}עותק(1)` })
@@ -70,6 +81,8 @@ const deleteStep = async ({ stepId, templateId }) => {
     return ("ok")
 }
 const duplicateStep = async ({ stepId, templateId }) => {
+    //TODO: duplicate-second
+    //TODO: step location
     const template = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const step = template.steps[0]
     createStep({ templateId, stepName: step.name + "עותק(1)", description: step.description, isCreatorApprove: step.isCreatorApprove })
@@ -97,8 +110,8 @@ const dataToStep = async ({ templateId, stepId, owner, type, title, content, isR
     return "ok"
 }
 const downSteps = async ({ templateId, stepIndex }) => {
-    const stepsLenght = await templateData.readOne({ _id: templateId }, "steps")
-    if (stepIndex < 0 || stepIndex >= stepsLenght.steps.length - 1) {
+    const stepsLength = await templateData.readOne({ _id: templateId }, "steps")
+    if (stepIndex < 0 || stepIndex >= stepsLength.steps.length - 1) {
         throw { message: "error" }
     }
     await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
@@ -106,12 +119,23 @@ const downSteps = async ({ templateId, stepIndex }) => {
     await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
     return await templateData.readOne({ _id: templateId })
 }
+//TODO:
+const downWidget = async ({ templateId, stepIndex }) => {
+    const stepsLength = await templateData.readOne({ _id: templateId }, "steps")
+    if (stepIndex < 0 || stepIndex >= stepsLength.steps.length - 1) {
+        throw { message: "error" }
+    }
+    await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
+    await templateData.update({ _id: templateId, "steps.index": stepIndex + 1 }, { $set: { "steps.$.index": stepIndex } })
+    await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
+    return await templateData.readOne({ _id: templateId })
+}
+
 const templateByUser = async (userId) => {
     return await templateData.read({ isTemplate: true, creatorId: userId })
 }
 const projectByUser = async (userId) => {
     return await templateData.read({ isTemplate: false, creatorId: userId })
-
 }
 const templateByCategoriesByUser = async (user) => {
     const categories = user.categories
@@ -157,9 +181,9 @@ const updateStep = async ({ templateId, stepId, dataId, content }) => {
 //לא גמור וגם אין ראוט
 const completeStep = async ({ templateId, stepId }) => {
 
-    await templateData.update({ _id: templateId, "steps._id": stepId }, { $set: { "steps.$.isAprove": true, "steps.$.opproveDate": Date.now() } })
+    await templateData.update({ _id: templateId, "steps._id": stepId }, { $set: { "steps.$.isApprove": true, "steps.$.approvedDate": Date.now() } })
 
     return "ok"
 }
 
-module.exports = { projectById, projectByUser, createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep, getStepById, updateStep, completeStep };
+module.exports = {downWidget,doneProject, renameTemplate,projectById, projectByUser, createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep, getStepById, updateStep, completeStep };
