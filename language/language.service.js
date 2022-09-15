@@ -100,18 +100,18 @@ async function update(code, newData){
 }
 
 
-async function del(_id){
+// async function del(_id){
 
-    if (!_id)
-    throw {code: 400, message: "ID not provided" };
+//     if (!_id)
+//     throw {code: 400, message: "ID not provided" };
 
-    const exsist = await languageControl.readOne({_id})
-    if(!exsist) 
-    throw({code: 404, message: "language not found" });
+//     const exsist = await languageControl.readOne({_id})
+//     if(!exsist) 
+//     throw({code: 404, message: "language not found" });
 
-    const language = await languageControl.del({_id})
-    return language;
+//     const language = await languageControl.del({_id})
+//     return language;
 
-}
+// }
 
-module.exports = { create, read, readOne, update, addWordsInOne, removeWordInOne, del }
+module.exports = { create, read, readOne, update, addWordsInOne, removeWordInOne }

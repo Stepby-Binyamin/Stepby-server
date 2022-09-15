@@ -100,20 +100,20 @@ router.put('/:code', async (req, res) => {
       }
     })
     
-    router.delete('/:id', async (req, res) => {
-      // #swagger.tags = ['Language']
-      // #swagger.description = 'remove language from database'
-      try {
-        const language = await languageService.del(req.params.id);
-        res.send(language)
-    }
-    catch (error) {
-        if (error.code && error.code < 1000) {
-          res.status(error.code).send(error.message)
-        } else {
-          res.status(500).send("something went wrong")
-        }
-      }
-})
+//     router.delete('/:id', async (req, res) => {
+//       // #swagger.tags = ['Language']
+//       // #swagger.description = 'remove language from database'
+//       try {
+//         const language = await languageService.del(req.params.id);
+//         res.send(language)
+//     }
+//     catch (error) {
+//         if (error.code && error.code < 1000) {
+//           res.status(error.code).send(error.message)
+//         } else {
+//           res.status(500).send("something went wrong")
+//         }
+//       }
+// })
 
 module.exports = router;
