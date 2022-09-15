@@ -1,5 +1,4 @@
 const express = require('express');
-const { getIgnoreTag } = require('swagger-autogen/src/swagger-tags');
 const { authJWT } = require('../auth/auth');
 const userService = require("../user/user.service");
 const router = express.Router();
@@ -40,8 +39,13 @@ router.post('/send-code', async (req, res) => {
             if (result.status !== 0) throw { message: result.message, status: 401 }
             res.send(result);
         }
-        if (token) activeUser = await userService.verifyBeforeSMS(token)
+        if (token) activeUser = await userService.verifyBeforeSMS(token,req.body)
         if (activeUser !== 401) res.send(activeUser)
+        if(activeUser === 401) {
+            const result = await userService.sms(req.body)
+            if (result.status !== 0) throw { message: result.message, status: 401 }
+            res.send(result);
+        }
     } catch (err) {
         res.status(err.status || 406).send(err.message)
     }
