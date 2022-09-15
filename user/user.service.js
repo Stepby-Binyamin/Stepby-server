@@ -47,27 +47,28 @@ const newClient = async (data, user) => {
 }
 
 
-const editBizRegister = async (data) => {
-    // const { firstName, lastName, bizName, categories } = data;
-    console.log(122345676543, data);
-    console.log(data.phoneNumber);
-    const foundUser = await userModel.read({ phoneNumber: data._id, permissions: "biz" });
-    console.log(foundUser);
-    console.log(foundUser.phoneNumber);
-    if (!foundUser) throw new Error("user not found");
-    const acknowledged = await userModel.update({phoneNumber: data.phoneNumber}, data);
-    console.log(acknowledged);
-    const result = await userModel.read({ phoneNumber: data.phoneNumber, permissions: "biz" });
-    console.log(result);
-    return result;
-}
+/*this function ↓ has deprecated */
+// const editBizRegister = async (data) => {
+//     // const { firstName, lastName, bizName, categories } = data;
+//     console.log(122345676543, data);
+//     console.log(data.phoneNumber);
+//     const foundUser = await userModel.read({ phoneNumber: data._id, permissions: "biz" });
+//     console.log(foundUser);
+//     console.log(foundUser.phoneNumber);
+//     if (!foundUser) throw new Error("user not found");
+//     const acknowledged = await userModel.update({phoneNumber: data.phoneNumber}, data);
+//     console.log(acknowledged);
+//     const result = await userModel.read({ phoneNumber: data.phoneNumber, permissions: "biz" });
+//     console.log(result);
+//     return result;
+// }
 
 
 const editBiz = async (data, user) => {
     // const { firstName, lastName, bizName, categories } = data;
     // const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
     // if (!foundUser) throw new Error("user not found");
-    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data, { new: true });
+    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data);
     console.log(acknowledged);
     const result  = await userModel.read({ _id: user._id, permissions: "biz" });
     return result
@@ -83,10 +84,13 @@ const removeBiz = async (data, user) => {
 
 
 //only for admin
-const getAllBiz = async () => {
-    const allBiz = await userModel.read({ permissions: "biz" });
-    if (!allBiz) throw new Error("error occured");
-    return allBiz;
+const getAllBiz = async (user) => {
+    if(user.permissions == "admin"){
+        const allBiz = await userModel.read({ permissions: "biz" });
+        if (!allBiz) throw new Error("error occured");
+        return allBiz;
+    }
+    throw new Error("Access Denied!")
 }
 
 const getAllClientsByBiz = async (user) => {
