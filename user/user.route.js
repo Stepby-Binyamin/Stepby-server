@@ -1,5 +1,6 @@
 const express = require('express');
 const { authJWT } = require('../auth/auth');
+const { validateToken } = require('../auth/jwt');
 const userService = require("../user/user.service");
 
 // const userController = require("./user.control")
@@ -103,9 +104,11 @@ router.put('/edit-biz', async (req, res) => {
     // #swagger.parameters['lastName'] = {description:'user details'}
     // #swagger.parameters['bizName'] = {description:'user details'}
     // #swagger.parameters['categories'] = {description:'user details'}
+    console.log(req.body);
     try {
-        const acknowledged = await userService.editBiz(req.body.data,req.body.user);
-        res.send(acknowledged);
+
+        const result = await userService.editBiz(req.body, req.user);
+        res.send(result);
     } catch (error) {
         res.send(error.message);
     }
@@ -128,7 +131,7 @@ router.get('/get-all-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "get all active bizs"
     try {
-        const allbiz = await userService.getAllBiz();
+        const allbiz = await userService.getAllBiz(req.user);
         res.send(allbiz);
     } catch (error) {
         res.send(error.message);
