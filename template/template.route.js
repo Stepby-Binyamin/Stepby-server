@@ -32,7 +32,7 @@ router.post('/createTemplateAdmin', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template by admin'
     try {
-        res.send(await templateService.createTemplateAdmin({ ...req.body, userId: req.user._id }));
+        res.send(await templateService.createTemplateAdmin({ ...req.body, userId: req.user._id, permission: req.user.permission }));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
