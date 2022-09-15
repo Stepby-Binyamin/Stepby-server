@@ -7,7 +7,6 @@ const authJWT = async (req, res, next) => {
     //TODO: delete --- || `Bearer ${newToken}`; ---  before production.
 
     const authHeader = req.headers.authorization //|| `Bearer ${newToken}`;
-    console.log(1234567, authHeader);
 
     if (authHeader) {
         const token = authHeader.split(" ")[1];

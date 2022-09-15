@@ -10,26 +10,23 @@ const verify = async (data) => {
     return result
 }
 
-const verifyBeforeSMS = async (token) => {
-    console.log(34, token);
+const verifyBeforeSMS = async (token,data) => {
+    const {phoneNumber} = data;
     token = token.split(" ")[1];
     let verifyToken, result, activeUser;
-    console.log(39, token);
     try {
         verifyToken = await jwt.validateToken(token)
     } catch (err) {
         console.log(33333, err);
     } finally {
-        console.log(12, verifyToken);
 
         if (!verifyToken) {
             console.log('lo tov')
             return 401
         }
-        console.log(10, verifyToken);
         activeUser = await userModel.readOne({ _id: verifyToken._id });
+        if(activeUser.phoneNumber !== phoneNumber) return 401
         result = activeUser ? activeUser : 401
-        console.log(17, result);
         return result
     }
 }
