@@ -3,6 +3,31 @@ const router = express.Router();
 const projectService = require("./template.service");
 const { authJWT } = require("../auth/auth");
 
+
+router.get('/projectByUser', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'get project by user'
+    try {
+        res.send(await projectService.projectByUser(req.user._id));
+
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
+router.get('/projectById/:projectId', authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.projectById(req.params.projectId));
+
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
 router.get("/getStepById/:projectId/:stepId", authJWT, async (req, res) => {
     try {
         res.send(await projectService.getStepById(req.params.projectId, req.params.stepId));
@@ -13,6 +38,30 @@ router.get("/getStepById/:projectId/:stepId", authJWT, async (req, res) => {
             .send({ message: error.message || "something wrong :(" });
     }
 });
+
+router.put('/doneProject/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'done project'
+    try {
+        res.send(await projectService.doneProject(req.params.projectId))
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+}) 
+
+router.put('/renameProject/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'rename project'
+    try {
+        res.send(await projectService.renameTemplate({ ...req.body, templateId: req.params.projectId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
 
 router.post("/createProject/:templateId", authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
@@ -27,12 +76,33 @@ router.post("/createProject/:templateId", authJWT, async (req, res) => {
     }
 });
 
+router.put("/downSteps/:projectId", authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.downSteps({ templateId: req.params.projectId, stepIndex: req.body.stepIndex }));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
 
 router.put('/newStep/:projectId', authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
     // #swagger.description = 'create step'
     try {
         res.send(await projectService.createStep({ ...req.body, templateId: req.params.projectId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+    }
+})
+
+router.put('/duplicateStep/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'duplicate step'
+    try {
+        res.send(await projectService.duplicateStep({ ...req.body, templateId: req.params.projectId }));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
@@ -51,12 +121,22 @@ router.post('/duplicateProject/:projectId', authJWT, async (req, res) => {
     }
 })
 
-router.get('/projectByUser', authJWT, async (req, res) => {
-    // #swagger.tags = ['Templates']
-    // #swagger.description = 'get project by user'
+router.put("/replaceSteps", async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'change index of steps'
     try {
-        res.send(await projectService.projectByUser(req.user._id));
+        res.send(await projectService.replaceSteps(req.body));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
 
+router.put('/dataToStep/:projectId', authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.dataToStep({ ...req.body, templateId: req.params.projectId }));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
@@ -64,11 +144,30 @@ router.get('/projectByUser', authJWT, async (req, res) => {
     }
 })
 
-router.put("/replaceSteps", async (req, res) => {
-    // #swagger.tags = ['Projects']
-    // #swagger.description = 'change index of steps'
+router.put('/updateStep/:templateId', authJWT, async (req, res) => {
     try {
-        res.send(await projectService.replaceSteps(req.body));
+        res.send(await projectService.updateStep({ ...req.body, templateId: req.params.templateId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
+router.put("/currentStep/:projectId", authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.currentStep({ projectId: req.params.projectId, stepId: req.body.stepId }));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
+
+router.put("/completeStep/:projectId", authJWT, async (req, res) => {
+    try {
+        res.send(await projectService.completeStep({ projectId: req.params.projectId, stepId: req.body.stepId }));
     } catch (error) {
         console.log(error.message);
         res
@@ -102,24 +201,4 @@ router.delete("/deleteProject/:projectId", async (req, res) => {
     }
 });
 
-router.get('/projectById/:projectId', authJWT, async (req, res) => {
-    try {
-        res.send(await projectService.projectById(req.params.projectId));
-
-    } catch (error) {
-        res.status(401).send("error");
-        console.log(error.message);
-
-    }
-})
-
-router.put('/updateStep/:templateId', authJWT, async (req, res) => {
-    try {
-        res.send(await projectService.updateStep({ ...req.body, templateId: req.params.templateId }));
-    } catch (error) {
-        res.status(401).send("error");
-        console.log(error.message);
-
-    }
-})
 module.exports = router;

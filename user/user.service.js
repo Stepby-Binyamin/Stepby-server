@@ -10,6 +10,29 @@ const verify = async (data) => {
     return result
 }
 
+const verifyBeforeSMS = async (token) => {
+    console.log(34, token);
+    token = token.split(" ")[1];
+    let verifyToken, result, activeUser;
+    console.log(39, token);
+    try {
+        verifyToken = await jwt.validateToken(token)
+    } catch (err) {
+        console.log(33333, err);
+    } finally {
+        console.log(12, verifyToken);
+
+        if (!verifyToken) {
+            console.log('lo tov')
+            return 401
+        }
+        console.log(10, verifyToken);
+        activeUser = await userModel.readOne({ _id: verifyToken._id });
+        result = activeUser ? activeUser : 401
+        console.log(17, result);
+        return result
+    }
+}
 
 const sms = async (data) => {
     const { phoneNumber } = data;
@@ -27,7 +50,14 @@ const register = async (data) => {
     return token;
 }
 
-
+const createAdmin = async(data)=>{
+    const { phoneNumber, firstName, lastName, email} = data;
+    if (!phoneNumber || !firstName || !lastName || !email) throw new Error("missing data");
+    const newBiz = await userModel.create({ phoneNumber, firstName, lastName, email, permissions: "admin" });
+    const token = jwt.createToken(newBiz);
+    return token;
+}
+// createAdmin({ phoneNumber: "0525381648", firstName:"doron" , lastName: "admin", email: "admin@dd"}) //createted admin
 //TODO: need a token
 const login = async (data) => {
     const { phoneNumber } = data;
@@ -47,16 +77,20 @@ const newClient = async (data, user) => {
 }
 
 
+
+
 const editBiz = async (data, user) => {
     // const { firstName, lastName, bizName, categories } = data;
-    const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
-    if (!foundUser) throw new Error("user not found");
-    const acknowledged = await userModel.update({ _id: foundUser._id, permissions: "biz" }, data, { new: true });
-    return acknowledged;
+    // const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
+    // if (!foundUser) throw new Error("user not found");
+    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data);
+    console.log(acknowledged);
+    const result = await userModel.readOne({ _id: user._id, permissions: "biz" });
+    return result
 }
 
+
 const removeBiz = async (data, user) => {
-    console.log("delete");
     const foundUser = await userModel.read({ _id: user._id });
     if (!foundUser) throw new Error("user not found");
     const deleted = await userModel.del({ _id: user._id });
@@ -65,10 +99,13 @@ const removeBiz = async (data, user) => {
 
 
 //only for admin
-const getAllBiz = async () => {
-    const allBiz = await userModel.read({ permissions: "biz" });
-    if (!allBiz) throw new Error("error occured");
-    return allBiz;
+const getAllBiz = async (user) => {
+    if (user.permissions == "admin") {
+        const allBiz = await userModel.read({ permissions: "biz" });
+        if (!allBiz) throw new Error("error occured");
+        return allBiz;
+    }
+    throw new Error("Access Denied!")
 }
 
 const getAllClientsByBiz = async (user) => {
@@ -79,4 +116,6 @@ const getAllClientsByBiz = async (user) => {
 
 
 
-module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz };
+
+module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS };
+

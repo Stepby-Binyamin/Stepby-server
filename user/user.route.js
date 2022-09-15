@@ -1,8 +1,7 @@
 const express = require('express');
+const { getIgnoreTag } = require('swagger-autogen/src/swagger-tags');
 const { authJWT } = require('../auth/auth');
 const userService = require("../user/user.service");
-
-// const userController = require("./user.control")
 const router = express.Router();
 
 
@@ -32,17 +31,25 @@ router.post('/send-code', async (req, res) => {
     // #swagger.description = "send SMS code to biz user"
     // #swagger.parameters['phoneNumber'] = {description:''}
     try {
-        const result = await userService.sms(req.body)
-        if (result.status !== 0) throw { message: result.message, status: 406 }
-        res.send(result);
+        const token = req.headers.authorization;
+        console.log(req.headers.authorization);
+        let activeUser;
+        console.log(1233, token);
+        if (!token) {
+            const result = await userService.sms(req.body)
+            if (result.status !== 0) throw { message: result.message, status: 401 }
+            res.send(result);
+        }
+        if (token) activeUser = await userService.verifyBeforeSMS(token)
+        if (activeUser !== 401) res.send(activeUser)
     } catch (err) {
         res.status(err.status || 406).send(err.message)
     }
-    
+
 });
 
 
-router.post('/new-client',[authJWT],async (req, res) => {
+router.post('/new-client', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "create a new client"
     // #swagger.parameters['fullName'] = {description:'user details'}
@@ -51,7 +58,7 @@ router.post('/new-client',[authJWT],async (req, res) => {
     // #swagger.parameters['user'] = {description:'user token'}
 
     try {
-        const newClient = await userService.newClient(req.body,req.user);
+        const newClient = await userService.newClient(req.body, req.user);
         res.send(newClient);
     } catch (error) {
         res.send(error.message);
@@ -92,30 +99,28 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.put('/edit-biz', async (req, res) => {
+router.put('/edit-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "edit details of biz user"
-    console.log(req.body);
-    console.log(req.body.data)
-    console.log(req.body.user);
     // #swagger.parameters['user'] = {description:'user token'}
     // #swagger.parameters['firstName '] = {description:'user details'}
     // #swagger.parameters['lastName'] = {description:'user details'}
     // #swagger.parameters['bizName'] = {description:'user details'}
     // #swagger.parameters['categories'] = {description:'user details'}
+    console.log(req.body);
     try {
-        const acknowledged = await userService.editBiz(req.body.data,req.body.user);
-        res.send(acknowledged);
+        const result = await userService.editBiz(req.body, req.user);
+        res.send(result);
     } catch (error) {
         res.send(error.message);
     }
 });
 
-router.post('/remove-biz',[authJWT], async (req, res) => {
+router.post('/remove-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "deactivate biz user from DB"
     try {
-        const removed = await userService.removeBiz(req.body,req.user);
+        const removed = await userService.removeBiz(req.body, req.user);
         res.send(removed);
     } catch (error) {
         res.send(error.message);
@@ -128,25 +133,25 @@ router.get('/get-all-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "get all active bizs"
     try {
-        const allbiz = await userService.getAllBiz();
+        const allbiz = await userService.getAllBiz(req.user);
         res.send(allbiz);
     } catch (error) {
         res.send(error.message);
     }
 });
 
-router.get('/get-my-clients',[authJWT] , async (req, res) => {
+router.get('/get-my-clients', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "get all biz's clients"
-    try{
+    try {
         const x = await userService.getAllClientsByBiz(req.user);
         res.send(x);
-    }catch(error){
+    } catch (error) {
         res.send(error.message);
     }
 });
 
-router.get('/get-user',[authJWT] , async (req, res) => {
+router.get('/get-user', [authJWT], async (req, res) => {
     res.send(req.user);
 });
 
