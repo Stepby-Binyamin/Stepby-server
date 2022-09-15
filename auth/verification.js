@@ -41,16 +41,14 @@ async function createOrUpdete(phoneNumber, hashCode) {
 
   const existUser = await checkExistUser(phoneNumber)
 
-  if (existUser) await codeModel.updateOne({ phoneNumber: phoneNumber }, { dateSent: Date.now(), code: hashCode })
-
-  else await codeModel.create({ phoneNumber: phoneNumber, code: hashCode })
+  existUser ? await codeModel.updateOne({ phoneNumber: phoneNumber }, { dateSent: Date.now(), code: hashCode }) :
+  await codeModel.create({ phoneNumber: phoneNumber, code: hashCode })
 }
 
 async function checkExistUser(phone) {
   const exist = await codeModel.findOne({ phoneNumber: phone })
-  console.log(await codeModel.findOne({ phoneNumber: phone }))
-  if (exist) return true
-  else return false
+  // console.log(await codeModel.findOne({ phoneNumber: phone }))
+   return exist ? true : false
 
 }
 
@@ -61,13 +59,13 @@ async function verifyCode(data) {
   if (!DBcode) return { message: 'invalid phone number', status: 406 }
   console.log(await bcrypt.compare(code, DBcode.code));
   if (await bcrypt.compare(code, DBcode.code)) {
-    const existUser = await userModel.readOne({ phoneNumber: phoneNumber })
+    let existUser = await userModel.readOne({ phoneNumber: phoneNumber })
+    if(!existUser) existUser = await userModel.create({ phoneNumber, permissions: "biz" });
 
     const result =
-    { newUser: existUser ? false : true,
-     token: existUser ? await jwt.createToken(existUser._id)
-
-     : await jwt.createToken(phoneNumber, "5m") }
+    { user: existUser,
+     token: await jwt.createToken(existUser._id) }
+   
     return result
 
   } else {
