@@ -126,7 +126,7 @@ router.get('/get-all-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "get all active bizs"
     try {
-        const allbiz = await userService.getAllBiz();
+        const allbiz = await userService.getAllBiz(req.user);
         res.send(allbiz);
     } catch (error) {
         res.send(error.message);
