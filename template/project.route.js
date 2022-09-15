@@ -14,6 +14,30 @@ router.get("/getStepById/:projectId/:stepId", authJWT, async (req, res) => {
     }
 });
 
+router.put('/doneProject/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'done project'
+    try {
+        res.send(await projectService.doneProject(req.params.projectId))
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+}) 
+
+router.put('/renameProject/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'rename project'
+    try {
+        res.send(await projectService.renameTemplate({ ...req.body, templateId: req.params.projectId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
 router.post("/createProject/:templateId", authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
     // #swagger.description = 'create project from template'
@@ -33,6 +57,18 @@ router.put('/newStep/:projectId', authJWT, async (req, res) => {
     // #swagger.description = 'create step'
     try {
         res.send(await projectService.createStep({ ...req.body, templateId: req.params.projectId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+    }
+})
+
+
+router.put('/duplicateStep/:projectId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'duplicate step'
+    try {
+        res.send(await projectService.duplicateStep({ ...req.body, templateId: req.params.projectId }));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);

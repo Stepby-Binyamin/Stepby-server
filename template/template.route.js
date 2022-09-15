@@ -90,6 +90,18 @@ router.delete('/deleteStep/:templateId', authJWT, async (req, res) => {
     }
 })
 
+router.put('/renameTemplate/:templateId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'rename template'
+    try {
+        res.send(await templateService.renameTemplate({ ...req.body, templateId: req.params.templateId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
 router.put('/duplicateStep/:templateId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'duplicate step'
