@@ -42,16 +42,19 @@ const createTemplate = async ({ userId, templateName }) => {
     return ("ok")
 
 }
-const createTemplateAdmin = async ({ userId, templateName, isTemplate, radio, categories, phoneNumber }) => {
-    if (!templateName) throw { message: "error template name" };
-    if (radio) {
-        await templateData.create({ name: templateName, creatorId: userId, categories, isTemplate })
+const createTemplateAdmin = async ({ userId, permission, templateName, isTemplate, radio, categories, phoneNumber }) => {
+    if (permission == 'admin') {
+        if (!templateName) throw { message: "error template name" };
+        if (radio) {
+            await templateData.create({ name: templateName, creatorId: userId, categories, isTemplate })
+        }
+        else {
+            const user = await userModel.readOne({ phoneNumber })
+            if (!user) throw { message: "error - user phone doesn't exist" }
+            await templateData.create({ name: templateName, creatorId: userId, client: user._id, isTemplate })
+        }
     }
-    else {
-        const user = await userModel.readOne({ phoneNumber })
-        if (!user) throw { message: "error - user phone doesn't exist" }
-        await templateData.create({ name: templateName, creatorId: userId, client: user._id, isTemplate })
-    }
+    else { throw { message: "user isn't admin" } }
     return ("ok")
 }
 const duplicateTemplate = async (templateId) => {
@@ -145,21 +148,35 @@ const projectById = async (projectId) => {
 
 //לא גמור
 const updateStep = async ({ templateId, stepId, dataId, content }) => {
-    // const step = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
-    // const step1 = step.steps[0]
-    // console.log(step1);
-    await templateData.update({ _id: templateId, "steps._id": stepId, "steps.$.data._id": dataId }, { $set: { "steps.$.data.$.content": content } })
-    // await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
+    await templateData.update({ _id: templateId, "steps._id": stepId, "steps.$.data._id": dataId }, { $set: { "steps.$[s].data.$[d].content": content } }, { multi: true, arrayFilters: [{ "s._id": stepId }, { "d._id": dataId }] })
 
     return "ok"
 }
 
-//לא גמור וגם אין ראוט
-const completeStep = async ({ templateId, stepId }) => {
-
-    await templateData.update({ _id: templateId, "steps._id": stepId }, { $set: { "steps.$.isAprove": true, "steps.$.opproveDate": Date.now() } })
-
+const completeStep = async ({ projectId, stepId }) => {
+    const step = await templateData.readOne({ _id: projectId, "steps._id": stepId }, { 'steps.$': 1 })
+    const index = step.steps[0].index
+    const nextStep = await templateData.readOne({ _id: projectId, "steps.index": index + 1 }, { 'steps.$': 1 })
+    if (!nextStep) {
+        console.log("done")
+        return "ok"
+    }
+    const approve = nextStep.steps[0].isApprove
+    await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": true, "steps.$.approvedDate": Date.now() } })
+    if (approve) {
+        await templateData.update({ _id: projectId }, { status: "biz" })
+    }
+    else {
+        await templateData.update({ _id: projectId }, { status: "client" })
+    }
     return "ok"
 }
 
-module.exports = { projectById, projectByUser, createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep, getStepById, updateStep, completeStep };
+//לבדוק תאריך
+const currentStep = async ({ projectId, stepId }) => {
+    return await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": false, "steps.$.approvedDate": undefined } })
+
+}
+
+
+module.exports = { projectById, projectByUser, currentStep, createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser, dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep, getStepById, updateStep, completeStep };
