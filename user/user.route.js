@@ -92,20 +92,18 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.put('/edit-biz', async (req, res) => {
+router.put('/edit-biz', [authJWT], async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "edit details of biz user"
-    console.log(req.body);
-    console.log(req.body.data)
-    console.log(req.body.user);
     // #swagger.parameters['user'] = {description:'user token'}
     // #swagger.parameters['firstName '] = {description:'user details'}
     // #swagger.parameters['lastName'] = {description:'user details'}
     // #swagger.parameters['bizName'] = {description:'user details'}
     // #swagger.parameters['categories'] = {description:'user details'}
+    console.log(req.body);
     try {
-        const acknowledged = await userService.editBiz(req.body.data,req.body.user);
-        res.send(acknowledged);
+        const result = await userService.editBiz(req.body, req.user);
+        res.send(result);
     } catch (error) {
         res.send(error.message);
     }
