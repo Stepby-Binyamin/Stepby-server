@@ -122,16 +122,16 @@ const downSteps = async ({ templateId, stepIndex }) => {
     await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
     return await templateData.readOne({ _id: templateId })
 }
-//TODO:
+//TODO: 
 const downWidget = async ({ templateId, stepIndex }) => {
-    const stepsLength = await templateData.readOne({ _id: templateId }, "steps")
-    if (stepIndex < 0 || stepIndex >= stepsLength.steps.length - 1) {
-        throw { message: "error" }
-    }
-    await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
-    await templateData.update({ _id: templateId, "steps.index": stepIndex + 1 }, { $set: { "steps.$.index": stepIndex } })
-    await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
-    return await templateData.readOne({ _id: templateId })
+    // const stepsLength = await templateData.readOne({ _id: templateId }, "steps")
+    // if (stepIndex < 0 || stepIndex >= stepsLength.steps.length - 1) {
+    //     throw { message: "error" }
+    // }
+    // await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
+    // await templateData.update({ _id: templateId, "steps.index": stepIndex + 1 }, { $set: { "steps.$.index": stepIndex } })
+    // await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
+    // return await templateData.readOne({ _id: templateId })
 }
 
 const templateByUser = async (userId) => {
@@ -142,13 +142,15 @@ const projectByUser = async (userId) => {
 }
 const templateByCategoriesByUser = async (user) => {
     const categories = user.categories
-    console.log(categories);
 
     let templateByCategory = []
-
-    for (i of categories) {
-        templateByCategory = templateByCategory.concat(await templateData.read({ isTemplate: true, categories: { $in: i._id.toString() } }))
+    const admins=await userModel.read({permissions:"admin"},"_id")
+    for(i of admins) { 
+        for (i of categories) {
+            templateByCategory = templateByCategory.concat(await templateData.read({ isTemplate: true, categories: { $in: i._id.toString() } }))
+        }
     }
+   
     let templateArr = []
     let flag = false
     for (i of templateByCategory) {
