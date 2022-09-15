@@ -47,13 +47,32 @@ const newClient = async (data, user) => {
 }
 
 
+const editBizRegister = async (data) => {
+    // const { firstName, lastName, bizName, categories } = data;
+    console.log(122345676543, data);
+    console.log(data.phoneNumber);
+    const foundUser = await userModel.read({ phoneNumber: data._id, permissions: "biz" });
+    console.log(foundUser);
+    console.log(foundUser.phoneNumber);
+    if (!foundUser) throw new Error("user not found");
+    const acknowledged = await userModel.update({phoneNumber: data.phoneNumber}, data);
+    console.log(acknowledged);
+    const result = await userModel.read({ phoneNumber: data.phoneNumber, permissions: "biz" });
+    console.log(result);
+    return result;
+}
+
+
 const editBiz = async (data, user) => {
     // const { firstName, lastName, bizName, categories } = data;
-    const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
-    if (!foundUser) throw new Error("user not found");
-    const acknowledged = await userModel.update({ _id: foundUser._id, permissions: "biz" }, data, { new: true });
-    return acknowledged;
+    // const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
+    // if (!foundUser) throw new Error("user not found");
+    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data, { new: true });
+    console.log(acknowledged);
+    const result  = await userModel.read({ _id: user._id, permissions: "biz" });
+    return result
 }
+
 
 const removeBiz = async (data, user) => {
     const foundUser = await userModel.read({ _id: user._id });
