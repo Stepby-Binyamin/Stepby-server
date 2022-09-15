@@ -1,5 +1,6 @@
 const express = require('express');
 const { authJWT } = require('../auth/auth');
+const { validateToken } = require('../auth/jwt');
 const userService = require("../user/user.service");
 
 // const userController = require("./user.control")
