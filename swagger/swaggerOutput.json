@@ -17,7 +17,20 @@
           "Users"
         ],
         "description": "verify the sms-code of the biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "phoneNumber",
+            "description": "users phone number",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "code",
+            "description": "code sent by 019 sistem in the login",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -185,11 +198,6 @@
         "description": "edit details of biz user",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "user",
             "description": "user token",
             "in": "query",
@@ -218,14 +226,26 @@
             "description": "user details",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": "any"
+                },
+                "user": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
@@ -1058,6 +1078,64 @@
         }
       }
     },
+    "/project/newStep/{projectId}": {
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "create step",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/project/duplicateProject/{projectId}": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "duplicate project",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/project/projectByUser": {
       "get": {
         "tags": [
@@ -1098,6 +1176,35 @@
         }
       }
     },
+    "/project/deleteStep/{projectId}": {
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "description": "delete step",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/project/deleteProject/{projectId}": {
       "delete": {
         "tags": [
@@ -1121,6 +1228,32 @@
         "parameters": [
           {
             "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/project/updateStep/{templateId}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "templateId",
             "in": "path",
             "required": true,
             "type": "string"
