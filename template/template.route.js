@@ -2,6 +2,7 @@ const templateService = require("./template.service");
 const express = require("express");
 const router = express.Router();
 const { authJWT } = require("../auth/auth");
+const { Router } = require("express");
 
 
 
@@ -32,7 +33,7 @@ router.post('/createTemplateAdmin', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template by admin'
     try {
-        res.send(await templateService.createTemplateAdmin({ ...req.body, userId: req.user._id }));
+        res.send(await templateService.createTemplateAdmin({ ...req.body, userId: req.user._id, permission: req.user.permission }));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
@@ -83,6 +84,18 @@ router.delete('/deleteStep/:templateId', authJWT, async (req, res) => {
     // #swagger.description = 'delete step'
     try {
         res.send(await templateService.deleteStep({ ...req.body, templateId: req.params.templateId }));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+
+    }
+})
+
+router.put('/renameTemplate/:templateId', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'rename template'
+    try {
+        res.send(await templateService.renameTemplate({ ...req.body, templateId: req.params.templateId }));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
@@ -157,8 +170,6 @@ router.get('/templateById/:templateId', authJWT, async (req, res) => {
 
     }
 })
-
-
 
 
 module.exports = router;

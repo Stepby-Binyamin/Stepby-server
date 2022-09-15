@@ -1058,6 +1058,64 @@
         }
       }
     },
+    "/project/newStep/{projectId}": {
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "create step",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/project/duplicateProject/{projectId}": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "description": "duplicate project",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/project/projectByUser": {
       "get": {
         "tags": [
@@ -1098,6 +1156,35 @@
         }
       }
     },
+    "/project/deleteStep/{projectId}": {
+      "delete": {
+        "tags": [
+          "Project"
+        ],
+        "description": "delete step",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/project/deleteProject/{projectId}": {
       "delete": {
         "tags": [
@@ -1121,6 +1208,32 @@
         "parameters": [
           {
             "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/project/updateStep/{templateId}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "templateId",
             "in": "path",
             "required": true,
             "type": "string"
