@@ -4,7 +4,7 @@ async function create(data) {
     return await projectData.create(data);
 }
 async function read(filter, proj) {
-    return await projectData.find(filter, proj).populate("client")
+    return await projectData.find(filter, proj).populate("client").populate({path: "creatorId"})
 }
 async function readOne(filter, proj) {
     return await projectData.findOne(filter, proj).populate("client");
