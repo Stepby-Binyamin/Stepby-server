@@ -6,7 +6,8 @@ const userModel = require('./user.model');
 const verify = async (data) => {
     const { phoneNumber, code } = data;
     if (!phoneNumber || !code) throw new Error('error');
-    return verifyCode(data);
+    const result = verifyCode(data);
+    return result
 }
 
 
@@ -41,7 +42,7 @@ const newClient = async (data, user) => {
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
     const client = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
-    await userModel.update({ _id: user._id }, { $push: { clients: client } });
+    await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { clients: client } });
     return client;
 }
 
@@ -49,9 +50,8 @@ const newClient = async (data, user) => {
 const editBiz = async (data, user) => {
     // const { firstName, lastName, bizName, categories } = data;
     const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
-    console.log("foundUser: ", foundUser);
     if (!foundUser) throw new Error("user not found");
-    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data, { new: true });
+    const acknowledged = await userModel.update({ _id: foundUser._id, permissions: "biz" }, data, { new: true });
     return acknowledged;
 }
 

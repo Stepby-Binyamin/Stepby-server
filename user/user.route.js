@@ -14,6 +14,7 @@ router.post('/check-code', async (req, res) => {
     // #swagger.description = "verify the sms-code of the biz user"
     // #swagger.parameters['phoneNumber'] = {description:'user's phone number'}
     // #swagger.parameters['code'] = {description:'code sent by 019 sistem in the login'}
+
     try {
         const result = await userService.verify(req.body)
         console.log({ result });
@@ -48,7 +49,7 @@ router.post('/new-client',[authJWT],async (req, res) => {
     // #swagger.parameters['phoneNumber'] = {description:'user details'}
     // #swagger.parameters['email'] = {description:'user details'}
     // #swagger.parameters['user'] = {description:'user token'}
-    console.log("newclient");
+
     try {
         const newClient = await userService.newClient(req.body,req.user);
         res.send(newClient);
@@ -81,6 +82,7 @@ router.post('/login', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.parameters['phoneNumber'] = {description:'user details'}
     // #swagger.description = "login of biz user"
+
     try {
         await userService.login(req.body);
         res.send("logged in");
@@ -90,16 +92,19 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.put('/edit-biz', [authJWT], async (req, res) => {
+router.put('/edit-biz', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "edit details of biz user"
+    console.log(req.body);
+    console.log(req.body.data)
+    console.log(req.body.user);
     // #swagger.parameters['user'] = {description:'user token'}
     // #swagger.parameters['firstName '] = {description:'user details'}
     // #swagger.parameters['lastName'] = {description:'user details'}
     // #swagger.parameters['bizName'] = {description:'user details'}
     // #swagger.parameters['categories'] = {description:'user details'}
     try {
-        const acknowledged = await userService.editBiz(req.body, req.user);
+        const acknowledged = await userService.editBiz(req.body.data,req.body.user);
         res.send(acknowledged);
     } catch (error) {
         res.send(error.message);
