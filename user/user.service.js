@@ -10,8 +10,8 @@ const verify = async (data) => {
     return result
 }
 
-const verifyBeforeSMS = async (token,data) => {
-    const {phoneNumber} = data;
+const verifyBeforeSMS = async (token, data) => {
+    const { phoneNumber } = data;
     token = token.split(" ")[1];
     let verifyToken, result, activeUser;
     try {
@@ -25,7 +25,7 @@ const verifyBeforeSMS = async (token,data) => {
             return 401
         }
         activeUser = await userModel.readOne({ _id: verifyToken._id });
-        if(activeUser.phoneNumber !== phoneNumber) return 401
+        if (activeUser.phoneNumber !== phoneNumber) return 401
         result = activeUser ? activeUser : 401
         return result
     }
@@ -47,8 +47,8 @@ const register = async (data) => {
     return token;
 }
 
-const createAdmin = async(data)=>{
-    const { phoneNumber, firstName, lastName, email} = data;
+const createAdmin = async (data) => {
+    const { phoneNumber, firstName, lastName, email } = data;
     if (!phoneNumber || !firstName || !lastName || !email) throw new Error("missing data");
     const newBiz = await userModel.create({ phoneNumber, firstName, lastName, email, permissions: "admin" });
     const token = jwt.createToken(newBiz);
@@ -112,7 +112,15 @@ const getAllClientsByBiz = async (user) => {
 }
 
 
+// TODO: For development purposes only, delete before the production
+const loginToUser = async ({ id }) => {
+    const token = await jwt.createToken(id);
+    let user = await userModel.readOne({ _id: id });
+    return {
+        user,
+        token
+    };
+}
 
-
-module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS };
+module.exports = { loginToUser, register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS };
 
