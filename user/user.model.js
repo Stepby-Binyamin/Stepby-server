@@ -2,6 +2,7 @@
 const { userData } = require('../data/user.data');
 
 async function create(data) {
+   console.log("data11",data);
    return await userData.create(data);
 }
 async function read(filter, proj) {

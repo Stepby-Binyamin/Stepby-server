@@ -66,6 +66,7 @@ const login = async (data) => {
 }
 
 const newClient = async (data, user) => {
+    console.log("data00", data, "user00", user);
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
     const client = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
