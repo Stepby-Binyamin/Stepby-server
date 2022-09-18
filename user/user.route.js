@@ -133,7 +133,6 @@ router.post('/remove-biz', [authJWT], async (req, res) => {
 
 router.get('/get-all-categories',async(req,res)=>{
     try {
-        console.log('im heerr');
         const result = await userService.getAllCategories();
         res.send(result);
     } catch (error) {
