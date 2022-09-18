@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/check-code', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "verify the sms-code of the biz user"
-    // #swagger.parameters['phoneNumber'] = {description:'user's phone number'}
+    // #swagger.parameters['phoneNumber'] = {description:'users phone number'}
     // #swagger.parameters['code'] = {description:'code sent by 019 sistem in the login'}
 
     try {
@@ -39,9 +39,9 @@ router.post('/send-code', async (req, res) => {
             if (result.status !== 0) throw { message: result.message, status: 401 }
             res.send(result);
         }
-        if (token) activeUser = await userService.verifyBeforeSMS(token,req.body)
+        if (token) activeUser = await userService.verifyBeforeSMS(token, req.body)
         if (activeUser !== 401) res.send(activeUser)
-        if(activeUser === 401) {
+        if (activeUser === 401) {
             const result = await userService.sms(req.body)
             if (result.status !== 0) throw { message: result.message, status: 401 }
             res.send(result);
@@ -166,6 +166,18 @@ router.get('/get-my-clients', [authJWT], async (req, res) => {
 
 router.get('/get-user', [authJWT], async (req, res) => {
     res.send(req.user);
+});
+
+// TODO: For development purposes only, delete before the production
+router.post('/loginToUser', async (req, res) => {
+    try {
+        const result = await userService.loginToUser(req.body)
+        console.log(result);
+        res.send(result)
+    } catch (err) {
+        console.log({ err });
+        res.status(err.status || 406).send(err.message)
+    }
 });
 
 module.exports = router;

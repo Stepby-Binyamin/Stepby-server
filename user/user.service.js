@@ -128,7 +128,14 @@ const getAllClientsByBiz = async (user) => {
 }
 
 
+// TODO: For development purposes only, delete before the production
+const loginToUser = async ({ id }) => {
+    const token = await jwt.createToken(id);
+    let user = await userModel.readOne({ _id: id });
+    return {
+        user,
+        token
+    };
+}
 
-
-module.exports = { register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS, getAllCategories };
-
+module.exports = { loginToUser, register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS, getAllCategories };

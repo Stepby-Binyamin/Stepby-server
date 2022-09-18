@@ -17,7 +17,20 @@
           "Users"
         ],
         "description": "verify the sms-code of the biz user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "phoneNumber",
+            "description": "users phone number",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "code",
+            "description": "code sent by 019 sistem in the login",
+            "in": "query",
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -185,11 +198,6 @@
         "description": "edit details of biz user",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "user",
             "description": "user token",
             "in": "query",
@@ -218,14 +226,26 @@
             "description": "user details",
             "in": "query",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "example": "any"
+                },
+                "user": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
