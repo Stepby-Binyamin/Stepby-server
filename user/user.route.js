@@ -116,7 +116,7 @@ router.put('/edit-biz', [authJWT], async (req, res) => {
         const result = await userService.editBiz(req.body, req.user);
         res.send(result);
     } catch (error) {
-        res.send(error.message);
+        res.status(error.status || 406).send(error.message)
     }
 });
 
@@ -130,6 +130,15 @@ router.post('/remove-biz', [authJWT], async (req, res) => {
         res.send(error.message);
     }
 });
+
+router.get('/get-all-categories',async(req,res)=>{
+    try {
+        const result = await userService.getAllCategories();
+        res.send(result);
+    } catch (error) {
+        res.status(error.status || 406).send(error.message)
+    }
+})
 
 
 //only for admin
