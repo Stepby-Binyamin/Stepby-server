@@ -1,5 +1,6 @@
 const express = require('express');
 const { authJWT } = require('../auth/auth');
+const { categoryModel } = require('../data/category.data');
 const userService = require("../user/user.service");
 const router = express.Router();
 
