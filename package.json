@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.171.0",
     "aws-sdk": "^2.1214.0",
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
@@ -27,7 +28,6 @@
     "nodemon": "^2.0.19",
     "swagger-autogen": "^2.21.6",
     "swagger-jsdoc": "^6.2.5",
-    "swagger-ui-express": "^4.5.0",
-    "winston": "^3.8.2"
+    "swagger-ui-express": "^4.5.0"
   }
 }
