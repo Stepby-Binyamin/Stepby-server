@@ -1,5 +1,6 @@
 const jwt = require('../auth/jwt');
 const { sendSMS, verifyCode } = require('../auth/verification');
+const { categoryModel } = require('../data/category.data');
 
 const userModel = require('./user.model');
 
@@ -73,15 +74,30 @@ const newClient = async (data, user) => {
     return client;
 }
 
+const getAllCategories = async ()=>{
+    const result = await categoryModel.find({})
+    return result
+}
+
+const editCategories = async (data, user) => {
+    console.log('start');
+    const categories = data.map(async cat => await categoryModel.find({ categoryName: cat }))
+    if (categories === []) throw { status: 404, message: 'bad request 112' }
+    categories.map(async cat => await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { categories: cat._id } }))
+    console.log('done');
+}
+
 
 
 
 const editBiz = async (data, user) => {
-    // const { firstName, lastName, bizName, categories } = data;
-    // const foundUser = await userModel.read({ _id: user._id, permissions: "biz" });
-    // if (!foundUser) throw new Error("user not found");
+    if(data.categories){
+        await editCategories(data, user)
+        console.log('ok');
+    } else {
     const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data);
-    console.log(acknowledged);
+    console.log(11, acknowledged);
+    }
     const result = await userModel.readOne({ _id: user._id, permissions: "biz" });
     return result
 }
@@ -122,5 +138,4 @@ const loginToUser = async ({ id }) => {
     };
 }
 
-module.exports = { loginToUser, register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS };
-
+module.exports = { loginToUser, register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS, getAllCategories };
