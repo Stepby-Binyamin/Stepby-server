@@ -7,7 +7,7 @@ const authJWT = async (req, res, next) => {
     //TODO: delete --- || `Bearer ${newToken}`; ---  before production.
 
     const authHeader = req.headers.authorization //|| `Bearer ${newToken}`;
-
+    console.log('auth: ', authHeader);
     if (authHeader) {
         const token = authHeader.split(" ")[1];
         const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
