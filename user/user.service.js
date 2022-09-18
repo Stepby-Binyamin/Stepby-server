@@ -79,26 +79,20 @@ const getAllCategories = async ()=>{
     return result
 }
 
-const editCategories = async (data, user) => {
-    console.log('start');
-    const categories = data.map(async cat => await categoryModel.find({ categoryName: cat }))
-    if (categories === []) throw { status: 404, message: 'bad request 112' }
-    categories.map(async cat => await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { categories: cat._id } }))
-    console.log('done');
-}
-
-
-
-
 const editBiz = async (data, user) => {
     if(data.categories){
-        await editCategories(data, user)
-        console.log('ok');
+        // await editCategories(data, user)
+        // console.log('ok');
+        const resetCategories = await userModel.update({ _id: user._id, permissions: "biz" }, {categories: []})
+        const acknowledged = data.categories.map(async cat => await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { categories: cat._id } }))
+        console.log(12, resetCategories);
+        console.log(14, acknowledged);
     } else {
     const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data);
     console.log(11, acknowledged);
     }
     const result = await userModel.readOne({ _id: user._id, permissions: "biz" });
+    console.log(result);
     return result
 }
 
