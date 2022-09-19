@@ -13,13 +13,13 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
     if (!projectName) throw { message: "projectName is required" };
     if (!templateId) throw { message: "templateId is required" };
     if (isNewClient === undefined) throw { message: "isNewClient is required" };
-    
+
     const dup = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")));
     // const duplicateTemplate= structuredClone(a)
     // console.log(duplicateTemplate);
     const newProject = await templateData.create(dup);
     console.log(newProject);
-    
+
     await templateData.update({ _id: newProject._id },
         {
             creatorId: user._id,
@@ -27,36 +27,36 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
             isTemplate: false,
             status: "new"
         });
-        if (isNewClient) {
-            const client = newClient({ fullName, phoneNumber, email }, user)
-            await templateData.update({ _id: newProject._id }, { client: client._id });
-        }
-        else {
-            await templateData.update({ _id: newProject._id }, { client: clientId });
-        }
-        return "success"
+    if (isNewClient) {
+        const client = newClient({ fullName, phoneNumber, email }, user)
+        await templateData.update({ _id: newProject._id }, { client: client._id });
     }
+    else {
+        await templateData.update({ _id: newProject._id }, { client: clientId });
+    }
+    return "success"
+}
 
-    // createProject({user: {_id:"6321d710adc24fc6dffcd126" }, projectName: "good data", templateId:"6322c772f8d7d30ff3da0230", isNewClient: false, clientId:"6321d812adc554992c045f2d"})
+// createProject({user: {_id:"6321d710adc24fc6dffcd126" }, projectName: "good data", templateId:"6322c772f8d7d30ff3da0230", isNewClient: false, clientId:"6321d812adc554992c045f2d"})
 
-    const createTemplate = async ({ userId, templateName }) => {
-    try{
+const createTemplate = async ({ userId, templateName }) => {
+    try {
         if (!templateName) throw { message: "error template name" };
         await templateData.create({ name: templateName, creatorId: userId, isTemplate: true })
-    }catch(err){
+    } catch (err) {
         console.log(err)
     }
-    return ("ok")    
+    return ("ok")
 }
 // createTemplate({userId: "6322e6562e79794c3c19db36", templateName:"new templatefrom the admin 6"})
 
-const renameTemplate=async ({ templateId,newName })=>{
-    await templateData.update({_id:templateId},{$set:{name:newName}})
+const renameTemplate = async ({ templateId, newName }) => {
+    await templateData.update({ _id: templateId }, { $set: { name: newName } })
     return ("ok")
 }
 
-const doneProject=async (projectId) => {
-    await templateData.update({_id:projectId},{$set:{status:"done"}})
+const doneProject = async (projectId) => {
+    await templateData.update({ _id: projectId }, { $set: { status: "done" } })
     return ("ok")
 }
 
@@ -154,13 +154,13 @@ const templateByCategoriesByUser = async (user) => {
     const categories = user.categories
 
     let templateByCategory = []
-    const admins=await userModel.read({permissions:"admin"},"_id")
-    for(i of admins) { 
+    const admins = await userModel.read({ permissions: "admin" }, "_id")
+    for (i of admins) {
         for (i of categories) {
             templateByCategory = templateByCategory.concat(await templateData.read({ isTemplate: true, categories: { $in: i._id.toString() } }))
         }
     }
-   
+
     let templateArr = []
     let flag = false
     for (i of templateByCategory) {
@@ -215,8 +215,10 @@ const currentStep = async ({ projectId, stepId }) => {
 
 }
 
-module.exports = {currentStep,downWidget,doneProject, renameTemplate,projectById, projectByUser, 
-    createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser, 
+module.exports = {
+    currentStep, downWidget, doneProject, renameTemplate, projectById, projectByUser,
+    createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
     dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,
-     getStepById, updateStep, completeStep };
+    getStepById, updateStep, completeStep
+};
 
