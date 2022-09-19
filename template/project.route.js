@@ -5,10 +5,13 @@ const { authJWT } = require("../auth/auth");
 
 
 router.get('/projectByUser', authJWT, async (req, res) => {
+    console.log("/projectByUser8", req.user._id);
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get project by user'
     try {
-        res.send(await projectService.projectByUser(req.user._id));
+        const result = await projectService.projectByUser(req.user._id)
+        console.log("/projectByUser Result",result);  
+        res.send(result);
 
     } catch (error) {
         res.status(401).send("error");
