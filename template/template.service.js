@@ -39,7 +39,8 @@ const createTemplate = async ({ userId, templateName }) => {
     if (!templateName) throw { message: "error template name" };
     await templateData.create({ name: templateName, creatorId: userId, isTemplate: true })
 
-    return ("ok")
+    return await templateData.read({creatorId: userId, isTemplate: true })
+
 
 }
 
