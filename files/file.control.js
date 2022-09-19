@@ -10,7 +10,8 @@ const s3 = new AWS.S3({
 const createBucket = async (client) => {
 
     const params = {
-        Bucket: client.toLowerCase(),
+        Bucket: "stepby-projects",
+        // Bucket: client.toLowerCase(),
         ACL: "private",
         CreateBucketConfiguration: {
             // Set your region here
@@ -20,14 +21,29 @@ const createBucket = async (client) => {
     return await s3.createBucket(params).promise()
 }
 
+//function that create a Client folder under "stepby-projects" bucket (client)
+// key is the path / folder name (the "/" is import - meant thats a folder)
+// this function can be used to add a new step too further in the project, just configure 
+// the projectName = projectnName/step#  
+const createClient = async (client) => {
+    var params = {
+        // Bucket: client.toLowerCase(),
+        Bucket: "stepby-projects",
+        Key: `${client}/`,
+    };
+
+    return await s3.putObject(params).promise()
+}
+
 //function that create a project under a specific bucket (client)
 // key is the path / folder name (the "/" is import - meant thats a folder)
 // this function can be used to add a new step too further in the project, just configure 
 // the projectName = projectnName/step#  
 const createProject = async (client, projectName) => {
     var params = {
-        Bucket: client.toLowerCase(),
-        Key: `${projectName}/`,
+        // Bucket: client.toLowerCase(),
+        Bucket: "stepby-projects",
+        Key: `${client}/${projectName}/`,
     };
 
     return await s3.putObject(params).promise()
@@ -39,8 +55,8 @@ const createSteps = async (client, projectName, stepsNum) => {
     for (i = 1; i <= stepsNum; i++) {
 
         var params = {
-            Bucket: client.toLowerCase(),
-            Key: `${projectName}/step${i}/`,
+            Bucket: "stepby-projects",
+            Key: `${client}/${projectName}/step${i}/`,
         };
 
         await s3.putObject(params).promise()
@@ -50,24 +66,21 @@ const createSteps = async (client, projectName, stepsNum) => {
 //function that upload jpg or pdf to specific path (Key)
 const uploadFile = async (fileName, dataContent, objShortQuestion, data) => {
 
-    console.log("objShortQuestion2525", objShortQuestion);
-    console.log("data", data);
-
+    // console.log("objShortQuestion2525", objShortQuestion);
+    // console.log("data", data);
 
     const objShortQuestion00 = JSON.parse(objShortQuestion)
     const { client, projectName, stepNum, answer } = objShortQuestion00
 
-
-
     answer !== "" && uploadAnswer(objShortQuestion, fileAnswerName = "fileAnswerName")
 
-    console.log("11", client);
-    console.log("22", `${projectName}/${Number(stepNum)}/${fileName}`);
+    // console.log("11", client);
+    // console.log("22", `${projectName}/${Number(stepNum)}/${fileName}`);
 
     const blob = dataContent
     const result = await s3.upload({
-        Bucket: client.toLowerCase(),
-        Key: `${projectName}/step${Number(stepNum)}/${fileName}`,
+        Bucket: "stepby-projects",
+        Key: `${client}/${projectName}/step${Number(stepNum)}/${fileName}`,
         Body: blob,
     }).promise()
     return result
@@ -75,17 +88,17 @@ const uploadFile = async (fileName, dataContent, objShortQuestion, data) => {
 
 //THIS FUNCTION NEED TO BE CHECKED, DOESNT WORK PROPERLY
 const uploadAnswer = async (objShortQuestion, fileAnswerName = "answerName") => {
-    console.log("objShortQuestion", objShortQuestion);
+    // console.log("objShortQuestion", objShortQuestion);
 
     const objShortQuestion00 = JSON.parse(objShortQuestion)
     const { client, projectName, stepNum } = objShortQuestion00
 
-    console.log("111", client);
-    console.log("222", `${projectName}/step${Number(stepNum)}/${fileAnswerName}.txt`);
+    // console.log("111", client);
+    // console.log("222", `${projectName}/step${Number(stepNum)}/${fileAnswerName}.txt`);
 
     return await s3.upload({
-        Bucket: client.toLowerCase(),
-        Key: `${projectName}/step${Number(stepNum)}/${fileAnswerName}.txt`,
+        Bucket: "stepby-projects",
+        Key: `${client}/${projectName}/step${Number(stepNum)}/${fileAnswerName}.txt`,
 
         Body: objShortQuestion,
     }).promise()
@@ -99,8 +112,8 @@ const uploadAnswer = async (objShortQuestion, fileAnswerName = "answerName") => 
 const getFile = async (client, projectName, stepNum, fileName) => {
 
     var params = {
-        Bucket: client.toLowerCase(),
-        Key: `${projectName}/step${Number(stepNum)}/${fileName}`
+        Bucket: "stepby-projects",
+        Key: `${client}/${projectName}/step${Number(stepNum)}/${fileName}`
     };
 
     return await s3.getObject(params).promise()
@@ -110,8 +123,8 @@ const getFile = async (client, projectName, stepNum, fileName) => {
 const getShow = async (client, projectName, stepNum, fileName) => {
 
     var params = {
-        Bucket: client.toLowerCase(),
-        Key: `${projectName}/step${Number(stepNum)}/${fileName}`
+        Bucket: "stepby-projects",
+        Key: `${client}/${projectName}/step${Number(stepNum)}/${fileName}`
     };
 
     return await s3.getObject(params).promise()
@@ -122,9 +135,9 @@ const getShow = async (client, projectName, stepNum, fileName) => {
 // StartAfter is the first returned list element<string>, MaxKey number of elements (can be till 1000 elements)<numbner>
 const listFiles = async ({ client, projectName, stepNum }) => {
     var paramsList = {
-        Bucket: client.toLowerCase(),
-        StartAfter: `${projectName}/${stepNum}`,    // start content from this point
-        Prefix: `${projectName}`,                   // contents to be shown
+        Bucket: "stepby-projects",
+        StartAfter: `${client}/${projectName}/${stepNum}`,    // start content from this point
+        Prefix: `${client}/${projectName}`,                   // contents to be shown
         MaxKeys: 50
     };
     return await s3.listObjectsV2(paramsList, function (err, data) {
@@ -137,12 +150,12 @@ const listFiles = async ({ client, projectName, stepNum }) => {
 //Bucket <string>, Key is the path <string> <string> ex: my/path/is.pdf
 const delFile = async ({ client, projectName, stepNum, fileName }) => {
     var params = {
-        Bucket: client.toLowerCase(),
-        Key: `${projectName}/${stepNum}/${fileName}`
+        Bucket: "stepby-projects",
+        Key: `${client}/${projectName}/${stepNum}/${fileName}`
     };
     s3.deleteObject(params, function (err, data) {
         if (err) console.log(err, err.stack);   // an error occurred
         else console.log(data);                 // successful response
     }).promise()
 }
-module.exports = { createBucket, createProject, createSteps, uploadFile, uploadAnswer, getFile, getShow, listFiles, delFile }
+module.exports = { createBucket, createClient, createProject, createSteps, uploadFile, uploadAnswer, getFile, getShow, listFiles, delFile }

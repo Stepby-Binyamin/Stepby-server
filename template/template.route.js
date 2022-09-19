@@ -18,8 +18,8 @@ router.get("/getStepById/:templateId/:stepId", authJWT, async (req, res) => {
 });
 
 router.post('/createTemplate', authJWT, async (req, res) => {
-    // router.post('/createTemplate', async (req, res) => {
-    console.log("/createTemplate");
+
+    console.log("/createTemplate22", req);
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template'
     try {
