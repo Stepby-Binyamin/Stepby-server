@@ -21,6 +21,16 @@ const createBucket = async (client) => {
     return await s3.createBucket(params).promise()
 }
 
+//Create bizName Folder
+const createBiz = async (bizName) => {
+    var params = {
+        Bucket: "stepby-projects",
+        Key: `${bizName}/`,
+    };
+
+    return await s3.putObject(params).promise()
+}
+
 //function that create a Client folder under "stepby-projects" bucket (client)
 // key is the path / folder name (the "/" is import - meant thats a folder)
 // this function can be used to add a new step too further in the project, just configure 
@@ -35,32 +45,30 @@ const createClient = async (client) => {
     return await s3.putObject(params).promise()
 }
 
+
+
 //function that create a project under a specific bucket (client)
 // key is the path / folder name (the "/" is import - meant thats a folder)
 // this function can be used to add a new step too further in the project, just configure 
 // the projectName = projectnName/step#  
-const createProject = async (client, projectName) => {
+const createProject = async (bizName, projectName) => {
     var params = {
-        // Bucket: client.toLowerCase(),
         Bucket: "stepby-projects",
-        Key: `${client}/${projectName}/`,
+        Key: `${bizName}/${projectName}/`,
     };
 
     return await s3.putObject(params).promise()
 }
 
 //function that create all the project steps where will be filled with files along the project
-const createSteps = async (client, projectName, stepsNum) => {
-    stepsNum = Number(stepsNum);
-    for (i = 1; i <= stepsNum; i++) {
+const createSteps = async (bizName, projectName, stepName) => {
 
-        var params = {
-            Bucket: "stepby-projects",
-            Key: `${client}/${projectName}/step${i}/`,
-        };
+    var params = {
+        Bucket: "stepby-projects",
+        Key: `${bizName}/${projectName}/${stepName}/`,
+    };
 
-        await s3.putObject(params).promise()
-    }
+    await s3.putObject(params).promise()
 }
 
 //function that upload jpg or pdf to specific path (Key)
@@ -158,4 +166,4 @@ const delFile = async ({ client, projectName, stepNum, fileName }) => {
         else console.log(data);                 // successful response
     }).promise()
 }
-module.exports = { createBucket, createClient, createProject, createSteps, uploadFile, uploadAnswer, getFile, getShow, listFiles, delFile }
+module.exports = { createBucket, createBiz, createClient, createProject, createSteps, uploadFile, uploadAnswer, getFile, getShow, listFiles, delFile }
