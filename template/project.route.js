@@ -5,10 +5,13 @@ const { authJWT } = require("../auth/auth");
 
 
 router.get('/projectByUser', authJWT, async (req, res) => {
+    console.log("/projectByUser8", req.user._id);
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get project by user'
     try {
-        res.send(await projectService.projectByUser(req.user._id));
+        const result = await projectService.projectByUser(req.user._id)
+        console.log("/projectByUser Result",result);  
+        res.send(result);
 
     } catch (error) {
         res.status(401).send("error");
@@ -91,7 +94,9 @@ router.put('/newStep/:projectId', authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
     // #swagger.description = 'create step'
     try {
-        res.send(await projectService.createStep({ ...req.body, templateId: req.params.projectId }));
+        const res = await projectService.createStep({ ...req.body, templateId: req.params.projectId });
+        console.log('res:', res);
+        res.send(res);
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);

@@ -36,6 +36,7 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
         await templateData.update({ _id: newProject._id }, { client: clientId });
     }
     return newProject._id
+
 }
 
 // createProject({user: {_id:"6321d710adc24fc6dffcd126" }, projectName: "good data", templateId:"6322c772f8d7d30ff3da0230", isNewClient: false, clientId:"6321d812adc554992c045f2d"})
@@ -109,8 +110,23 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
     if (!template) throw { message: "error-template" };
     const index = template.steps.length
     console.log({ name: stepName, description, isCreatorApprove, index });
-    await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
-    return "ok"
+    const project = await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
+    return project.steps;
+}
+
+const editStep = async ({ templateId, stepId, stepName, description, isCreatorApprove }) => {
+    const template = templateData.readOne({_id: templateId});
+    if(!template) throw new Error("template not exist"); 
+    const res = await templateData.update(
+        {_id: templateId},
+        {$set: {"steps.$[el].name": stepName,"steps.$[el].description": description, "steps.$[el].isCreatorApprove" : isCreatorApprove } },
+        { 
+          arrayFilters: [{ "el._id": stepId }],
+          new: true
+        }
+      )
+      console.log('res: ', res);
+    return res.steps;
 }
 
 const dataToStep = async ({ templateId, stepId, owner, type, title, content, isRequired }) => {
@@ -219,7 +235,8 @@ const currentStep = async ({ projectId, stepId }) => {
 module.exports = {
     currentStep, downWidget, doneProject, renameTemplate, projectById, projectByUser,
     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
-    dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,
-    getStepById, updateStep, completeStep
-};
+    dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep
+
+     getStepById, updateStep, completeStep,editStep};
+
 

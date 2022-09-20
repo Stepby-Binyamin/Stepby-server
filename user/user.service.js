@@ -67,6 +67,7 @@ const login = async (data) => {
 }
 
 const newClient = async (data, user) => {
+    console.log("data00", data, "user00", user);
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
     const client = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
@@ -79,18 +80,20 @@ const getAllCategories = async ()=>{
     return result
 }
 
+const editBizCategories = async (data,user)=>{
+    if(data.categories.length <=0) throw {status: 406, message: 'you must choose at least one category'}
+    await userModel.update({ _id: user._id, permissions: "biz" }, {categories: []})
+    for (let cat of data.categories){
+         await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { categories: cat._id } })
+    }
+    const result = await userModel.readOne({ _id: user._id, permissions: "biz" });
+    console.log(result);
+    return result
+}
+
 const editBiz = async (data, user) => {
-    if(data.categories){
-        // await editCategories(data, user)
-        // console.log('ok');
-        const resetCategories = await userModel.update({ _id: user._id, permissions: "biz" }, {categories: []})
-        const acknowledged = data.categories.map(async cat => await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { categories: cat._id } }))
-        console.log(12, resetCategories);
-        console.log(14, acknowledged);
-    } else {
     const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data);
     console.log(11, acknowledged);
-    }
     const result = await userModel.readOne({ _id: user._id, permissions: "biz" });
     console.log(result);
     return result
@@ -132,4 +135,4 @@ const loginToUser = async ({ id }) => {
     };
 }
 
-module.exports = { loginToUser, register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS, getAllCategories };
+module.exports = { loginToUser, register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS, getAllCategories, editBizCategories };
