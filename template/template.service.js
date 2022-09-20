@@ -115,17 +115,17 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
 }
 
 const editStep = async ({ templateId, stepId, stepName, description, isCreatorApprove }) => {
-    const template = templateData.readOne({_id: templateId});
-    if(!template) throw new Error("template not exist"); 
+    const template = templateData.readOne({ _id: templateId });
+    if (!template) throw new Error("template not exist");
     const res = await templateData.update(
-        {_id: templateId},
-        {$set: {"steps.$[el].name": stepName,"steps.$[el].description": description, "steps.$[el].isCreatorApprove" : isCreatorApprove } },
-        { 
-          arrayFilters: [{ "el._id": stepId }],
-          new: true
+        { _id: templateId },
+        { $set: { "steps.$[el].name": stepName, "steps.$[el].description": description, "steps.$[el].isCreatorApprove": isCreatorApprove } },
+        {
+            arrayFilters: [{ "el._id": stepId }],
+            new: true
         }
-      )
-      console.log('res: ', res);
+    )
+    console.log('res: ', res);
     return res.steps;
 }
 
@@ -235,8 +235,8 @@ const currentStep = async ({ projectId, stepId }) => {
 module.exports = {
     currentStep, downWidget, doneProject, renameTemplate, projectById, projectByUser,
     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
-    dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep
-
-     getStepById, updateStep, completeStep,editStep};
+    dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,
+    updateStep, completeStep, editStep, getStepById
+};
 
 
