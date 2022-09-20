@@ -108,8 +108,8 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
     if (!template) throw { message: "error-template" };
     const index = template.steps.length
     console.log({ name: stepName, description, isCreatorApprove, index });
-    await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
-    return "ok"
+    const project = await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
+    return project.steps;
 }
 
 const editStep = async ({ templateId, stepId, stepName, description, isCreatorApprove }) => {
