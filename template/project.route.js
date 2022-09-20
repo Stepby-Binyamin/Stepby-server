@@ -94,7 +94,9 @@ router.put('/newStep/:projectId', authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
     // #swagger.description = 'create step'
     try {
-        res.send(await projectService.createStep({ ...req.body, templateId: req.params.projectId }));
+        const res = await projectService.createStep({ ...req.body, templateId: req.params.projectId });
+        console.log('res:', res);
+        res.send(res);
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
