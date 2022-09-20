@@ -59,6 +59,8 @@ router.post('/duplicateTemplate/:templateId', authJWT, async (req, res) => {
 router.put('/newStep/:templateId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create step'
+    console.log("template/newStep/:projectId", req.body);
+
     try {
         res.send(await templateService.createStep({ ...req.body, templateId: req.params.templateId }));
     } catch (error) {
