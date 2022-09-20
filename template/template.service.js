@@ -112,6 +112,17 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
     return "ok"
 }
 
+const editStep = async ({ templateId, stepId, stepName, description, isCreatorApprove }) => {
+        templateData.update(
+        {_id: templateId},
+        {$set: {"steps.$[el].name": stepName,"steps.$[el].description": description, "steps.$[el].isCreatorApprove" : isCreatorApprove } },
+        { 
+          arrayFilters: [{ "el._id": stepId }],
+          new: true
+        }
+      )
+}
+
 const dataToStep = async ({ templateId, stepId, owner, type, title, content, isRequired }) => {
     const step = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const data = step.steps[0].data
@@ -219,6 +230,7 @@ module.exports = {
     currentStep, downWidget, doneProject, renameTemplate, projectById, projectByUser,
     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
     dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,
-    getStepById, updateStep, completeStep
-};
+
+     getStepById, updateStep, completeStep,editStep};
+
 
