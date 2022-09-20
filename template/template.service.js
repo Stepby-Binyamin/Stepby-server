@@ -113,7 +113,9 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
 }
 
 const editStep = async ({ templateId, stepId, stepName, description, isCreatorApprove }) => {
-        templateData.update(
+    const template = templateData.readOne({_id: templateId});
+    if(!template) throw new Error("template not exist"); 
+    const res = await templateData.update(
         {_id: templateId},
         {$set: {"steps.$[el].name": stepName,"steps.$[el].description": description, "steps.$[el].isCreatorApprove" : isCreatorApprove } },
         { 
@@ -121,6 +123,8 @@ const editStep = async ({ templateId, stepId, stepName, description, isCreatorAp
           new: true
         }
       )
+      console.log('res: ', res);
+    return res.steps;
 }
 
 const dataToStep = async ({ templateId, stepId, owner, type, title, content, isRequired }) => {
