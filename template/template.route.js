@@ -6,7 +6,7 @@ const { Router } = require("express");
 
 
 
-router.get("/getStepById/:templateId/:stepId", authJWT, async (req, res) => {
+router.get("/getStepById/:templateId/:stepId",/*  authJWT, */ async (req, res) => {
     try {
         res.send(await templateService.getStepById(req.params.templateId, req.params.stepId));
     } catch (error) {
@@ -22,7 +22,7 @@ router.post('/createTemplate', authJWT, async (req, res) => {
     console.log("/createTemplate22", req);
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template'
-    console.log("userId:",  req.user)
+    console.log("userId:", req.user)
     try {
         res.send(await templateService.createTemplate({ ...req.body, userId: req.user._id }));
     } catch (error) {
@@ -177,7 +177,7 @@ router.put("/downSteps/:templateId", authJWT, async (req, res) => {
     }
 })
 
-router.get('/templateById/:templateId', authJWT, async (req, res) => {
+router.get('/templateById/:templateId', /* authJWT, */ async (req, res) => {
     try {
         res.send(await templateService.projectById(req.params.templateId));
 
