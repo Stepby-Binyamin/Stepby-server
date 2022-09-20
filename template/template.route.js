@@ -71,9 +71,10 @@ router.put('/newStep/:templateId', authJWT, async (req, res) => {
 router.put('/edit-step/:templateId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'edit step'
-    console.log("hi");
     try {
-        res.send(await templateService.editStep({ ...req.body, templateId: req.params.templateId }));
+        const response = await templateService.editStep({ ...req.body, templateId: req.params.templateId });
+        console.log('response: ', response);
+        res.send(response);
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
