@@ -28,13 +28,15 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
             status: "new"
         });
     if (isNewClient) {
-        const client = newClient({ fullName, phoneNumber, email }, user)
+        const client = await newClient({ fullName, phoneNumber, email }, user)
+        console.log("clientId:", client.id);
         await templateData.update({ _id: newProject._id }, { client: client._id });
     }
     else {
         await templateData.update({ _id: newProject._id }, { client: clientId });
     }
-    return "success"
+    return newProject._id
+
 }
 
 // createProject({user: {_id:"6321d710adc24fc6dffcd126" }, projectName: "good data", templateId:"6322c772f8d7d30ff3da0230", isNewClient: false, clientId:"6321d812adc554992c045f2d"})
@@ -233,7 +235,7 @@ const currentStep = async ({ projectId, stepId }) => {
 module.exports = {
     currentStep, downWidget, doneProject, renameTemplate, projectById, projectByUser,
     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
-    dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,
+    dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep
 
      getStepById, updateStep, completeStep,editStep};
 
