@@ -18,7 +18,7 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
     // const duplicateTemplate= structuredClone(a)
     // console.log(duplicateTemplate);
     const newProject = await templateData.create(dup);
-    console.log(newProject);
+    // console.log(newProject);
 
     await templateData.update({ _id: newProject._id },
         {
@@ -28,13 +28,15 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
             status: "new"
         });
     if (isNewClient) {
-        const client = newClient({ fullName, phoneNumber, email }, user)
+        const client = await newClient({ fullName, phoneNumber, email }, user)
+        // console.log("clientId:", client.id);
         await templateData.update({ _id: newProject._id }, { client: client._id });
     }
     else {
         await templateData.update({ _id: newProject._id }, { client: clientId });
     }
-    return "success"
+    return newProject._id
+
 }
 
 // createProject({user: {_id:"6321d710adc24fc6dffcd126" }, projectName: "good data", templateId:"6322c772f8d7d30ff3da0230", isNewClient: false, clientId:"6321d812adc554992c045f2d"})
@@ -57,23 +59,24 @@ const renameTemplate = async ({ templateId, newName }) => {
 
 const doneProject = async (projectId) => {
     await templateData.update({ _id: projectId }, { $set: { status: "done" } })
-    return ("ok")
+    return ("doneProject")
 }
 
-const createTemplateAdmin = async ({ userId, permission, templateName, isTemplate, radio, categories, phoneNumber }) => {
+const createTemplateAdmin = async ({ userId, permission, templateName, isTemplate, isGeneral, categories, phoneNumber }) => {
+    let project
     if (permission == 'admin') {
         if (!templateName) throw { message: "error template name" };
-        if (radio) {
-            await templateData.create({ name: templateName, creatorId: userId, categories, isTemplate })
+        if (isGeneral) {
+            project = await templateData.create({ name: templateName, creatorId: userId, categories, isTemplate })
         }
         else {
             const user = await userModel.readOne({ phoneNumber })
             if (!user) throw { message: "error - user phone doesn't exist" }
-            await templateData.create({ name: templateName, creatorId: userId, client: user._id, isTemplate })
+            project = await templateData.create({ name: templateName, creatorId: userId, client: user._id, isTemplate })
         }
     }
     else { throw { message: "user isn't admin" } }
-    return ("ok")
+    return ({message: project})
 }
 const duplicateTemplate = async (templateId) => {
     //TODO: duplicate-second
@@ -100,24 +103,38 @@ const duplicateStep = async ({ stepId, templateId }) => {
 }
 
 const createStep = async ({ templateId, stepName, description, isCreatorApprove }) => {
-    console.log(templateId, stepName, description, isCreatorApprove);
     if (!stepName) throw { message: "error step name" };
     if (!description) throw { message: "error description" };
     if (isCreatorApprove == undefined) throw { message: "error-approve" }
     const template = await templateData.readOne({ _id: templateId })
     if (!template) throw { message: "error-template" };
     const index = template.steps.length
-    console.log({ name: stepName, description, isCreatorApprove, index });
-    await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
-    return "ok"
+    // console.log({ name: stepName, description, isCreatorApprove, index });
+    const project = await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
+    return project.steps;
+}
+
+const editStep = async ({ templateId, stepId, stepName, description, isCreatorApprove }) => {
+    const template = templateData.readOne({ _id: templateId });
+    if (!template) throw new Error("template not exist");
+    const res = await templateData.update(
+        { _id: templateId },
+        { $set: { "steps.$[el].name": stepName, "steps.$[el].description": description, "steps.$[el].isCreatorApprove": isCreatorApprove } },
+        {
+            arrayFilters: [{ "el._id": stepId }],
+            new: true
+        }
+    )
+    // console.log('res: ', res);
+    return res.steps;
 }
 
 const dataToStep = async ({ templateId, stepId, owner, type, title, content, isRequired }) => {
+    // console.log({ templateId, stepId, owner, type, title, content, isRequired });
     const step = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const data = step.steps[0].data
-    await templateData.update({ _id: templateId, "steps._id": stepId }, { $push: { "steps.$.data": [{ owner, type, title, content, isRequired, index: data.length }] } })
-
-    return "ok"
+    const res = await templateData.update({ _id: templateId, "steps._id": stepId }, { $push: { "steps.$.data": [{ owner, type, title, content, isRequired, index: data.length }] } })
+    return res.steps.filter(v => v._id == stepId)[0].data;
 }
 
 
@@ -194,12 +211,12 @@ const completeStep = async ({ projectId, stepId }) => {
     const step = await templateData.readOne({ _id: projectId, "steps._id": stepId }, { 'steps.$': 1 })
     const index = step.steps[0].index
     const nextStep = await templateData.readOne({ _id: projectId, "steps.index": index + 1 }, { 'steps.$': 1 })
+    await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": true, "steps.$.approvedDate": Date.now() } })
     if (!nextStep) {
-        console.log("done")
-        return "ok"
+        // doneProject(projectId)
+        return doneProject(projectId)
     }
     const approve = nextStep.steps[0].isApprove
-    await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": true, "steps.$.approvedDate": Date.now() } })
     if (approve) {
         await templateData.update({ _id: projectId }, { status: "biz" })
     }
@@ -219,6 +236,7 @@ module.exports = {
     currentStep, downWidget, doneProject, renameTemplate, projectById, projectByUser,
     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
     dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,
-    getStepById, updateStep, completeStep
+    updateStep, completeStep, editStep, getStepById
 };
+
 
