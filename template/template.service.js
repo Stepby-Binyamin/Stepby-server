@@ -76,7 +76,7 @@ const createTemplateAdmin = async ({ userId, permission, templateName, isTemplat
         }
     }
     else { throw { message: "user isn't admin" } }
-    return ({message: project})
+    return ({ message: project })
 }
 const duplicateTemplate = async (templateId) => {
     //TODO: duplicate-second
