@@ -19,7 +19,7 @@ router.post('/createbiz', async (req, res) => {
 
         console.log('/files/createbiz222', result);
 
-        res.status(200).send(`The folder for client ${client} was created at  http://stepby-projects.s3.amazonaws.com/${bizName}`)
+        res.status(200).send(`The folder for client ${client} was created at  http://stepbyprojects.s3.amazonaws.com/${bizName}`)
 
     } catch (err) {
         console.log(err);
@@ -33,11 +33,11 @@ router.post('/createproject', async (req, res) => {
         const { body } = req
         const client = body.firstName + body.lastName
         const bizName = body.bizName + body._id
-        const result = await filesControl.createProject(body.bizName, body.name)
+        const result = await filesControl.createProject(bizName, body.name)
 
         console.log('/files/createProject222', result);
 
-        res.status(200).send(`${client}'s Busness, ${body.bizName}, was created at  http://stepby-projects.s3.amazonaws.com/${bizName}/${body.name}`)
+        res.status(200).send(`${client}'s Busness, ${body.bizName}, was created at  http://stepbyprojects.s3.amazonaws.com/${bizName}/${body.name}`)
 
     } catch (err) {
         console.log(err);
@@ -55,7 +55,7 @@ router.post('/createsteps', async (req, res) => {
 
         console.log('/files/createSteps222', result);
 
-        res.status(200).send(`All ${body.steps.name} steps has been created under http://stepby-projects.s3.amazonaws.com/${bizName}/${body.name}/${body.steps.name}`)
+        res.status(200).send(`All ${body.steps.name} steps has been created under http://stepbyprojects.s3.amazonaws.com/${bizName}/${body.name}/${body.steps.name}`)
 
     } catch (err) {
         console.log(err);
@@ -161,14 +161,15 @@ router.post('/showImg', async (req, res) => {
 
 router.get('/list', async (req, res) => {
     console.log('/files/list111', req.body);
-
     try {
         // { client, projectName, stepNum }
-        let result = await filesControl.listFiles();
+        const { body } = req
+        const bizName = body.bizName + body._id
+        let result = await filesControl.listFiles(bizName, body.name, body.steps.name);
 
-        console.log("/files/list222", result);
+        console.log("/files/list222", result.Contents);
 
-
+        res.send(result.Contents)
     } catch (err) {
         console.log(err);
         res.status(400).send(err);
@@ -187,6 +188,28 @@ router.delete('/delete', async (req, res) => {
         console.log(err);
         res.status(400).send(err);
     }
+})
+
+router.post("/copyfiles", async (req, res) => {
+
+    console.log('/files/copyfiles111', req.body);
+
+    const { body } = req
+    const bizName = body.bizName + body._id
+
+    try {
+        const result = await filesControl.copyFiles(bizName, body.name, body.steps.name, body.newName)
+
+        console.log('/files/copyfiles222', result);
+
+        res.status(200).send(`All ${body.steps.name} steps has been created under http://stepby-projects.s3.amazonaws.com/${bizName}/${body.name}/${body.steps.name}`)
+
+
+    } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
+
 })
 
 

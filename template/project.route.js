@@ -171,6 +171,7 @@ router.put("/currentStep/:projectId", authJWT, async (req, res) => {
 })
 
 router.put("/completeStep/:projectId", authJWT, async (req, res) => {
+    console.log("1212", req.params.projectId, req.body);
     try {
         res.send(await projectService.completeStep({ projectId: req.params.projectId, stepId: req.body.stepId }));
     } catch (error) {

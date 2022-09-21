@@ -53,7 +53,7 @@ const createClient = async (client) => {
 // the projectName = projectnName/step#  
 const createProject = async (bizName, projectName) => {
     var params = {
-        Bucket: "stepby-projects",
+        Bucket: "stepbyprojects",
         Key: `${bizName}/${projectName}/`,
     };
 
@@ -64,7 +64,7 @@ const createProject = async (bizName, projectName) => {
 const createSteps = async (bizName, projectName, stepName) => {
 
     var params = {
-        Bucket: "stepby-projects",
+        Bucket: "stepbyprojects",
         Key: `${bizName}/${projectName}/${stepName}/`,
     };
 
@@ -84,14 +84,14 @@ const uploadFile = async (fileName, dataContent, objShortQuestion, data) => {
 
     // console.log("11", client);
     // console.log("22", `${projectName}/${Number(stepNum)}/${fileName}`);
-
+    // ${bizName}/${projectName}/${stepName}/
     const blob = dataContent
-    const result = await s3.upload({
-        Bucket: "stepby-projects",
+    const params = {
+        Bucket: "stepbyprojects",
         Key: `${client}/${projectName}/step${Number(stepNum)}/${fileName}`,
         Body: blob,
-    }).promise()
-    return result
+    }
+    return await s3.upload(params).promise()
 }
 
 //THIS FUNCTION NEED TO BE CHECKED, DOESNT WORK PROPERLY
@@ -105,7 +105,8 @@ const uploadAnswer = async (objShortQuestion, fileAnswerName = "answerName") => 
     // console.log("222", `${projectName}/step${Number(stepNum)}/${fileAnswerName}.txt`);
 
     return await s3.upload({
-        Bucket: "stepby-projects",
+        Bucket: "stepbyprojects",
+        // Key: `${bizName}/${projectName}/${stepName}/`,
         Key: `${client}/${projectName}/step${Number(stepNum)}/${fileAnswerName}.txt`,
 
         Body: objShortQuestion,
@@ -141,17 +142,15 @@ const getShow = async (client, projectName, stepNum, fileName) => {
 //function that give back a list of elements (file and/or folder) locaded in one specific bucket
 // Bucket is the main folder <string>, Prefix is the folder inside Bucket <string>,
 // StartAfter is the first returned list element<string>, MaxKey number of elements (can be till 1000 elements)<numbner>
-const listFiles = async ({ client, projectName, stepNum }) => {
-    var paramsList = {
-        Bucket: "stepby-projects",
-        StartAfter: `${client}/${projectName}/${stepNum}`,    // start content from this point
-        Prefix: `${client}/${projectName}`,                   // contents to be shown
+const listFiles = async (bizName, projectName, stepName) => {
+    console.log("listFiles", bizName, projectName, stepName);
+    var params = {
+        Bucket: "stepbyprojects",
+        StartAfter: `${bizName}/${projectName}/`,    // start content from this point
+        Prefix: `${bizName}/${projectName}/`,                   // contents to be shown
         MaxKeys: 50
     };
-    return await s3.listObjectsV2(paramsList, function (err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else console.log(data);
-    }).promise()
+    return await s3.listObjectsV2(params).promise()
 }
 
 //Function that delete one element from the bucket
@@ -166,4 +165,32 @@ const delFile = async ({ client, projectName, stepNum, fileName }) => {
         else console.log(data);                 // successful response
     }).promise()
 }
-module.exports = { createBucket, createBiz, createClient, createProject, createSteps, uploadFile, uploadAnswer, getFile, getShow, listFiles, delFile }
+
+const copyFiles = async (bizName, projectName, stepName, newName) => {
+    // console.log("PATH111", `/stepby-projects/${bizName}/${projectName}/${stepName}`);
+
+    const list = await listFiles(bizName, projectName, stepName)
+    // console.log("List111", list.Contents);
+
+    // const projectNameCopy = projectName + "copy"
+
+    newName !== "" ? projName = newName : projName = `${projectName}Copy`
+    await createProject(bizName, projName)
+
+    list.Contents.forEach(element => {
+
+        const first = element.Key.indexOf("/")
+        const second = element.Key.indexOf("/", first + 1)
+        const path = element.Key.slice(second)
+        // console.log("path1212", path);
+
+        var params = {
+            Bucket: "stepbyprojects",
+            CopySource: `/stepbyprojects/${element.Key}`,
+            Key: `${bizName}/${projName}${path}`
+        };
+        return s3.copyObject(params).promise()
+    });
+}
+
+module.exports = { createBucket, createBiz, createClient, createProject, createSteps, uploadFile, uploadAnswer, getFile, getShow, listFiles, delFile, copyFiles }
