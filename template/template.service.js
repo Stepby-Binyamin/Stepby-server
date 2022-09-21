@@ -128,11 +128,11 @@ const editStep = async ({ templateId, stepId, stepName, description, isCreatorAp
 }
 
 const dataToStep = async ({ templateId, stepId, owner, type, title, content, isRequired }) => {
+    console.log({ templateId, stepId, owner, type, title, content, isRequired });
     const step = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const data = step.steps[0].data
-    await templateData.update({ _id: templateId, "steps._id": stepId }, { $push: { "steps.$.data": [{ owner, type, title, content, isRequired, index: data.length }] } })
-
-    return "ok"
+    const res = await templateData.update({ _id: templateId, "steps._id": stepId }, { $push: { "steps.$.data": [{ owner, type, title, content, isRequired, index: data.length }] } })
+    return res.steps.filter(v => v._id == stepId)[0].data;
 }
 
 
