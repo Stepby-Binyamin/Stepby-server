@@ -13,7 +13,7 @@ const authJWT = async (req, res, next) => {
         const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
         console.log(11, verifyToken);
         req.user = await readOne({ _id: verifyToken._id });
-        console.log(15, req.user);
+        // console.log(15, req.user);
            if (req.user) next()
     } else {
         res.sendStatus(401);
