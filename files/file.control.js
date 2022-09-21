@@ -86,12 +86,12 @@ const uploadFile = async (fileName, dataContent, objShortQuestion, data) => {
     // console.log("22", `${projectName}/${Number(stepNum)}/${fileName}`);
     // ${bizName}/${projectName}/${stepName}/
     const blob = dataContent
-    const result = await s3.upload({
-        Bucket: "stepby-projects",
+    const params = {
+        Bucket: "stepbyprojects",
         Key: `${client}/${projectName}/step${Number(stepNum)}/${fileName}`,
         Body: blob,
-    }).promise()
-    return result
+    }
+    return await s3.upload(params).promise()
 }
 
 //THIS FUNCTION NEED TO BE CHECKED, DOESNT WORK PROPERLY
@@ -105,7 +105,8 @@ const uploadAnswer = async (objShortQuestion, fileAnswerName = "answerName") => 
     // console.log("222", `${projectName}/step${Number(stepNum)}/${fileAnswerName}.txt`);
 
     return await s3.upload({
-        Bucket: "stepby-projects",
+        Bucket: "stepbyprojects",
+        // Key: `${bizName}/${projectName}/${stepName}/`,
         Key: `${client}/${projectName}/step${Number(stepNum)}/${fileAnswerName}.txt`,
 
         Body: objShortQuestion,
@@ -142,7 +143,7 @@ const getShow = async (client, projectName, stepNum, fileName) => {
 // Bucket is the main folder <string>, Prefix is the folder inside Bucket <string>,
 // StartAfter is the first returned list element<string>, MaxKey number of elements (can be till 1000 elements)<numbner>
 const listFiles = async (bizName, projectName, stepName) => {
-    console.log("listFiles",bizName, projectName, stepName);
+    console.log("listFiles", bizName, projectName, stepName);
     var params = {
         Bucket: "stepbyprojects",
         StartAfter: `${bizName}/${projectName}/`,    // start content from this point
@@ -167,19 +168,19 @@ const delFile = async ({ client, projectName, stepNum, fileName }) => {
 
 const copyFiles = async (bizName, projectName, stepName, newName) => {
     // console.log("PATH111", `/stepby-projects/${bizName}/${projectName}/${stepName}`);
-    
+
     const list = await listFiles(bizName, projectName, stepName)
     // console.log("List111", list.Contents);
-    
+
     // const projectNameCopy = projectName + "copy"
-    
+
     newName !== "" ? projName = newName : projName = `${projectName}Copy`
     await createProject(bizName, projName)
 
     list.Contents.forEach(element => {
 
         const first = element.Key.indexOf("/")
-        const second = element.Key.indexOf("/", first +1)
+        const second = element.Key.indexOf("/", first + 1)
         const path = element.Key.slice(second)
         // console.log("path1212", path);
 
