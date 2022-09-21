@@ -113,13 +113,8 @@ router.put('/edit-biz', [authJWT], async (req, res) => {
     // #swagger.parameters['categories'] = {description:'user details'}
     console.log(req.body);
     try {
-        if(req.body.categories) {
-            const result = await userService.editBizCategories(req.body, req.user)
-            res.send(result);
-        } else{
         const result = await userService.editBiz(req.body, req.user);
         res.send(result);
-        } 
     } catch (error) {
         res.status(error.status || 406).send(error.message)
     }
