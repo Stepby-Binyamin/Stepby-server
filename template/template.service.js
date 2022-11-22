@@ -62,17 +62,18 @@ const doneProject = async (projectId) => {
     return ("doneProject")
 }
 
-const createTemplateAdmin = async ({ userId, permission, templateName, isTemplate, isGeneral, categories, phoneNumber }) => {
-    let project
+const createTemplateAdmin = async ({ userId, permission, templateName, isGeneral, categories, phoneNumber }) => {
+   let project;
+   const selectedCategories=categories.filter(category =>category.isActive===true);
     if (permission == 'admin') {
         if (!templateName) throw { message: "error template name" };
         if (isGeneral) {
-            project = await templateData.create({ name: templateName, creatorId: userId, categories, isTemplate })
+            project = await templateData.create({ name: templateName, creatorId: userId, categories:selectedCategories, isTemplate:true })
         }
         else {
             const user = await userModel.readOne({ phoneNumber })
             if (!user) throw { message: "error - user phone doesn't exist" }
-            project = await templateData.create({ name: templateName, creatorId: userId, client: user._id, isTemplate })
+            project = await templateData.create({ name: templateName, creatorId: userId, client: user._id, isTemplate:true })
         }
     }
     else { throw { message: "user isn't admin" } }

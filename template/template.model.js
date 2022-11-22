@@ -15,5 +15,8 @@ async function update(filter, newData, options) {
 async function remove(filter) {
     return await update(filter, { isActive: false });
 }
-
+async function deleteAll(){
+    await projectData.deleteMany({}).catch(function(err) {console.log(err);})
+}
+// deleteAll()
 module.exports = { create, read, readOne, update, remove };
