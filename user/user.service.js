@@ -62,17 +62,16 @@ const login = async (data) => {
     if (!phoneNumber) throw new Error("missing data");
 
     const phone = await userModel.readOne({ phoneNumber });
-    if (!phone) throw new Error("phone number dosen't exist");
+    if (!phone) throw new Error("phone number doesn't exist");
 
 }
 
 const newClient = async (data, user) => {
-    console.log("data00", data, "user00", user);
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
-    const client = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
-    await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { clients: client } });
-    return client;
+    const clientId = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
+    await userModel.update({ _id: user._id }, { $push: { clients: clientId._id} });
+    return clientId;
 }
 
 const getAllCategories = async ()=>{
@@ -119,9 +118,8 @@ const getAllBiz = async (user) => {
 }
 
 const getAllClientsByBiz = async (user) => {
-    const clients = await userModel.readOne({ _id: user._id, permissions: "biz" });
-    console.log(clients.clients);
-    return clients.clients;
+    const client = await userModel.readOne({ _id: user._id});
+    return client.clients;
 }
 
 
