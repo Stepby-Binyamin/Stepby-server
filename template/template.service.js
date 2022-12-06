@@ -8,6 +8,7 @@ const createTemplate = async ({ userId, templateName }) => {
     return template._id
 }
 const createTemplateAdmin = async ({ userId, permission, templateName, isGeneral, categories, phoneNumber }) => {
+    console.log("🚀 ~ file: template.service.js ~ line 11 ~ createTemplateAdmin ~ categories", categories)
     let project;
     const selectedCategories=categories.filter(category =>category.isActive===true);
     if (permission == 'admin') {
@@ -28,12 +29,12 @@ const renameTemplate = async ({ templateId, newName }) => {
     await templateData.update({ _id: templateId }, { $set: { name: newName } })
     return ("ok")
 }
-const duplicateTemplate = async (templateId) => {
+const duplicateTemplate = async ({userId,templateId}) => {
     //TODO: duplicate-second
     const template = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")))
     const newTemplate = await templateData.create(template)
-    await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}עותק(1)` })
-    return ("ok")
+    await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}עותק(1)` , creatorId : userId})
+    return newTemplate._id 
 }
 const templateByUser = async (userId) => {
     return await templateData.read({ isTemplate: true, creatorId: userId })
@@ -52,7 +53,6 @@ const templateByCategoriesByUser = async (user) => {
             templateByCategory = templateByCategory.concat(await templateData.read({ isTemplate: true, categories: { $in: i._id.toString() } }))
         }
     }
-
     let templateArr = []
     let flag = false
     for (i of templateByCategory) {
@@ -161,12 +161,12 @@ const dataToStep = async ({ templateId, stepId, owner, type, title, content, isR
     return res.steps.filter(v => v._id == stepId)[0].data;
 }
 const downSteps = async ({ templateId, stepIndex }) => {
-    const stepsLength = await templateData.readOne({ _id: templateId }, "steps")
-    if (stepIndex < 0 || stepIndex >= stepsLength.steps.length - 1) {
+    const template = await templateData.readOne({ _id: templateId }, "steps")
+    if (stepIndex < 0 || stepIndex >= template.steps.length - 1) {
         throw { message: "error" }
     }
     await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
-    await templateData.update({ _id: templateId, "steps.index": stepIndex + 1 }, { $set: { "steps.$.index": stepIndex } })
+    await templateData.update({ _id: templateId, "steps.index": stepIndex + 1 }, { $set: { "steps.$.index": stepIndex }})
     await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
     return await templateData.readOne({ _id: templateId })
 }

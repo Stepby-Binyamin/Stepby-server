@@ -48,7 +48,7 @@ router.post('/duplicateTemplate/:templateId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'duplicate template'
     try {
-        res.send(await templateService.duplicateTemplate(req.params.templateId));
+        res.send(await templateService.duplicateTemplate({userId: req.user._id,templateId:req.params.templateId}));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);

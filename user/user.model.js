@@ -6,7 +6,6 @@ async function create(data) {
    return await userData.create(data);
 }
 async function read(filter, proj) {
-
    return await userData.find(filter, proj).populate({ path: 'clients'}).populate({ path: 'categories'});
 }
 async function readOne(filter, proj) {
