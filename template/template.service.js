@@ -125,8 +125,8 @@ const duplicateStep = async ({ stepId, templateId }) => {
     //TODO: step location
     const template = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const step = template.steps[0]
-    createStep({ templateId, stepName: step.name + "עותק(1)", description: step.description, isCreatorApprove: step.isCreatorApprove })
-    return ("ok")
+    const steps= await createStep({ templateId, stepName: step.name + "עותק(1)", description: step.description, isCreatorApprove: step.isCreatorApprove })
+    return steps[steps.length-1]._id
 }
 const createStep = async ({ templateId, stepName, description, isCreatorApprove }) => {
     if (!stepName) throw { message: "error step name" };
