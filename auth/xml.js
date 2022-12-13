@@ -1,7 +1,7 @@
 const { toXML } = require("jstoxml");
 
 
-function getXML(object) {
+const getXML=(object) =>{
   return toXML(object, {
     indent: "    ",
     header: true,

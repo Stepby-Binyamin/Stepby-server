@@ -31,28 +31,25 @@ const sendSMS = async (phoneNumber) => {
   const res = await axios.post(process.env.SMS_API, xml, {
     headers: { ...xmlHeaders, ...authHeaders }
   })
+  console.log("🚀 ~ file: verification.js ~ line 34 ~ sendSMS ~ res.data", res.data)
   const hashCode = await bcrypt.hash(code, 12)
   await createOrUpdete(phoneNumber, hashCode)
-  console.log(res.data)
   return res.data
 }
-
-async function createOrUpdete(phoneNumber, hashCode) {
+const createOrUpdete=async(phoneNumber, hashCode)=> {
 
   const existUser = await checkExistUser(phoneNumber)
 
   existUser ? await codeModel.updateOne({ phoneNumber: phoneNumber }, { dateSent: Date.now(), code: hashCode }) :
   await codeModel.create({ phoneNumber: phoneNumber, code: hashCode })
 }
-
-async function checkExistUser(phone) {
+const checkExistUser=async (phone) =>{
   const exist = await codeModel.findOne({ phoneNumber: phone })
   // console.log(await codeModel.findOne({ phoneNumber: phone }))
    return exist ? true : false
 
 }
-
-async function verifyCode(data) {
+const verifyCode= async(data)=> {
   const { code, phoneNumber } = data;
 
   const DBcode = await codeModel.findOne({ phoneNumber: phoneNumber })
@@ -72,18 +69,15 @@ async function verifyCode(data) {
     return { message: 'invalid code', status: 406 }
   }
 }
-
 const checkValidNumber = async (phoneNumber = '123') => {
   if (phoneNumber[0] !== '0' || phoneNumber[1] !== '5' || phoneNumber.length !== 10) return { message: 'invalid phone number', status: 406 }
   const result = await removeZero(phoneNumber)
   return result
 }
-
-async function removeZero(phoneNumber = '123', countryCode = '972') {
+const removeZero=async(phoneNumber = '123', countryCode = '972')=> {
   return `${countryCode}${phoneNumber.slice(1)}`
 }
-
-function generateCode(codeLength) {
+const generateCode=(codeLength) =>{
   let result = []
   for (let i = 0; i < codeLength; i++) {
     result.push((Math.floor(Math.random() * (9 - 1 + 1) + 1)))
@@ -91,9 +85,4 @@ function generateCode(codeLength) {
   result = "".concat(...result)
   return result
 }
-
-
-
-
-
 module.exports = { sendSMS, verifyCode }
