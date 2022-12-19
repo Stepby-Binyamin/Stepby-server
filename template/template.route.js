@@ -80,6 +80,19 @@ router.put('/edit-step/:templateId', authJWT, async (req, res) => {
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
+    }
+})
+
+router.put('/addWidget', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'create step'
+    console.log("template/addWidget :", req.body);
+
+    try {
+        res.send(await templateService.addWidget({ ...req.body}));
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
 
     }
 })

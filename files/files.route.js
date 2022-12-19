@@ -9,15 +9,15 @@ const upload = multer()
 const filesControl = require("./file.control");
 
 
-router.post('/createbiz', async (req, res) => {
-    console.log('/files/createbiz111', req.body);
+router.post('/create-biz', async (req, res) => {
+    console.log('/files/create-biz111', req.body);
     try {
         const { body } = req
         const client = body.firstName + body.lastName
         const bizName = body.bizName + body._id
         const result = await filesControl.createBiz(bizName)
 
-        console.log('/files/createbiz222', result);
+        console.log('/files/create-biz222', result);
 
         res.status(200).send(`The folder for client ${client} was created at  http://stepbyprojects.s3.amazonaws.com/${bizName}`)
 
@@ -211,6 +211,5 @@ router.post("/copyfiles", async (req, res) => {
     }
 
 })
-
 
 module.exports = router

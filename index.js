@@ -19,12 +19,7 @@ app.use(express.json())
 
 PORT = process.env.PORT || 5000
 
-
-
-
 app.use("/", mainRouter)
-
-
 
 require("./data/db").connect()
 
@@ -38,11 +33,7 @@ const check = () => {
         console.log(err)
         logger.error({ e: err })
     }
-
 }
 
-
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
-
-
 app.listen(PORT, () => console.log(`Server is running at Port ${PORT}`))
