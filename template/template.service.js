@@ -104,9 +104,11 @@ const doneProject = async (projectId) => {
 
 
 const getStepById = async (projectId, stepId) => {
-    const template = await templateData.readOne({ _id: projectId, "steps._id": stepId }, { "steps.$": 1 ,name:1 , client:1})
-    console.log("🚀 ~ file: template.service.js ~ line 117 ~ getStepById ~ steps", template)
-    return { tempName: template.name , bizName: template.creatorId , clientName: template.client?.fullName , step: template.steps[0]}
+    const template = await templateData.readOne({ _id: projectId, "steps._id": stepId })
+    const step=template.steps.find(step => step._id.toString()===stepId)
+    const nextStepName=template.steps.find(step_ => step_.index===step.index+1)?.name
+    const isCurrent=step.index===[...template.steps].sort((a, b) => a.index < b.index ? -1 : 1).find(step_ => !step_.isApprove).index
+    return {bizName: template.creatorId.firstName , client: template.client,isCurrent, nextStepName , step , tempName: template.name}
 };
 const deleteStep = async ({ stepId, templateId }) => {
     await templateData.update({ _id: templateId }, { $pull: { steps: { _id: stepId } } })
