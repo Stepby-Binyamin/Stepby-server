@@ -12,7 +12,4 @@ const xmlHeaders = {
   "Content-Type": "application/xml",
 };
 
-module.exports = {
-  getXML,
-  xmlHeaders,
-};
+module.exports = {getXML,xmlHeaders};

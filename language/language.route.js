@@ -8,18 +8,19 @@ router.get('/:code', async (req, res) => {
   // #swagger.description = 'get language dictionary'
   try {
     const language = await languageService.readOne(req.params.code);
-        res.send(language)
+    res.send(language)
+  }
+  catch (error) {
+    if (error.code && error.code < 1000) {
+      res.status(error.code).send(error.message)
+    } 
+    else {
+      res.status(500).send("something went wrong")
     }
-    catch (error) {
-        if (error.code && error.code < 1000) {
-          res.status(error.code).send(error.message)
-        } else {
-          res.status(500).send("something went wrong")
-        }
-      }
-    })
+  }
+})
     
-    router.get('/', async (req, res) => {
+router.get('/', async (req, res) => {
   // #swagger.tags = ['Language']
   // #swagger.description = 'get all languages dictionaries'
   try {

@@ -9,7 +9,7 @@ router.post('/check-code', async (req, res) => {
     // #swagger.tags= ['Users']
     // #swagger.description = "verify the sms-code of the biz user"
     // #swagger.parameters['phoneNumber'] = {description:'users phone number'}
-    // #swagger.parameters['code'] = {description:'code sent by 019 sistem in the login'}
+    // #swagger.parameters['code'] = {description:'code sent by 019 system in the login'}
 
     try {
         const result = await userService.verify(req.body)

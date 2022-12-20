@@ -19,7 +19,6 @@ const verifyBeforeSMS = async (token, data) => {
     } catch (err) {
         console.log(33333, err);
     } finally {
-
         if (!verifyToken) {
             console.log('lo tov')
             return 401
@@ -58,7 +57,6 @@ const login = async (data) => {
 
     const phone = await userModel.readOne({ phoneNumber });
     if (!phone) throw new Error("phone number doesn't exist");
-
 }
 const newClient = async (data, user) => {
     const { fullName, phoneNumber, email } = data;
@@ -68,8 +66,7 @@ const newClient = async (data, user) => {
     return clientId;
 }
 const getAllCategories = async ()=>{
-    const result = await categoryModel.find({})
-    return result
+    return await categoryModel.find({})
 }
 const editBizCategories = async (data,user)=>{
     if(data.categories.length <=0) throw {status: 406, message: 'you must choose at least one category'}
@@ -111,9 +108,6 @@ const getAllClientsByBiz = async (user) => {
 const loginToUser = async ({ id }) => {
     const token = await jwt.createToken(id);
     let user = await userModel.readOne({ _id: id });
-    return {
-        user,
-        token
-    };
+    return { user, token };
 }
 module.exports = { loginToUser, register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS, getAllCategories, editBizCategories };

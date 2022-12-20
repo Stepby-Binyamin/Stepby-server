@@ -1,13 +1,9 @@
 const express = require('express');
 const router = express.Router();
-
 // const { authJWT } = require('../auth/auth');
-
 const multer = require("multer");
 const upload = multer()
-
 const filesControl = require("./file.control");
-
 
 router.post('/create-biz', async (req, res) => {
     console.log('/files/create-biz111', req.body);
@@ -26,9 +22,8 @@ router.post('/create-biz', async (req, res) => {
         res.status(400).send("error", err.message);
     }
 })
-
-router.post('/createproject', async (req, res) => {
-    console.log('/files/createproject111', req.body);
+router.post('/create-project', async (req, res) => {
+    console.log('/files/create-project111', req.body);
     try {
         const { body } = req
         const client = body.firstName + body.lastName
@@ -44,16 +39,15 @@ router.post('/createproject', async (req, res) => {
         res.status(400).send("error", err.message);
     }
 })
-
-router.post('/createsteps', async (req, res) => {
-    console.log('/files/createSteps111', req.body);
+router.post('/create-steps', async (req, res) => {
+    console.log('/files/create-Steps111', req.body);
 
     try {
         const { body } = req
         const bizName = body.bizName + body._id
         const result = await filesControl.createSteps(bizName, body.name, body.steps.name)
 
-        console.log('/files/createSteps222', result);
+        console.log('/files/create-Steps222', result);
 
         res.status(200).send(`All ${body.steps.name} steps has been created under http://stepbyprojects.s3.amazonaws.com/${bizName}/${body.name}/${body.steps.name}`)
 
@@ -62,9 +56,8 @@ router.post('/createsteps', async (req, res) => {
         res.status(400).send(err);
     }
 })
-
-router.post('/createclient', async (req, res) => {
-    console.log('/files/createClient111', req.body);
+router.post('/create-client', async (req, res) => {
+    console.log('/files/create-Client111', req.body);
     try {
         const { body } = req
         const client = body.firstName + body.lastName + body._id
@@ -80,13 +73,10 @@ router.post('/createclient', async (req, res) => {
         res.status(400).send("error", err.message);
     }
 })
+router.post('/upload-file', upload.single("new_file"), async (req, res) => {
 
-
-
-router.post('/uploadfile', upload.single("new_file"), async (req, res) => {
-
-    console.log("/files/uploadfile111", req.body);
-    console.log("/files/uploadfile222", req.file);
+    console.log("/files/upload-file111", req.body);
+    console.log("/files/upload-file222", req.file);
 
     try {
         // { client, projectName, stepNum, fileName, dataContent }
@@ -94,7 +84,7 @@ router.post('/uploadfile', upload.single("new_file"), async (req, res) => {
         console.log("1515", body.objShortQuestion);
         const result = await filesControl.uploadFile(file?.originalname, file?.buffer, body.objShortQuestion, body?.data)
 
-        console.log("/files/uploadfile333", result);
+        console.log("/files/upload-file333", result);
 
         res.status(200).send(`The File "${file?.originalname} was uploaded to ${result.Location}, 
         and the "fileAnswerName.txt" was uploaded to "https://solyattie.s3.amazonaws.com/fisrtProject/step1/fileAnswerName.txt"`)
@@ -103,15 +93,14 @@ router.post('/uploadfile', upload.single("new_file"), async (req, res) => {
         res.status(400).send(err);
     }
 })
-
-router.post("/uploadanswer", upload.single("new_file"), async (req, res) => {
-    console.log("/files/uploadanswer111", req.body);
+router.post("/upload-answer", upload.single("new_file"), async (req, res) => {
+    console.log("/files/upload-answer111", req.body);
 
     try {
         const { body } = req
         const result = await filesControl.uploadAnswer(body.objShortQuestion)
 
-        console.log("/files/uploadanswer333", result);
+        console.log("/files/upload-answer333", result);
 
         res.status(200).send(`The File "answerName.txt" was uploaded to ${result.Location}`)
     } catch (err) {
@@ -119,7 +108,6 @@ router.post("/uploadanswer", upload.single("new_file"), async (req, res) => {
         res.status(400).send(err);
     }
 })
-
 router.post('/download', async (req, res) => {
     console.log("/files/down111", req.body);
     try {
@@ -158,6 +146,27 @@ router.post('/showImg', async (req, res) => {
         res.status(400).send(err);
     }
 })
+router.post("/copy-files", async (req, res) => {
+
+    console.log('/files/copy-files111', req.body);
+
+    const { body } = req
+    const bizName = body.bizName + body._id
+
+    try {
+        const result = await filesControl.copyFiles(bizName, body.name, body.steps.name, body.newName)
+
+        console.log('/files/copyfiles222', result);
+
+        res.status(200).send(`All ${body.steps.name} steps has been created under http://stepby-projects.s3.amazonaws.com/${bizName}/${body.name}/${body.steps.name}`)
+
+
+    } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
+
+})
 
 router.get('/list', async (req, res) => {
     console.log('/files/list111', req.body);
@@ -188,28 +197,6 @@ router.delete('/delete', async (req, res) => {
         console.log(err);
         res.status(400).send(err);
     }
-})
-
-router.post("/copyfiles", async (req, res) => {
-
-    console.log('/files/copyfiles111', req.body);
-
-    const { body } = req
-    const bizName = body.bizName + body._id
-
-    try {
-        const result = await filesControl.copyFiles(bizName, body.name, body.steps.name, body.newName)
-
-        console.log('/files/copyfiles222', result);
-
-        res.status(200).send(`All ${body.steps.name} steps has been created under http://stepby-projects.s3.amazonaws.com/${bizName}/${body.name}/${body.steps.name}`)
-
-
-    } catch (err) {
-        console.log(err);
-        res.status(400).send(err);
-    }
-
 })
 
 module.exports = router
