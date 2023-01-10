@@ -10,7 +10,7 @@ function logError (err) {
 
 function logErrorMiddleware (err, req, res, next) {
     logger.error(err)
- next(err)
+    next(err)
 }
 
 function returnError (err, req, res, next) {
@@ -19,14 +19,9 @@ function returnError (err, req, res, next) {
 
 function isOperationalError(error) {
  if (error instanceof BaseError) {
- return error.isOperational
+    return error.isOperational
  }
  return false
 }
 
-module.exports = {
- logError,
- logErrorMiddleware,
- returnError,
- isOperationalError,
-}
+module.exports = {logError, logErrorMiddleware, returnError, isOperationalError}

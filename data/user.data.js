@@ -1,6 +1,5 @@
 const  mongoose = require ('mongoose');
-
-//TODO: need to check whether to add 'fullName' field (for the user-client).
+//TODO: add required for category/project/user??
 const userSchema = new mongoose.Schema({
     firstName: { // for biz
         type: String,
@@ -52,7 +51,4 @@ const userSchema = new mongoose.Schema({
 });
 
 const userData = mongoose.model("user",userSchema);
-
-
 module.exports = {userData};
-

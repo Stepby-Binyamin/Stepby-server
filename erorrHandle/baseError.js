@@ -11,5 +11,4 @@ class BaseError extends Error {
     this.mes = mes
     }
    }
-   
-   module.exports = BaseError
+module.exports = BaseError

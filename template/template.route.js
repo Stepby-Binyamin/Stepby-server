@@ -6,7 +6,7 @@ const { Router } = require("express");
 
 
 
-router.get("/getStepById/:templateId/:stepId", authJWT, async (req, res) => {
+router.get("/getStepById/:templateId/:stepId",/*  authJWT, */ async (req, res) => {
     try {
         res.send(await templateService.getStepById(req.params.templateId, req.params.stepId));
     } catch (error) {
@@ -22,7 +22,7 @@ router.post('/createTemplate', authJWT, async (req, res) => {
     console.log("/createTemplate22", req);
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template'
-    console.log("userId:",  req.user)
+    console.log("userId:", req.user)
     try {
         res.send(await templateService.createTemplate({ ...req.body, userId: req.user._id }));
     } catch (error) {
@@ -48,7 +48,7 @@ router.post('/duplicateTemplate/:templateId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'duplicate template'
     try {
-        res.send(await templateService.duplicateTemplate(req.params.templateId));
+        res.send(await templateService.duplicateTemplate({userId: req.user._id,templateId:req.params.templateId}));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
@@ -59,6 +59,8 @@ router.post('/duplicateTemplate/:templateId', authJWT, async (req, res) => {
 router.put('/newStep/:templateId', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create step'
+    console.log("template/newStep/:projectId", req.body);
+
     try {
         res.send(await templateService.createStep({ ...req.body, templateId: req.params.templateId }));
     } catch (error) {
@@ -75,6 +77,19 @@ router.put('/edit-step/:templateId', authJWT, async (req, res) => {
         const response = await templateService.editStep({ ...req.body, templateId: req.params.templateId });
         console.log('response: ', response);
         res.send(response);
+    } catch (error) {
+        res.status(401).send("error");
+        console.log(error.message);
+    }
+})
+
+router.put('/addWidget', authJWT, async (req, res) => {
+    // #swagger.tags = ['Templates']
+    // #swagger.description = 'create step'
+    console.log("template/addWidget :", req.body);
+
+    try {
+        res.send(await templateService.addWidget({ ...req.body}));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
@@ -177,7 +192,7 @@ router.put("/downSteps/:templateId", authJWT, async (req, res) => {
     }
 })
 
-router.get('/templateById/:templateId', authJWT, async (req, res) => {
+router.get('/templateById/:templateId', /* authJWT, */ async (req, res) => {
     try {
         res.send(await templateService.projectById(req.params.templateId));
 
