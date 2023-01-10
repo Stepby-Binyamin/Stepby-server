@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { readOne } = require("../user/user.model");
 
-
 const authJWT = async (req, res, next) => {
     // const newToken = jwt.sign({ _id: "631ee9f9d86c3d2ab5a08814" }, process.env.JWT_SECRET, { expiresIn: "10h" })
     //TODO: delete --- || `Bearer ${newToken}`; ---  before production.
@@ -19,6 +18,4 @@ const authJWT = async (req, res, next) => {
         res.sendStatus(401);
     }
 };
-
-
 module.exports = { authJWT };

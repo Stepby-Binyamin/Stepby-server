@@ -10,7 +10,6 @@ const verify = async (data) => {
     const result = verifyCode(data);
     return result
 }
-
 const verifyBeforeSMS = async (token, data) => {
     const { phoneNumber } = data;
     token = token.split(" ")[1];
@@ -20,7 +19,6 @@ const verifyBeforeSMS = async (token, data) => {
     } catch (err) {
         console.log(33333, err);
     } finally {
-
         if (!verifyToken) {
             console.log('lo tov')
             return 401
@@ -31,14 +29,11 @@ const verifyBeforeSMS = async (token, data) => {
         return result
     }
 }
-
 const sms = async (data) => {
     const { phoneNumber } = data;
     if (!phoneNumber) throw new Error('error');
     return sendSMS(phoneNumber);
 }
-
-
 const register = async (data) => {
     const { phoneNumber, firstName, lastName, email, bizName, categories } = data; // categories is array of _id
     //TODO: create a function that push each empty var into array.
@@ -47,7 +42,6 @@ const register = async (data) => {
     const token = jwt.createToken(newBiz);
     return token;
 }
-
 const createAdmin = async (data) => {
     const { phoneNumber, firstName, lastName, email } = data;
     if (!phoneNumber || !firstName || !lastName || !email) throw new Error("missing data");
@@ -62,52 +56,41 @@ const login = async (data) => {
     if (!phoneNumber) throw new Error("missing data");
 
     const phone = await userModel.readOne({ phoneNumber });
-    if (!phone) throw new Error("phone number dosen't exist");
-
+    if (!phone) throw new Error("phone number doesn't exist");
 }
-
 const newClient = async (data, user) => {
-    console.log("data00", data, "user00", user);
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
-    const client = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
-    await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { clients: client } });
-    return client;
+    const clientId = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
+    await userModel.update({ _id: user._id }, { $push: { clients: clientId._id} });
+    return clientId;
 }
-
 const getAllCategories = async ()=>{
-    const result = await categoryModel.find({})
-    return result
+    return await categoryModel.find({})
 }
-
 const editBizCategories = async (data,user)=>{
     if(data.categories.length <=0) throw {status: 406, message: 'you must choose at least one category'}
-    await userModel.update({ _id: user._id, permissions: "biz" }, {categories: []})
+    await userModel.update({ _id: user._id }, {categories: []})
     for (let cat of data.categories){
-         await userModel.update({ _id: user._id, permissions: "biz" }, { $push: { categories: cat._id } })
+         await userModel.update({ _id: user._id }, { $push: { categories: cat._id } })
     }
-    const result = await userModel.readOne({ _id: user._id, permissions: "biz" });
-    console.log(result);
+    const result = await userModel.readOne({ _id: user._id });
+    console.log("🚀 ~ file: user.service.js ~ line 81 ~ editBizCategories ~ result", result)
     return result
 }
-
 const editBiz = async (data, user) => {
-    const acknowledged = await userModel.update({ _id: user._id, permissions: "biz" }, data);
-    console.log(11, acknowledged);
-    const result = await userModel.readOne({ _id: user._id, permissions: "biz" });
-    console.log(result);
+    const acknowledged = await userModel.update({ _id: user._id }, data);
+    console.log("🚀 ~ file: user.service.js ~ line 86 ~ editBiz ~ acknowledged", acknowledged)
+    const result = await userModel.readOne({ _id: user._id });
+    console.log("🚀 ~ file: user.service.js ~ line 88 ~ editBiz ~ result", result)
     return result
 }
-
-
 const removeBiz = async (data, user) => {
     const foundUser = await userModel.read({ _id: user._id });
     if (!foundUser) throw new Error("user not found");
     const deleted = await userModel.del({ _id: user._id });
     return deleted;
 }
-
-
 //only for admin
 const getAllBiz = async (user) => {
     if (user.permissions == "admin") {
@@ -117,22 +100,14 @@ const getAllBiz = async (user) => {
     }
     throw new Error("Access Denied!")
 }
-
 const getAllClientsByBiz = async (user) => {
-    const clients = await userModel.readOne({ _id: user._id, permissions: "biz" });
-    console.log(clients.clients);
-    return clients.clients;
+    const client = await userModel.readOne({ _id: user._id});
+    return client.clients;
 }
-
-
 // TODO: For development purposes only, delete before the production
 const loginToUser = async ({ id }) => {
     const token = await jwt.createToken(id);
     let user = await userModel.readOne({ _id: id });
-    return {
-        user,
-        token
-    };
+    return { user, token };
 }
-
 module.exports = { loginToUser, register, login, newClient, editBiz, removeBiz, getAllBiz, sms, verify, getAllClientsByBiz, verifyBeforeSMS, getAllCategories, editBizCategories };

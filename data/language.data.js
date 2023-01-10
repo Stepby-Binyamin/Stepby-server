@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 const languageSchema = new mongoose.Schema({
-   
     code: {
         type: Number,
         required: true
@@ -19,9 +18,6 @@ const languageSchema = new mongoose.Schema({
     dict:{
         type: Object
     }
-}
-)
-
+})
 const languageModel = mongoose.model('language', languageSchema)
-
 module.exports = {languageModel}

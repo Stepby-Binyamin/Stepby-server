@@ -26,7 +26,7 @@ const projectSchema = new mongoose.Schema({
     }],
     status: {
         type: String,
-        enum: ['done', 'biz', 'client', 'new']
+        enum: ['done', 'biz', 'client']
     },
     lastApprove: {
         type: Date,
@@ -84,6 +84,5 @@ const projectSchema = new mongoose.Schema({
         }]
     }],
 });
-
 const projectData = mongoose.model("project", projectSchema);
 module.exports = { projectData };

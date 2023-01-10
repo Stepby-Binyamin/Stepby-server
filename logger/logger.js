@@ -3,8 +3,6 @@ const { appendFileSync, existsSync, mkdirSync } = require("fs")
 const chalk = require('chalk');
 
 
-
-
 const error = ({ message, e = {}, user = null, writeToFile = false }) => {
     console.log(e)
     const celler = "Location undefine"
@@ -15,16 +13,15 @@ const error = ({ message, e = {}, user = null, writeToFile = false }) => {
     console.log(chalk.red(mes))
 
     if (writeToFile) {
-        writeToFile(mes, level)
+        writeToFile_(mes, level)
     }
 }
-
 
 const getDate = () => {
     return moment(new Date()).format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS)
 }
 
-const writeToFile = (message, level) => {
+const writeToFile_ = (message, level) => {
     const logDir = './logs'
     const data = `${message}\r\n`
     if (!existsSync(logDir)) {
@@ -37,6 +34,5 @@ const writeToFile = (message, level) => {
     }
     appendFileSync(`./logs/${level}.log`, data, options)
 }
-
 
 module.exports = { error };

@@ -5,10 +5,9 @@ const s3 = new AWS.S3({
     secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
 })
 
-// fucntion that create a bucket for a specific client , the client name nee to be lowercased, and anothers spcifications
+// function that create a bucket for a specific client, the client name nee to be lowercased, and anothers spcifications
 // that need to be limited on the client side 
 const createBucket = async (client) => {
-
     const params = {
         Bucket: "stepby-projects",
         // Bucket: client.toLowerCase(),
@@ -27,7 +26,6 @@ const createBiz = async (bizName) => {
         Bucket: "stepby-projects",
         Key: `${bizName}/`,
     };
-
     return await s3.putObject(params).promise()
 }
 
@@ -41,7 +39,6 @@ const createClient = async (client) => {
         Bucket: "stepby-projects",
         Key: `${client}/`,
     };
-
     return await s3.putObject(params).promise()
 }
 
@@ -56,27 +53,22 @@ const createProject = async (bizName, projectName) => {
         Bucket: "stepbyprojects",
         Key: `${bizName}/${projectName}/`,
     };
-
     return await s3.putObject(params).promise()
 }
 
 //function that create all the project steps where will be filled with files along the project
 const createSteps = async (bizName, projectName, stepName) => {
-
     var params = {
         Bucket: "stepbyprojects",
         Key: `${bizName}/${projectName}/${stepName}/`,
     };
-
     await s3.putObject(params).promise()
 }
 
 //function that upload jpg or pdf to specific path (Key)
 const uploadFile = async (fileName, dataContent, objShortQuestion, data) => {
-
     // console.log("objShortQuestion2525", objShortQuestion);
     // console.log("data", data);
-
     const objShortQuestion00 = JSON.parse(objShortQuestion)
     const { client, projectName, stepNum, answer } = objShortQuestion00
 
@@ -119,23 +111,19 @@ const uploadAnswer = async (objShortQuestion, fileAnswerName = "answerName") => 
 // Bucket is the main folder to look for the file<string>, Key is the path, inlcuding the filename <string> ex: my/path/is.jpg
 // fileName including his extension
 const getFile = async (client, projectName, stepNum, fileName) => {
-
     var params = {
         Bucket: "stepby-projects",
         Key: `${client}/${projectName}/step${Number(stepNum)}/${fileName}`
     };
-
     return await s3.getObject(params).promise()
 }
 
 //function that
 const getShow = async (client, projectName, stepNum, fileName) => {
-
     var params = {
         Bucket: "stepby-projects",
         Key: `${client}/${projectName}/step${Number(stepNum)}/${fileName}`
     };
-
     return await s3.getObject(params).promise()
 }
 
@@ -174,11 +162,10 @@ const copyFiles = async (bizName, projectName, stepName, newName) => {
 
     // const projectNameCopy = projectName + "copy"
 
-    newName !== "" ? projName = newName : projName = `${projectName}Copy`
+    const projName=newName !== "" ? newName : `${projectName}Copy`
     await createProject(bizName, projName)
 
     list.Contents.forEach(element => {
-
         const first = element.Key.indexOf("/")
         const second = element.Key.indexOf("/", first + 1)
         const path = element.Key.slice(second)
