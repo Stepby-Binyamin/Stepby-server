@@ -33,7 +33,7 @@ const duplicateTemplate = async ({userId,templateId}) => {
     //TODO: duplicate-second
     const template = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")))
     const newTemplate = await templateData.create(template)
-    await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}-עותק(1)` , creatorId : userId})
+    await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}-עותק(1)` , creatorId : userId, lastApprove:Date.now()})
     return newTemplate._id 
 }
 const templateByUser = async (userId) => {
