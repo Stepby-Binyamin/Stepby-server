@@ -33,7 +33,7 @@ const duplicateTemplate = async ({userId,templateId}) => {
     //TODO: duplicate-second
     const template = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")))
     const newTemplate = await templateData.create(template)
-    await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}-עותק(1)` , creatorId : userId, lastApprove:Date.now()})
+    await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}-עותק(1)` , creatorId : userId, lastApprove:Date.now(),categories:[]})
     return newTemplate._id 
 }
 const templateByUser = async (userId) => {
@@ -45,28 +45,29 @@ const deleteTemplate = async (templateId) => {
 }
 const templateByCategoriesByUser = async (user) => {
     const categories = user.categories
-
-    let templateByCategory = []
+    let templatesByCategories = []
     const admins = await userModel.read({ permissions: "admin" }, "_id")
+    console.log("🚀 ~ file: template.service.js:50 ~ templateByCategoriesByUser ~ admins", admins)
     for (i of admins) {
         for (i of categories) {
-            templateByCategory = templateByCategory.concat(await templateData.read({ isTemplate: true, categories: { $in: i._id.toString() } }))
+            templatesByCategories = templatesByCategories.concat(await templateData.read({ isTemplate: true, categories: { $in: i._id.toString() } }))
         }
     }
-    let templateArr = []
+    let templatesToSubmit = []
     let flag = false
-    for (i of templateByCategory) {
-        for (j of templateArr) {
+    for (i of templatesByCategories) {
+        for (j of templatesToSubmit) {
             if (i._id.toString() == j._id.toString()) {
                 flag = true
             }
         }
         if (!flag) {
-            templateArr.push(i)
+            templatesToSubmit.push(i)
         }
         flag = false
     }
-    return templateArr
+    console.log("🚀 ~ file: template.service.js:69 ~ templateByCategoriesByUser ~ templateArr", templatesToSubmit)
+    return templatesToSubmit
 }
 
 
