@@ -49,6 +49,11 @@ const userSchema = new mongoose.Schema({
         type: Date,
     }
 });
-
+userSchema.index({
+    phoneNumber: 1,
+    permissions: 1,
+  }, {
+    unique: true,
+  });
 const userData = mongoose.model("user",userSchema);
 module.exports = {userData};

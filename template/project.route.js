@@ -79,17 +79,6 @@ router.post("/createProject/:templateId", authJWT, async (req, res) => {
     }
 });
 
-router.put("/downSteps/:projectId", authJWT, async (req, res) => {
-    try {
-        res.send(await projectService.downSteps({ templateId: req.params.projectId, stepIndex: req.body.stepIndex }));
-    } catch (error) {
-        console.log(error.message);
-        res
-            .status(error.code || 500)
-            .send({ message: error.message || "something wrong :(" });
-    }
-})
-
 router.put('/newStep/:projectId', authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
     // #swagger.description = 'create step'

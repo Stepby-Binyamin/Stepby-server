@@ -82,6 +82,18 @@ router.put('/edit-step/:templateId', authJWT, async (req, res) => {
         console.log(error.message);
     }
 })
+router.put("/replaceSteps", async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'change index of steps'
+    try {
+        res.send(await templateService.replaceSteps(req.body));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
 
 router.put('/addWidget', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
@@ -178,17 +190,6 @@ router.get('/categoriesByUser', authJWT, async (req, res) => {
         res.status(401).send("error");
         console.log(error.message);
 
-    }
-})
-
-router.put("/downSteps/:templateId", authJWT, async (req, res) => {
-    try {
-        res.send(await templateService.downSteps({ templateId: req.params.templateId, stepIndex: req.body.stepIndex }));
-    } catch (error) {
-        console.log(error.message);
-        res
-            .status(error.code || 500)
-            .send({ message: error.message || "something wrong :(" });
     }
 })
 
