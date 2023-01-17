@@ -8,7 +8,6 @@ const createTemplate = async ({ userId, templateName }) => {
     return template._id
 }
 const createTemplateAdmin = async ({ userId, permission, templateName, isGeneral, categories, phoneNumber }) => {
-    console.log("🚀 ~ file: template.service.js ~ line 11 ~ createTemplateAdmin ~ categories", categories)
     let project;
     const selectedCategories=categories.filter(category =>category.isActive===true);
     if (permission == 'admin') {
@@ -51,7 +50,6 @@ const templateByCategoriesByUser = async (user) => {
     const categories = user.categories
     let templatesByCategories = []
     const admins = await userModel.read({ permissions: "admin" }, "_id")
-    console.log("🚀 ~ file: template.service.js:50 ~ templateByCategoriesByUser ~ admins", admins)
     for (i of admins) {
         for (i of categories) {
             templatesByCategories = templatesByCategories.concat(await templateData.read({ isTemplate: true, categories: { $in: i._id.toString() } }))
@@ -70,8 +68,16 @@ const templateByCategoriesByUser = async (user) => {
         }
         flag = false
     }
-    console.log("🚀 ~ file: template.service.js:69 ~ templateByCategoriesByUser ~ templateArr", templatesToSubmit)
     return templatesToSubmit
+}
+const duplicateStep = async ({ stepId, templateId }) => {
+    //TODO: duplicate-second
+    //TODO: step location
+    const template = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
+    const step = template.steps[0]
+    const steps= await createStep({ templateId, stepName: step.name + "עותק (1)"
+                                    ,description: step.description, isCreatorApprove: step.isCreatorApprove })
+    return steps[steps.length-1]._id
 }
 
 
@@ -118,9 +124,8 @@ const projectUpdate = async (projectId) => {
         }  
     }
     console.log("🚀 ~ file: template.service.js:117 ~ projectUpdate ~ step", step)
-    await templateData.update({ _id: templateId }, { status: step.isCreatorApprove ? "admin" : "biz" })
+    await templateData.update({ _id: projectId }, { status: step.isCreatorApprove ? "biz" : "client" })
 }
-projectUpdate("63c513e4587fc8426276db06")
 const getStepById = async (projectId, stepId) => {
     const template = await templateData.readOne({ _id: projectId, "steps._id": stepId })
     const step=template.steps.find(step => step._id.toString()===stepId)
@@ -136,29 +141,29 @@ const getStepById = async (projectId, stepId) => {
 }
 const deleteStep = async ({ stepId, templateId }) => {
     await templateData.update({ _id: templateId }, { $pull: { steps: { _id: stepId } } })
+    await projectUpdate(templateId)
     return ("ok")
-}
-const duplicateStep = async ({ stepId, templateId }) => {
-    //TODO: duplicate-second
-    //TODO: step location
-    const template = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
-    console.log("🚀 ~ file: template.service.js ~ line 128 ~ duplicateStep ~ template", template)
-    const step = template.steps[0]
-    console.log("🚀 ~ file: template.service.js ~ line 130 ~ duplicateStep ~ step", step)
-    const steps= await createStep({ templateId, stepName: step.name + "עותק(1)"
-                                    ,description: step.description, isCreatorApprove: step.isCreatorApprove })
-    console.log("🚀 ~ file: template.service.js ~ line 133 ~ duplicateStep ~ steps", steps)
-    console.log("🚀 ~ file: template.service.js ~ line 131 ~ duplicateStep ~ steps", steps)
-    return steps[steps.length-1]._id
 }
 const createStep = async ({ templateId, stepName, description, isCreatorApprove }) => {
     if (!stepName) throw { message: "error step name" };
     if (!description) throw { message: "error description" };
     if (isCreatorApprove == undefined) throw { message: "error-approve" }
+
     const template = await templateData.readOne({ _id: templateId })
     if (!template) throw { message: "error-template" };
-    const index = template.steps.length
-    // console.log({ name: stepName, description, isCreatorApprove, index });
+    
+    let index;
+    if(!template.steps.length){
+        index = 0
+    }
+    else{
+        index = template.steps[0].index
+        for (let i = 1; i < template.steps.length; i++) {
+            if(template.steps[i].index>index)
+                index = template.steps[i].index
+        }
+        index++
+    }
     const project = await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
     return project.steps;
 }
@@ -173,7 +178,6 @@ const editStep = async ({ templateId, stepId, stepName, description, isCreatorAp
             new: true
         }
     )
-    // console.log('res: ', res);
     return res.steps.filter(v => v._id == stepId)[0];
 }
 const dataToStep = async ({ templateId, stepId, owner, type, title, content, isRequired }) => {
@@ -183,20 +187,14 @@ const dataToStep = async ({ templateId, stepId, owner, type, title, content, isR
     const res = await templateData.update({ _id: templateId, "steps._id": stepId }, { $push: { "steps.$.data": [{ owner, type, title, content, isRequired, index: data.length }] } })
     return res.steps.filter(v => v._id == stepId)[0];
 }
-const downSteps = async ({ templateId, stepIndex }) => {
+const replaceSteps =async ({templateId, stepId1,stepId2})=>{
     const template = await templateData.readOne({ _id: templateId }, "steps")
-    console.log("🚀 :", stepIndex < 0," 🚀 :",stepIndex >= template.steps.length - 1)
-
-    if (stepIndex < 0 || stepIndex >= template.steps.length - 1) {
-        throw { message: "error" }
-    }
-   
-    await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
-    await templateData.update({ _id: templateId, "steps.index": stepIndex + 1 }, { $set: { "steps.$.index": stepIndex }})
-    const project=await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
-    
-    if(!project.isTemplate && stepIndex===0){
-        // projectUpdate(templateId)
+    const index1=template.steps.find(step => step._id.toString() === stepId1).index
+    const index2=template.steps.find(step => step._id.toString() === stepId2).index
+    await templateData.update({ _id: templateId, "steps._id": stepId1 }, { $set: { "steps.$.index": index2 } })
+    await templateData.update({ _id: templateId, "steps._id": stepId2 }, { $set: { "steps.$.index": index1 } })
+    if(!template.isTemplate){
+        await projectUpdate(templateId)
     }
     return await templateData.readOne({ _id: templateId })
 }
@@ -219,36 +217,24 @@ const completeStep = async ({ projectId, stepId }) => {
     return "ok"
 }
 const currentStep = async ({ projectId, stepId }) => {
-    //לבדוק תאריך
+    //TODO check date 
     return await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": false, "steps.$.approvedDate": undefined } })
 
 }
-
 
 const addWidget = async ({ templateId,stepId,owner,type, title,content,isRequired }) => {
     if (!type) throw { message: "error- widget type" };
     if (!owner) throw { message: "error- owner " };
 
     const project=await templateData.update({_id: templateId, "steps._id": stepId},{$push:{"steps.$[s].data":{owner,type, title,content,isRequired}}},  { multi: true, arrayFilters: [{ "s._id": stepId }] })
-    console.log("🚀 ~ file: template.service.js:209 ~ addWidget ~ project", project)
+    // console.log("🚀 ~ file: template.service.js:209 ~ addWidget ~ project", project)
     return project
-}
-const downWidget = async ({ templateId, stepIndex }) => {
-    //TODO: 
-    // const stepsLength = await templateData.readOne({ _id: templateId }, "steps")
-    // if (stepIndex < 0 || stepIndex >= stepsLength.steps.length - 1) {
-    //     throw { message: "error" }
-    // }
-    // await templateData.update({ _id: templateId, "steps.index": stepIndex }, { $set: { "steps.$.index": -1 } })
-    // await templateData.update({ _id: templateId, "steps.index": stepIndex + 1 }, { $set: { "steps.$.index": stepIndex } })
-    // await templateData.update({ _id: templateId, "steps.index": -1 }, { $set: { "steps.$.index": stepIndex + 1 } })
-    // return await templateData.readOne({ _id: templateId })
 }
 
 module.exports = {
-    currentStep, downWidget, doneProject, renameTemplate, projectById, projectByUser,
+    currentStep, doneProject, renameTemplate, projectById, projectByUser,
     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
-    dataToStep, duplicateTemplate, deleteTemplate, createStep, downSteps, deleteStep, duplicateStep,
+    dataToStep, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep,
     updateStep, completeStep, editStep, getStepById,addWidget
 };
 
