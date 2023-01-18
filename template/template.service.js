@@ -75,7 +75,7 @@ const duplicateStep = async ({ stepId, templateId }) => {
     //TODO: step location
     const template = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const step = template.steps[0]
-    const steps= await createStep({ templateId, stepName: step.name + "עותק (1)"
+    const steps= await createStep({ templateId, stepName: step.name + "-עותק (1)"
                                     ,description: step.description, isCreatorApprove: step.isCreatorApprove })
     return steps[steps.length-1]._id
 }
@@ -116,15 +116,18 @@ const doneProject = async (projectId) => {
 const projectUpdate = async (projectId) => {
     const project = await templateData.readOne({ _id: projectId })
     console.log("🚀 ~ file: template.service.js:114 ~ projectUpdate ~ project", project.steps)
-    let step={index:project.steps.length+1}
+    let step={index:1000} //TODO
     for (let i = 0; i < project.steps.length; i++) {
         console.log("🚀 :", !project.steps[i].isApprove," 🚀 :",step.index>project.steps[i].index)
         if(!project.steps[i].isApprove && step.index>project.steps[i].index){
             step=project.steps[i]
         }  
     }
+    if (step.index===1000) {
+        return await doneProject(projectId)
+    }
     console.log("🚀 ~ file: template.service.js:117 ~ projectUpdate ~ step", step)
-    await templateData.update({ _id: projectId }, { status: step.isCreatorApprove ? "biz" : "client" })
+    return await templateData.update({ _id: projectId }, { status: step.isCreatorApprove ? "biz" : "client" })
 }
 const getStepById = async (projectId, stepId) => {
     const template = await templateData.readOne({ _id: projectId, "steps._id": stepId })
@@ -206,14 +209,12 @@ const updateStep = async ({ templateId, stepId, dataId, content }) => {
 }
 const completeStep = async ({ projectId, stepId }) => {
     await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": true, "steps.$.approvedDate": Date.now() } })
-    const nextStep_= await templateData.readOne({ _id: projectId, "steps.isApprove": false }, { 'steps.$': 1 })
-    if (!nextStep_) {
-        return doneProject(projectId)
-    }
-    nextStep_.steps[0].isCreatorApprove ?
-        await templateData.update({ _id: projectId }, { status: "biz" })
-         :
-        await templateData.update({ _id: projectId }, { status: "client" });
+    await projectUpdate(projectId)
+    return "ok"
+}
+const stepUndo = async ({ projectId, stepId }) => {
+    await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": false, "steps.$.approvedDate": Date.now() } })
+    await projectUpdate(projectId)
     return "ok"
 }
 const currentStep = async ({ projectId, stepId }) => {
@@ -235,7 +236,7 @@ module.exports = {
     currentStep, doneProject, renameTemplate, projectById, projectByUser,
     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
     dataToStep, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep,
-    updateStep, completeStep, editStep, getStepById,addWidget
+    updateStep, completeStep,stepUndo, editStep, getStepById,addWidget
 };
 
 

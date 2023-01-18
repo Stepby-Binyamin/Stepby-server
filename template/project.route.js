@@ -170,6 +170,17 @@ router.put("/completeStep/:projectId", authJWT, async (req, res) => {
             .send({ message: error.message || "something wrong :(" });
     }
 })
+router.put("/stepUndo/:projectId", authJWT, async (req, res) => {
+    console.log("stepUndo:", req.params.projectId, req.body);
+    try {
+        res.send(await projectService.stepUndo({ projectId: req.params.projectId, stepId: req.body.stepId }));
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
 
 router.delete('/deleteStep/:projectId', authJWT, async (req, res) => {
     // #swagger.tags = ['Project']
