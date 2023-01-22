@@ -3,11 +3,13 @@ const userModel = require('../user/user.model');
 const { newClient } = require("../user/user.service");
 
 const createTemplate = async ({ userId, templateName }) => {
+    console.log("🚀 ~ file: template.service.js:6 ~ createTemplate ")
     if (!templateName) throw { message: "error template name" };
     const template=await templateData.create({ name: templateName, creatorId: userId, isTemplate: true })
     return template._id
 }
 const createTemplateAdmin = async ({ userId, permission, templateName, isGeneral, categories, phoneNumber }) => {
+    console.log("🚀 ~ file: template.service.js:12 ~ createTemplateAdmin")
     let project;
     const selectedCategories=categories.filter(category =>category.isActive===true);
     if (permission == 'admin') {
@@ -25,10 +27,12 @@ const createTemplateAdmin = async ({ userId, permission, templateName, isGeneral
     return ({ message: project })
 }
 const renameTemplate = async ({ templateId, newName }) => {
+    console.log("🚀 ~ file: template.service.js:28 ~ renameTemplate ")
     await templateData.update({ _id: templateId }, { $set: { name: newName } })
     return ("ok")
 }
 const duplicateTemplate = async ({userId,templateId}) => {
+    console.log("🚀 ~ file: template.service.js:33 ~ duplicateTemplate ")
     //TODO: duplicate-second
     const template = JSON.parse(JSON.stringify(await templateData.readOne({ _id: templateId }, "-_id")))
     const newTemplate = await templateData.create(template)
@@ -39,14 +43,17 @@ const duplicateTemplate = async ({userId,templateId}) => {
         await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}-עותק(1)` , creatorId : userId, lastApprove:Date.now(),categories:[]})
     return newTemplate._id 
 }
-const templateByUser = async (userId) => {
+const templatesByUser = async (userId) => {
+    console.log("🚀 ~ file: template.service.js:47 ~ templatesByUser ")
     return await templateData.read({ isTemplate: true, creatorId: userId })
 }
 const deleteTemplate = async (templateId) => {
+    console.log("🚀 ~ file: template.service.js:46 ~ deleteTemplate")
     await templateData.remove({ _id: templateId })
     return ("ok")
 }
 const templateByCategoriesByUser = async (user) => {
+    console.log("🚀 ~ file: template.service.js:56 ~ templateByCategoriesByUser ")
     const categories = user.categories
     let templatesByCategories = []
     const admins = await userModel.read({ permissions: "admin" }, "_id")
@@ -71,6 +78,7 @@ const templateByCategoriesByUser = async (user) => {
     return templatesToSubmit
 }
 const duplicateStep = async ({ stepId, templateId }) => {
+    console.log("🚀 ~ file: template.service.js:74 ~ duplicateStep ")
     //TODO: duplicate-second
     //TODO: step location
     const template = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
@@ -82,6 +90,7 @@ const duplicateStep = async ({ stepId, templateId }) => {
 
 
 const createProject = async ({ user, projectName, templateId, isNewClient, clientId, fullName, phoneNumber, email }) => {
+    console.log("🚀 ~ file: template.service.js:85 ~ createProject ")
     if (!projectName) throw { message: "projectName is required" };
     if (!templateId) throw { message: "templateId is required" };
     if (isNewClient === undefined) throw { message: "isNewClient is required" };
@@ -90,6 +99,12 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
     // const duplicateTemplate= structuredClone(a)
     // console.log(duplicateTemplate);
     const newProject = await templateData.create(dup);
+    let currentStepIndex=100 //TODO
+    for (let i = 0; i < newProject.steps.length; i++) {
+        if(currentStepIndex>newProject.steps[i].index){
+            currentStepIndex=newProject.steps[i].index
+        }
+    }
     if (isNewClient) {
         client = await newClient({ fullName, phoneNumber, email }, user)
     }
@@ -98,56 +113,85 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
             creatorId: user._id,
             name: projectName,
             isTemplate: false,
-            status: newProject.steps[0].isCreatorApprove? "biz" : "client",
+            currentStepIndex: currentStepIndex,
+            status: newProject.steps.find(step=>step.index===currentStepIndex).isCreatorApprove? "biz" : "client",
             client: isNewClient? client._id : clientId
         });
     return newProject._id
 }
 const projectById = async (projectId) => {
+    console.log("🚀 ~ file: template.service.js:123 ~ projectById ")
     return await templateData.readOne({ _id: projectId })
 }
-const projectByUser = async (userId) => {
+const projectsByUser = async (userId) => {
+    console.log("🚀 ~ file: template.service.js:127 ~ projectsByUser ")
     return await templateData.read({ isTemplate: false, creatorId: userId })
 }
 const doneProject = async (projectId) => {
-    return await templateData.update({ _id: projectId }, { $set: { status: "done" } })
+    console.log("🚀 ~ file: template.service.js:120 ~ doneProject")
+    return await templateData.update({ _id: projectId }, { $set: { status: "done", currentStepIndex : null } })
 }
 
 const projectUpdate = async (projectId) => {
+    console.log("🚀 ~ file: template.service.js:124 ~ projectUpdate")
     const project = await templateData.readOne({ _id: projectId })
-    console.log("🚀 ~ file: template.service.js:114 ~ projectUpdate ~ project", project.steps)
-    let step={index:1000} //TODO
-    for (let i = 0; i < project.steps.length; i++) {
-        console.log("🚀 :", !project.steps[i].isApprove," 🚀 :",step.index>project.steps[i].index)
-        if(!project.steps[i].isApprove && step.index>project.steps[i].index){
-            step=project.steps[i]
-        }  
-    }
-    if (step.index===1000) {
+    if(project.steps.every(step => step.isApprove)){
         return await doneProject(projectId)
     }
-    console.log("🚀 ~ file: template.service.js:117 ~ projectUpdate ~ step", step)
-    return await templateData.update({ _id: projectId }, { status: step.isCreatorApprove ? "biz" : "client" })
+    const steps=[...project.steps].sort((a, b) => a.index < b.index ? -1 : 1)
+    console.log("🚀 ~ file: template.service.js:142 ~ projectUpdate ~ steps", steps)
+    const currentStep = steps.find(step => !step.isApprove)
+    console.log("🚀 ~ file: template.service.js:144 ~ projectUpdate ~ currentStep", currentStep)
+    // let step;
+    // let nextStepIndex=project.currentStepIndex;
+    // do {
+    //     nextStepIndex++
+    //     step=project.steps.find(step => step.index === nextStepIndex)
+    // } while (!step);
+
+    // let step={index:1000} //TODO
+    // for (let i = 0; i < project.steps.length; i++) {
+    //     console.log("🚀 :", !project.steps[i].isApprove," 🚀 :",step.index>project.steps[i].index)
+    //     if(!project.steps[i].isApprove && step.index>project.steps[i].index){
+    //         step=project.steps[i]
+    //     }  
+    // }
+    // if (step.index===1000) {
+    //     return await doneProject(projectId)
+    // }
+    const p= await templateData.update({ _id: projectId }, { currentStepIndex : currentStep.index , status: currentStep.isCreatorApprove ? "biz" : "client" })
+    console.log("🚀 ~ file: template.service.js:159 ~ projectUpdate ~ p", p)
+    return p
 }
 const getStepById = async (projectId, stepId) => {
-    const template = await templateData.readOne({ _id: projectId, "steps._id": stepId })
-    const step=template.steps.find(step => step._id.toString()===stepId)
-    const nextStepName=template.steps.find(step_ => step_.index===step.index+1)?.name
-    const isCurrent=step.index===[...template.steps].sort((a, b) => a.index < b.index ? -1 : 1).find(step_ => !step_.isApprove).index
+    console.log("🚀 ~ file: template.service.js:161 ~ getStepById ")
+    const template = await templateData.readOne({ _id: projectId, "steps._id": stepId }, { 'steps.$': 1 })
+    const stepById=template.steps[0]
+    // const stepById=template.steps.find(step => step._id.toString()===stepId)
+
+    const nextStepName= [...template.steps].sort((a, b) => a.index < b.index ? -1 : 1).find(step_ => !step_.isApprove)?.name
+
+    // const nextStepName=template.steps.find(step_ => step_.index===step.index+1)?.name
+    // const isCurrent=step.index===[...template.steps].sort((a, b) => a.index < b.index ? -1 : 1).find(step_ => !step_.isApprove).index
     return { bizName: template.creatorId.firstName ,
              creatorIdPermissions:template.creatorId.permissions , 
              client: template.client,
-             isCurrent, 
+             isCurrent:template.currentStepIndex===stepById?.index, 
              nextStepName , 
-             step , 
+             step: stepById , 
              tempName: template.name }
 }
 const deleteStep = async ({ stepId, templateId }) => {
-    await templateData.update({ _id: templateId }, { $pull: { steps: { _id: stepId } } })
-    await projectUpdate(templateId)
-    return ("ok")
+    console.log("🚀 ~ file: template.service.js:179 ~ deleteStep ")
+    const template=await templateData.update({ _id: templateId }, { $pull: { steps: { _id: stepId } } })
+    console.log("🚀 ~ file: template.service.js:183 ~ deleteStep ~ template", template)
+    if(!template.isTemplate){
+        await projectUpdate(templateId)
+    }
+    return "ok"
 }
 const createStep = async ({ templateId, stepName, description, isCreatorApprove }) => {
+    console.log("🚀 ~ file: template.service.js:172 ~ createStep")
     if (!stepName) throw { message: "error step name" };
     if (!description) throw { message: "error description" };
     if (isCreatorApprove == undefined) throw { message: "error-approve" }
@@ -171,6 +215,7 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
     return project.steps;
 }
 const editStep = async ({ templateId, stepId, stepName, description, isCreatorApprove }) => {
+    console.log("🚀 ~ file: template.service.js:195 ~ editStep")
     const template = templateData.readOne({ _id: templateId });
     if (!template) throw new Error("template not exist");
     const res = await templateData.update(
@@ -184,6 +229,7 @@ const editStep = async ({ templateId, stepId, stepName, description, isCreatorAp
     return res.steps.filter(v => v._id == stepId)[0];
 }
 const dataToStep = async ({ templateId, stepId, owner, type, title, content, isRequired }) => {
+    console.log("🚀 ~ file: template.service.js:223 ~ dataToStep ")
     // console.log({ templateId, stepId, owner, type, title, content, isRequired });
     const step = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const data = step.steps[0].data
@@ -191,39 +237,48 @@ const dataToStep = async ({ templateId, stepId, owner, type, title, content, isR
     return res.steps.filter(v => v._id == stepId)[0];
 }
 const replaceSteps =async ({templateId, stepId1,stepId2})=>{
-    const template = await templateData.readOne({ _id: templateId }, "steps")
+    console.log("🚀 ~ file: template.service.js:215 ~ replaceSteps")
+    const template = await templateData.readOne({ _id: templateId })
+    console.log("🚀 ~ file: template.service.js:235 ~ replaceSteps ~ template", template)
     const index1=template.steps.find(step => step._id.toString() === stepId1).index
     const index2=template.steps.find(step => step._id.toString() === stepId2).index
     await templateData.update({ _id: templateId, "steps._id": stepId1 }, { $set: { "steps.$.index": index2 } })
     await templateData.update({ _id: templateId, "steps._id": stepId2 }, { $set: { "steps.$.index": index1 } })
+    console.log("🚀 ~ file: template.service.js:241 ~ replaceSteps ~ template.isTemplate", template.isTemplate)
+    
     if(!template.isTemplate){
         await projectUpdate(templateId)
     }
     return await templateData.readOne({ _id: templateId })
 }
 const updateStep = async ({ templateId, stepId, dataId, content }) => {
+    console.log("🚀 ~ file: template.service.js:235 ~ updateStep")
     //לא גמור
     await templateData.update({ _id: templateId, "steps._id": stepId, "steps.$.data._id": dataId },
              { $set: { "steps.$[s].data.$[d].content": content } }, { multi: true, arrayFilters: [{ "s._id": stepId }, { "d._id": dataId }] })
     return "ok"
 }
 const completeStep = async ({ projectId, stepId }) => {
+    console.log("🚀 ~ file: template.service.js:233 ~ completeStep ")
     await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": true, "steps.$.approvedDate": Date.now() } })
     await projectUpdate(projectId)
     return "ok"
 }
 const stepUndo = async ({ projectId, stepId }) => {
+    console.log("🚀 ~ file: template.service.js:238 ~ stepUndo")
     await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": false, "steps.$.approvedDate": Date.now() } })
     await projectUpdate(projectId)
     return "ok"
 }
 const currentStep = async ({ projectId, stepId }) => {
-    //TODO check date 
-    return await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": false, "steps.$.approvedDate": undefined } })
+    console.log("🚀 ~ file: template.service.js:244 ~ currentStep ")
+    const project = await templateData.readOne({ _id: projectId, "steps._id": stepId }, { 'steps.$': 1 })
+    return await templateData.update({ _id: projectId }, { currentStepIndex : project.steps[0]?.index , status: project.steps[0]?.isCreatorApprove ? "biz" : "client" })
 
 }
 
 const addWidget = async ({ templateId,stepId,owner,type, title,content,isRequired }) => {
+    console.log("🚀 ~ file: template.service.js:269 ~ addWidget ")
     if (!type) throw { message: "error- widget type" };
     if (!owner) throw { message: "error- owner " };
 
@@ -233,10 +288,8 @@ const addWidget = async ({ templateId,stepId,owner,type, title,content,isRequire
 }
 
 module.exports = {
-    currentStep, doneProject, renameTemplate, projectById, projectByUser,
-    createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templateByUser,
+    currentStep, doneProject, renameTemplate, projectById, projectsByUser,
+    createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templatesByUser,
     dataToStep, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep,
     updateStep, completeStep,stepUndo, editStep, getStepById,addWidget
 };
-
-

@@ -24,6 +24,9 @@ const projectSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'category'
     }],
+    currentStepIndex:{    
+        type: Number,
+    },
     status: {
         type: String,
         enum: ['done', 'biz', 'client']
