@@ -4,7 +4,9 @@ const router = express.Router();
 const { authJWT } = require("../auth/auth");
 const { Router } = require("express");
 
-
+router.get("/test", (req, res)=>{
+    res.send("success");
+})
 
 router.get("/getStepById/:templateId/:stepId",/*  authJWT, */ async (req, res) => {
     try {
@@ -169,16 +171,14 @@ router.put('/dataToStep/:templateId', authJWT, async (req, res) => {
     }
 })
 
-router.get('/templateByUser', authJWT, async (req, res) => {
+router.get('/templatesByUser', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get template by user'
     try {
-        res.send(await templateService.templateByUser(req.user._id));
-
+        res.send(await templateService.templatesByUser(req.user._id));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
-
     }
 })
 

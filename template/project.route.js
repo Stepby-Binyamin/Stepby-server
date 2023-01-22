@@ -4,13 +4,12 @@ const projectService = require("./template.service");
 const { authJWT } = require("../auth/auth");
 
 
-router.get('/projectByUser', authJWT, async (req, res) => {
-    console.log("/projectByUser8", req.user._id);
+router.get('/projectsByUser', authJWT, async (req, res) => {
+    console.log("🚀 ~ file: project.route.js:22 ~ router.get ~ projectsByUser")
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get project by user'
     try {
-        const result = await projectService.projectByUser(req.user._id)
-        console.log("/projectByUser Result",result);  
+        const result = await projectService.projectsByUser(req.user._id)
         res.send(result);
 
     } catch (error) {
@@ -160,7 +159,7 @@ router.put("/currentStep/:projectId", authJWT, async (req, res) => {
 })
 
 router.put("/completeStep/:projectId", authJWT, async (req, res) => {
-    console.log("1212", req.params.projectId, req.body);
+    console.log("🚀 ~ file: project.route.js:162 ~ router.put ~ completeStep", req.params.projectId, req.body)
     try {
         res.send(await projectService.completeStep({ projectId: req.params.projectId, stepId: req.body.stepId }));
     } catch (error) {
