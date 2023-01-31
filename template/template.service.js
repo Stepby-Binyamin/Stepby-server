@@ -1,3 +1,4 @@
+const nodemailer = require('nodemailer');
 const templateData = require('./template.model')
 const userModel = require('../user/user.model');
 const { newClient } = require("../user/user.service");
@@ -147,25 +148,23 @@ const projectUpdate = async (projectId) => {
 
     const res = await templateData.update({ _id: projectId },{ $set: { "steps.$[el].approvedDate": Date.now() }},{arrayFilters: [{ "el._id": currentStep._id }],new: true})
 
-
     const p= await templateData.update({ _id: projectId }, { currentStepIndex : currentStep.index , status: currentStep.isCreatorApprove ? "biz" : "client" })
     console.log("🚀 ~ file: template.service.js:159 ~ projectUpdate ~ p", p)
     return p
 }
 const getStepById = async (projectId, stepId) => {
     console.log("🚀 ~ file: template.service.js:161 ~ getStepById ")
-    const template = await templateData.readOne({ _id: projectId, "steps._id": stepId }, { 'steps.$': 1 })
-    const stepById=template.steps[0]
-    // const stepById=template.steps.find(step => step._id.toString()===stepId)
+    const template = await templateData.readOne({ _id: projectId})
+    const stepById=template.steps.find(step => step._id.toString()===stepId)
+    const sortedSteps= [...template.steps].sort((a, b) => a.index < b.index ? -1 : 1)
+    const indexStepById=sortedSteps.findIndex(step => step._id.toString()===stepId)
+    let nextStepName=indexStepById+1===sortedSteps.length?"":sortedSteps[indexStepById+1]
 
-    const nextStepName= [...template.steps].sort((a, b) => a.index < b.index ? -1 : 1).find(step_ => !step_.isApprove)?.name
-
-    // const nextStepName=template.steps.find(step_ => step_.index===step.index+1)?.name
-    // const isCurrent=step.index===[...template.steps].sort((a, b) => a.index < b.index ? -1 : 1).find(step_ => !step_.isApprove).index
     return { bizName: template.creatorId.firstName ,
              creatorIdPermissions:template.creatorId.permissions , 
              client: template.client,
              isCurrent:template.currentStepIndex===stepById?.index, 
+             index: stepById?.index,
              nextStepName , 
              step: stepById , 
              tempName: template.name }
@@ -253,6 +252,30 @@ const completeStep = async ({ projectId, stepId }) => {
     if(project.currentStepIndex===project.steps.find(step => step._id.toString()===stepId).index){
         await projectUpdate(projectId)
     }
+    //TODO send mail
+    // const transporter = nodemailer.createTransport({
+    //     service: 'gmail',
+    //     auth: {
+    //       user: process.env.MY_EMAIL,
+    //       pass: process.env.MY_EMAIL_PASS
+    //     }
+    // });
+    // console.log("🚀 ~ file: template.service.js:262 ~ completeStep ~ process.env.MY_EMAIL", process.env.MY_EMAIL)
+    // console.log("🚀 ~ file: template.service.js:262 ~ completeStep ~ process.env.MY_EMAIL_PASS", process.env.MY_EMAIL_PASS)
+      
+    // const mailOptions = {
+    //     from: process.env.MY_EMAIL,
+    //     to: 'sagimaatuf@gmail.com',   //TODO 
+    //     subject: 'Sending Email using Node.js',
+    //     text: 'That was easy!'
+    //   };
+      
+    //   transporter.sendMail(mailOptions, (error, info)=>{
+    //     error?
+    //       console.log("🚀 ~ file: template.service.js:273 ~ transporter.sendMail ~ error", error)
+    //       :
+    //       console.log('🚀Email sent: ' + info.response);
+    //   });
     return "ok"
 }
 const stepUndo = async ({ projectId, stepId }) => {
