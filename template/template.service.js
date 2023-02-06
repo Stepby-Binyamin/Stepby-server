@@ -158,7 +158,7 @@ const getStepById = async (projectId, stepId) => {
     const stepById=template.steps.find(step => step._id.toString()===stepId)
     const sortedSteps= [...template.steps].sort((a, b) => a.index < b.index ? -1 : 1)
     const indexStepById=sortedSteps.findIndex(step => step._id.toString()===stepId)
-    let nextStepName=indexStepById+1===sortedSteps.length?"":sortedSteps[indexStepById+1]
+    let nextStepName= indexStepById+1!==sortedSteps.length ? sortedSteps[indexStepById+1].name : null
 
     return { bizName: template.creatorId.firstName ,
              creatorIdPermissions:template.creatorId.permissions , 
