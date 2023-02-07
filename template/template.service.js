@@ -102,27 +102,18 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
     // const duplicateTemplate= structuredClone(a)
     // console.log(duplicateTemplate);
     const newProject = await templateData.create(dup);
-    let currentStepIndex=100 //TODO
-    for (let i = 0; i < newProject.steps.length; i++) {
-        if(currentStepIndex>newProject.steps[i].index){
-            currentStepIndex=newProject.steps[i].index
-        }
-    }
+
     if (isNewClient) {
         client = await newClient({ fullName, phoneNumber, email }, user)
     }
     await templateData.update({ _id: newProject._id },
-        {
-            creatorId: user._id,
-            name: projectName,
-            isTemplate: false,
-            currentStepIndex: currentStepIndex,
-            status: newProject.steps.find(step=>step.index===currentStepIndex).isCreatorApprove? "biz" : "client",
-            client: isNewClient? client._id : clientId
-        });
-    const res = await templateData.update({ _id: newProject._id },{ $set: { "steps.$[el].approvedDate": Date.now() }},{arrayFilters: [{ "el.index": currentStepIndex }],new: true})
-
-    return newProject._id
+    {
+        creatorId: user._id,
+        name: projectName,
+        isTemplate: false,
+        client: isNewClient? client._id : clientId
+    });
+    return await projectUpdate(newProject._id)
 }
 const projectById = async (projectId) => {
     console.log("🚀 ~ file: template.service.js:123 ~ projectById ")
@@ -150,9 +141,9 @@ const projectUpdate = async (projectId) => {
 
     const res = await templateData.update({ _id: projectId },{ $set: { "steps.$[el].approvedDate": Date.now() }},{arrayFilters: [{ "el._id": currentStep._id }],new: true})
 
-    const p= await templateData.update({ _id: projectId }, { currentStepIndex : currentStep.index , status: currentStep.isCreatorApprove ? "biz" : "client" ,lastApprove: Date.now()})
-    console.log("🚀 ~ file: template.service.js:159 ~ projectUpdate ~ p", p)
-    return p
+    const project_= await templateData.update({ _id: projectId }, { currentStepIndex : currentStep.index , status: currentStep.isCreatorApprove ? "biz" : "client" ,lastApprove: Date.now()})
+    console.log("🚀 ~ file: template.service.js:159 ~ projectUpdate ~ p", project_)
+    return project_
 }
 const getStepById = async (projectId, stepId) => {
     console.log("🚀 ~ file: template.service.js:161 ~ getStepById ")
@@ -201,6 +192,7 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
         }
         index++
     }
+    console.log("🚀 ~ file: template.service.js:204 ~ createStep ~ index", index)
     const project = await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
     return project.steps;
 }
@@ -255,29 +247,29 @@ const completeStep = async ({ projectId, stepId }) => {
         await projectUpdate(projectId)
     }
     //TODO send mail
-    // const transporter = nodemailer.createTransport({
-    //     service: 'gmail',
-    //     auth: {
-    //       user: process.env.MY_EMAIL,
-    //       pass: process.env.MY_EMAIL_PASS
-    //     }
-    // });
-    // console.log("🚀 ~ file: template.service.js:262 ~ completeStep ~ process.env.MY_EMAIL", process.env.MY_EMAIL)
-    // console.log("🚀 ~ file: template.service.js:262 ~ completeStep ~ process.env.MY_EMAIL_PASS", process.env.MY_EMAIL_PASS)
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.MY_EMAIL,
+          pass: process.env.MY_EMAIL_PASS
+        }
+    });
+    console.log("🚀 ~ file: template.service.js:262 ~ completeStep ~ process.env.MY_EMAIL", process.env.MY_EMAIL)
+    console.log("🚀 ~ file: template.service.js:262 ~ completeStep ~ process.env.MY_EMAIL_PASS", process.env.MY_EMAIL_PASS)
       
-    // const mailOptions = {
-    //     from: process.env.MY_EMAIL,
-    //     to: 'sagimaatuf@gmail.com',   //TODO 
-    //     subject: 'Sending Email using Node.js',
-    //     text: 'That was easy!'
-    //   };
+    const mailOptions = {
+        from: process.env.MY_EMAIL,
+        to: process.env.MY_EMAIL,   //TODO 
+        subject: 'Sending Email using Node.js',
+        text: 'That was easy!'
+      };
       
-    //   transporter.sendMail(mailOptions, (error, info)=>{
-    //     error?
-    //       console.log("🚀 ~ file: template.service.js:273 ~ transporter.sendMail ~ error", error)
-    //       :
-    //       console.log('🚀Email sent: ' + info.response);
-    //   });
+      transporter.sendMail(mailOptions, (error, info)=>{
+        error?
+          console.log("🚀 ~ file: template.service.js:273 ~ transporter.sendMail ~ error", error)
+          :
+          console.log('🚀Email sent: ' + info.response);
+      });
     return "ok"
 }
 const stepUndo = async ({ projectId, stepId }) => {
