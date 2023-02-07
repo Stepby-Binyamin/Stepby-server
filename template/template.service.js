@@ -120,6 +120,8 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
             status: newProject.steps.find(step=>step.index===currentStepIndex).isCreatorApprove? "biz" : "client",
             client: isNewClient? client._id : clientId
         });
+    const res = await templateData.update({ _id: newProject._id },{ $set: { "steps.$[el].approvedDate": Date.now() }},{arrayFilters: [{ "el.index": currentStepIndex }],new: true})
+
     return newProject._id
 }
 const projectById = async (projectId) => {
@@ -148,7 +150,7 @@ const projectUpdate = async (projectId) => {
 
     const res = await templateData.update({ _id: projectId },{ $set: { "steps.$[el].approvedDate": Date.now() }},{arrayFilters: [{ "el._id": currentStep._id }],new: true})
 
-    const p= await templateData.update({ _id: projectId }, { currentStepIndex : currentStep.index , status: currentStep.isCreatorApprove ? "biz" : "client" })
+    const p= await templateData.update({ _id: projectId }, { currentStepIndex : currentStep.index , status: currentStep.isCreatorApprove ? "biz" : "client" ,lastApprove: Date.now()})
     console.log("🚀 ~ file: template.service.js:159 ~ projectUpdate ~ p", p)
     return p
 }
