@@ -61,7 +61,8 @@ const login = async (data) => {
 const newClient = async (data, user) => {
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
-    const clientId = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
+    //TODO check if the user not existing
+    const clientId = await userModel.create({ fullName, phoneNumber, email, permissions: "client", bizId:user._id });
     await userModel.update({ _id: user._id }, { $push: { clients: clientId._id} });
     return clientId;
 }
