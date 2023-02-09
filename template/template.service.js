@@ -243,10 +243,14 @@ const updateStep = async ({ templateId, stepId, dataId, content }) => {
 const completeStep = async ({ projectId, stepId }) => {
     console.log("🚀 ~ file: template.service.js:233 ~ completeStep ")
     const project =await templateData.update({ _id: projectId, "steps._id": stepId }, { $set: { "steps.$.isApprove": true, "steps.$.approvedDate": Date.now() } })
-    if(project.currentStepIndex===project.steps.find(step => step._id.toString()===stepId).index){
+    const step=project.steps.find(step => step._id.toString()===stepId)
+    if(project.currentStepIndex===step.index){
         await projectUpdate(projectId)
     }
-    //TODO send mail
+
+    const user = await userModel.readOne({ _id: step.isCreatorApprove? project.client:project.creatorId})
+    const emailTo= user.email
+
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -254,14 +258,12 @@ const completeStep = async ({ projectId, stepId }) => {
           pass: process.env.MY_EMAIL_PASS
         }
     });
-    console.log("🚀 ~ file: template.service.js:262 ~ completeStep ~ process.env.MY_EMAIL", process.env.MY_EMAIL)
-    console.log("🚀 ~ file: template.service.js:262 ~ completeStep ~ process.env.MY_EMAIL_PASS", process.env.MY_EMAIL_PASS)
       
     const mailOptions = {
         from: process.env.MY_EMAIL,
-        to: process.env.MY_EMAIL,   //TODO 
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
+        to: emailTo,  
+        subject: 'Sending Email using Node.js',  //TODO
+        text: 'That was easy!'                   //TODO
       };
       
       transporter.sendMail(mailOptions, (error, info)=>{
