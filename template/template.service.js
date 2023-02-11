@@ -262,8 +262,8 @@ const completeStep = async ({ projectId, stepId }) => {
     const mailOptions = {
         from: process.env.MY_EMAIL,
         to: emailTo,  
-        subject: 'Sending Email using Node.js',  //TODO
-        text: 'That was easy!'                   //TODO
+        subject: `הושלם שלב בפרויקט: ${project.name}`,  //TODO
+        text: `השלב שהושלם: ${step.name}`                  //TODO
       };
       
       transporter.sendMail(mailOptions, (error, info)=>{
