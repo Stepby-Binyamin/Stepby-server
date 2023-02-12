@@ -258,21 +258,19 @@ const completeStep = async ({ projectId, stepId }) => {
           pass: process.env.MY_EMAIL_PASS
         }
     });
-      
-    const mailOptions = {
-        from: process.env.MY_EMAIL,
-        to: emailTo,  
-        subject: `הושלם שלב בפרויקט: ${project.name}`,  //TODO
-        text: `השלב שהושלם: ${step.name}`                  //TODO
-      };
-      
-      transporter.sendMail(mailOptions, (error, info)=>{
-        error?
-          console.log("🚀 ~ file: template.service.js:273 ~ transporter.sendMail ~ error", error)
-          :
-          console.log('🚀Email sent: ' + info.response);
-      });
-    return "ok"
+      try{
+        const info=await  transporter.sendMail({
+            from: process.env.MY_EMAIL,
+            to: emailTo,  
+            subject: `הושלם שלב בפרויקט: ${project.name}`,  //TODO
+            text: `השלב שהושלם: ${step.name}`                  //TODO
+          })
+        console.log('🚀Email sent: ' + info.response);
+        return info
+      }catch(err){
+        console.log("🚀 ~ file: template.service.js:273 ~ transporter.sendMail ~ error", err)
+        return err
+      }
 }
 const stepUndo = async ({ projectId, stepId }) => {
     console.log("🚀 ~ file: template.service.js:238 ~ stepUndo")
