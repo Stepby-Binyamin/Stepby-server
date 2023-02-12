@@ -265,7 +265,7 @@ const completeStep = async ({ projectId, stepId }) => {
             subject: `הושלם שלב בפרויקט: ${project.name}`,  //TODO
             text: `השלב שהושלם: ${step.name}`                  //TODO
           })
-        console.log('🚀Email sent: ' + info.response);
+        console.log('🚀 ~ Email sent: ' + info.response);
         return info
       }catch(err){
         console.log("🚀 ~ file: template.service.js:273 ~ transporter.sendMail ~ error", err)
