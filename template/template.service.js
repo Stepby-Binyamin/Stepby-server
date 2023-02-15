@@ -269,7 +269,7 @@ const completeStep = async ({ projectId, stepId }) => {
         return info
       }catch(err){
         console.log("🚀 ~ file: template.service.js:273 ~ transporter.sendMail ~ error", err)
-        throw err
+        return err
       }
 }
 const stepUndo = async ({ projectId, stepId }) => {

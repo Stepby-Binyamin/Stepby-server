@@ -163,6 +163,7 @@ router.put("/completeStep/:projectId", authJWT, async (req, res) => {
     try {
         res.send(await projectService.completeStep({ projectId: req.params.projectId, stepId: req.body.stepId }));
     } catch (error) {
+        console.log("🚀 ~ file: project.route.js:166 ~ router.put ~ error", error)
         console.log(error.message);
         res
             .status(error.code || 500)
