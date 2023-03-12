@@ -31,19 +31,14 @@ router.post('/create-project', async (req, res) => {
     }
 })
 router.post('/create-steps', async (req, res) => {
-    console.log('/files/create-Steps111', req.body);
-
     try {
-        const { body } = req
-        const bizName = body.bizName + body._id
-        const result = await filesControl.createSteps(bizName, body.name, body.steps.name)
+        console.log("🚀 ~ file: files.route.js:50 ~ router.post ~ create-steps -req.body", req.body)
+        const result = await filesControl.createSteps(req.body.bizId, req.body.projectId, req.body.stepId)
+        console.log("🚀 ~ file: files.route.js:39 ~ router.post ~ result", result)
 
-        console.log('/files/create-Steps222', result);
-
-        res.status(200).send(`All ${body.steps.name} steps has been created under http://stepbyprojects.s3.amazonaws.com/${bizName}/${body.name}/${body.steps.name}`)
-
+        res.status(200).send(`All ${req.body.stepId} steps has been created under https://stepby-files.s3.eu-central-1.amazonaws.com/${req.body.bizId}/${req.body.projectId}/${req.body.stepId}/`)
     } catch (err) {
-        console.log(err);
+        console.log("🚀 ~ file: files.route.js:43 ~ router.post ~ err", err)
         res.status(400).send(err);
     }
 })

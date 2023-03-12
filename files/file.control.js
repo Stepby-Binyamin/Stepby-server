@@ -59,12 +59,12 @@ const createProject = async (bizId, projectId) => {
 }
 
 //function that create all the project steps where will be filled with files along the project
-const createSteps = async (bizName, projectName, stepName) => {
+const createSteps = async (bizId, projectId, stepId) => {
     var params = {
         Bucket: BUCKET_NAME,
-        Key: `${bizName}/${projectName}/${stepName}/`,
+        Key: `${bizId}/${projectId}/${stepId}/`,
     };
-    await s3.putObject(params).promise()
+    return await s3.putObject(params).promise()
 }
 
 //function that upload jpg or pdf to specific path (Key)
