@@ -6,17 +6,13 @@ const upload = multer()
 const filesControl = require("./file.control");
 
 router.post('/create-biz', async (req, res) => {
-    console.log('/files/create-biz111', req.body);
     try {
-        const { body } = req
-        const client = body.firstName + body.lastName
-        const bizName = body.bizName + body._id
-        const result = await filesControl.createBiz(bizName)
+        console.log("🚀 ~ file: files.route.js:22 ~ router.post ~create-biz ~ req.body",  req.body)
+        const client = req.body.firstName + req.body.lastName
+        const result = await filesControl.createBiz( req.body._id.toString())
+        console.log("🚀 ~ file: files.route.js:15 ~ router.post ~ result", result)
 
-        console.log('/files/create-biz222', result);
-
-        res.status(200).send(`The folder for client ${client} was created at  http://stepbyprojects.s3.amazonaws.com/${bizName}`)
-
+        res.status(200).send(`The folder for client ${client} was created at  http://stepbyprojects.s3.amazonaws.com/${body._id}`)
     } catch (err) {
         console.log(err);
         res.status(400).send("error", err.message);
