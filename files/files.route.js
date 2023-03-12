@@ -11,25 +11,20 @@ router.post('/create-biz', async (req, res) => {
         const client = req.body.firstName + req.body.lastName
         const result = await filesControl.createBiz( req.body._id.toString())
         console.log("🚀 ~ file: files.route.js:15 ~ router.post ~ result", result)
-
-        res.status(200).send(`The folder for client ${client} was created at  http://stepbyprojects.s3.amazonaws.com/${body._id}`)
+        
+        res.status(200).send(`The folder for client ${client} was created at  https://stepby-files.s3.eu-central-1.amazonaws.com/${req.body._id}/`)
     } catch (err) {
         console.log(err);
         res.status(400).send("error", err.message);
     }
 })
 router.post('/create-project', async (req, res) => {
-    console.log('/files/create-project111', req.body);
     try {
-        const { body } = req
-        const client = body.firstName + body.lastName
-        const bizName = body.bizName + body._id
-        const result = await filesControl.createProject(bizName, body.name)
-
-        console.log('/files/createProject222', result);
-
-        res.status(200).send(`${client}'s Busness, ${body.bizName}, was created at  http://stepbyprojects.s3.amazonaws.com/${bizName}/${body.name}`)
-
+        console.log("🚀 ~ file: files.route.js:38 ~ router.post ~ create-project ~  req.body", req.body)
+        const result = await filesControl.createProject(req.body.bizId, req.body.projectId)
+        console.log("🚀 ~ file: files.route.js:28 ~ router.post ~ result", result)
+        
+        res.status(200).send(`bizId: ${req.body.bizId}, was created at https://stepby-files.s3.eu-central-1.amazonaws.com/${req.body.bizId}/${req.body.projectId}/`)
     } catch (err) {
         console.log(err);
         res.status(400).send("error", err.message);

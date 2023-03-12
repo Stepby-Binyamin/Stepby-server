@@ -50,10 +50,10 @@ const createClient = async (client) => {
 // key is the path / folder name (the "/" is import - meant thats a folder)
 // this function can be used to add a new step too further in the project, just configure 
 // the projectName = projectnName/step#  
-const createProject = async (bizName, projectName) => {
+const createProject = async (bizId, projectId) => {
     var params = {
         Bucket: BUCKET_NAME,
-        Key: `${bizName}/${projectName}/`,
+        Key: `${bizId}/${projectId}/`,
     };
     return await s3.putObject(params).promise()
 }
