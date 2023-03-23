@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const templateData = require('./template.model')
 const userModel = require('../user/user.model');
+const filesControl = require('../files/file.control');
 const { newClient } = require("../user/user.service");
 
 const createTemplate = async ({ userId, templateName }) => {
@@ -43,7 +44,8 @@ const duplicateTemplate = async ({userId,templateId}) => {
     user.permissions === "admin"?
         await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}-עותק(1)` , creatorId : userId, lastApprove:Date.now()})
         :
-        await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}-עותק(1)` , creatorId : userId, lastApprove:Date.now(),categories:[]})
+        await templateData.update({ _id: newTemplate._id }, { name: `${newTemplate.name}-עותק(1)` , creatorId : userId, lastApprove:Date.now(),categories:[]});
+    await filesControl.copyFiles(`${userId}/${templateId}`,`${userId}/${newTemplate._id}`)
     return newTemplate._id 
 }
 const templatesByUser = async (userId) => {
@@ -86,8 +88,10 @@ const duplicateStep = async ({ stepId, templateId }) => {
     //TODO: step location
     const template = await templateData.readOne({ _id: templateId, "steps._id": stepId }, { 'steps.$': 1 })
     const step = template.steps[0]
+
     const steps= await createStep({ templateId, stepName: step.name + "-עותק (1)"
-                                    ,description: step.description, isCreatorApprove: step.isCreatorApprove })
+                                    ,description: step.description, isCreatorApprove: step.isCreatorApprove,data:step.data}); 
+    await filesControl.copyFiles(`${template.creatorId._id}/${templateId}/${stepId}`,`${template.creatorId._id}/${templateId}/${steps[steps.length-1]._id}`,true)  
     return steps[steps.length-1]._id
 }
 
@@ -113,6 +117,7 @@ const createProject = async ({ user, projectName, templateId, isNewClient, clien
         isTemplate: false,
         client: isNewClient? client._id : clientId
     });
+    await filesControl.copyFiles(`${user._id}/${templateId}`,`${user._id}/${newProject._id}`)
     return await projectUpdate(newProject._id)
 }
 const projectById = async (projectId) => {
@@ -171,7 +176,7 @@ const deleteStep = async ({ stepId, templateId }) => {
     }
     return "ok"
 }
-const createStep = async ({ templateId, stepName, description, isCreatorApprove }) => {
+const createStep = async ({ templateId, stepName, description, isCreatorApprove, data }) => {
     console.log("🚀 ~ file: template.service.js:172 ~ createStep")
     if (!stepName) throw { message: "error step name" };
     if (!description) throw { message: "error description" };
@@ -193,7 +198,7 @@ const createStep = async ({ templateId, stepName, description, isCreatorApprove 
         index++
     }
     console.log("🚀 ~ file: template.service.js:204 ~ createStep ~ index", index)
-    const project = await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index }] } })
+    const project = await templateData.update({ _id: templateId }, { $push: { steps: [{ name: stepName, description, isCreatorApprove, index ,data}] } })
     return project.steps;
 }
 const editStep = async ({ templateId, stepId, stepName, description, isCreatorApprove }) => {
@@ -290,7 +295,7 @@ const currentStep = async ({ projectId, stepId }) => {
     return await templateData.update({ _id: projectId }, { currentStepIndex : project.steps[0]?.index , status: project.steps[0]?.isCreatorApprove ? "biz" : "client" })
 }
 
-const addWidget = async ({ templateId,stepId,owner,type, title,content,isRequired }) => {
+const addWidget = async ( templateId,stepId,owner,type, title,content,isRequired ) => {
     console.log("🚀 ~ file: template.service.js:269 ~ addWidget ")
     if (!type) throw { message: "error- widget type" };
     if (!owner) throw { message: "error- owner " };
@@ -299,10 +304,18 @@ const addWidget = async ({ templateId,stepId,owner,type, title,content,isRequire
     // console.log("🚀 ~ file: template.service.js:209 ~ addWidget ~ project", project)
     return project
 }
-
-module.exports = {
-    currentStep, doneProject, renameTemplate, projectById, projectsByUser,
-    createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templatesByUser,
-    dataToStep, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep,
-    updateStep, completeStep,stepUndo, editStep, getStepById,addWidget
-};
+Object.assign(
+    module.exports,
+    {
+        currentStep, doneProject, renameTemplate, projectById, projectsByUser,
+        createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templatesByUser,
+        dataToStep, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep,
+        updateStep, completeStep,stepUndo, editStep, getStepById,addWidget
+    },
+);
+// module.exports = {
+//     currentStep, doneProject, renameTemplate, projectById, projectsByUser,
+//     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templatesByUser,
+//     dataToStep, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep,
+//     updateStep, completeStep,stepUndo, editStep, getStepById,addWidget
+// };

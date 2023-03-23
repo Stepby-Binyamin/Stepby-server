@@ -21,12 +21,11 @@ router.get('/projectsByUser', authJWT, async (req, res) => {
 
 router.get('/projectById/:projectId', authJWT, async (req, res) => {
     try {
+        console.log("🚀 ~ file: project.route.js:32 ~ router.get ~ projectById")
         res.send(await projectService.projectById(req.params.projectId));
-
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
-
     }
 })
 
@@ -109,8 +108,8 @@ router.post('/duplicateProject/:projectId', authJWT, async (req, res) => {
     try {
         res.send(await projectService.duplicateTemplate(req.params.projectId));
     } catch (error) {
+        console.log("🚀 ~ file: project.route.js:111 ~ router.post ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
     }
 })
 
