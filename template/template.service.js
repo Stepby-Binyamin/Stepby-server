@@ -144,7 +144,8 @@ const projectUpdate = async (projectId) => {
     const currentStep = steps.find(step => !step.isApprove)
     // console.log("🚀 ~ file: template.service.js:144 ~ projectUpdate ~ currentStep", currentStep)
 
-    const res = await templateData.update({ _id: projectId },{ $set: { "steps.$[el].approvedDate": Date.now() }},{arrayFilters: [{ "el._id": currentStep._id }],new: true})
+    await templateData.update({ _id: projectId },{ $set: { "steps.$[el].approvedDate": Date.now() }},
+                              {arrayFilters: [{ "el._id": currentStep._id }],new: true})
 
     const project_= await templateData.update({ _id: projectId }, { currentStepIndex : currentStep.index , status: currentStep.isCreatorApprove ? "biz" : "client" ,lastApprove: Date.now()})
     console.log("🚀 ~ file: template.service.js:159 ~ projectUpdate ~ p", project_)
@@ -297,11 +298,27 @@ const currentStep = async ({ projectId, stepId }) => {
 
 const addWidget = async ( templateId,stepId,owner,type, title,content,isRequired ) => {
     console.log("🚀 ~ file: template.service.js:269 ~ addWidget ")
+    console.log("🚀 ~ file: template.service.js:300 ~ addWidget ~ templateId", templateId)
+    const a=await templateData.readOne({ _id: templateId })
+    // console.log("🚀 ~ file: template.service.js:303 ~ addWidget ~ a", a)
     if (!type) throw { message: "error- widget type" };
     if (!owner) throw { message: "error- owner " };
 
-    const project=await templateData.update({_id: templateId, "steps._id": stepId},{$push:{"steps.$[s].data":{owner,type, title,content,isRequired}}},  { multi: true, arrayFilters: [{ "s._id": stepId }] })
+    const project=await templateData.update({_id: templateId, "steps._id": stepId},
+                                            {$push:{"steps.$[s].data":{owner,type, title,content,isRequired}}},  
+                                            { multi: true, arrayFilters: [{ "s._id": stepId }] })
     // console.log("🚀 ~ file: template.service.js:209 ~ addWidget ~ project", project)
+    return project
+}
+
+const updateWidget = async ( templateId,stepId,widgetId,content ) => {
+    console.log("🚀 ~ file: template.service.js:269 ~ updateWidget ")
+    console.log("🚀 ~ file: template.service.js:312 ~ updateWidget ~ templateId,stepId,widgetId,content", templateId,"  ",stepId,"  ",widgetId,"  ",content)
+    console.log("🚀 ~ file: template.service.js:315 ~ updateWidget ~typeof content",typeof content)
+
+    const project=await templateData.update({ _id: templateId, 'steps._id': stepId, 'steps.data._id': widgetId },
+                                            { $set: { 'steps.$.data.$[elem].content': content } },
+                                            { arrayFilters: [{ 'elem._id': widgetId }] })
     return project
 }
 Object.assign(
@@ -310,12 +327,6 @@ Object.assign(
         currentStep, doneProject, renameTemplate, projectById, projectsByUser,
         createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templatesByUser,
         dataToStep, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep,
-        updateStep, completeStep,stepUndo, editStep, getStepById,addWidget
+        updateStep, completeStep,stepUndo, editStep, getStepById,addWidget,updateWidget
     },
 );
-// module.exports = {
-//     currentStep, doneProject, renameTemplate, projectById, projectsByUser,
-//     createTemplate, createProject, templateByCategoriesByUser, createTemplateAdmin, templatesByUser,
-//     dataToStep, duplicateTemplate, deleteTemplate, createStep, replaceSteps, deleteStep, duplicateStep,
-//     updateStep, completeStep,stepUndo, editStep, getStepById,addWidget
-// };
