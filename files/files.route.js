@@ -66,7 +66,7 @@ router.post('/upload-file', upload.single("new_file"), async (req, res) => {
         console.log("🚀 ~ file: files.route.js:82 ~ router.post ~ upload-file ~ req.file", req.file)
 
         const result = await filesControl.uploadFile(req.file,req.body.data)
-        console.log("🚀 ~ file: files.route.js:70 ~ router.post ~ result", result)
+        // console.log("🚀 ~ file: files.route.js:70 ~ router.post ~ result", result)
 
         res.status(200).send(result)
     } catch (err) {
@@ -107,7 +107,7 @@ router.post('/showImg', async (req, res) => {
     try {
         console.log("🚀 ~ file: files.route.js:139 ~ router.post ~ showImg")
         let data = await filesControl.getShow(req.body);
-        console.log("🚀 ~ file: files.route.js:126 ~ router.post ~ data", data)
+        // console.log("🚀 ~ file: files.route.js:126 ~ router.post ~ data", data)
         
         let buf = Buffer.from(data.Body);
 

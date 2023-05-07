@@ -9,8 +9,8 @@ async function read(filter, proj) {
 async function readOne(filter, proj) {
     return await projectData.findOne({isActive: true,...filter }, proj).populate("client").populate({path: "creatorId"}).populate({path: "client"});
 }
-async function update(filter, newData, options) {
-    return await projectData.findOneAndUpdate(filter, newData, { ...options, new: true });
+async function update(filter, newData, options, func) {
+    return await projectData.findOneAndUpdate(filter, newData, { ...options, new: true }, func);
 }
 async function remove(filter) {
     return await update(filter, { isActive: false });

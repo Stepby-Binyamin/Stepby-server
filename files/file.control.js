@@ -78,11 +78,11 @@ const createFolder=async (path)=>{
 
 //function that upload jpg or pdf to specific path (Key)
 const uploadFile = async (file, data) => {
-    console.log("🚀 ~ file: file.control.js:72 ~ uploadFile ~ file", file)
+    console.log("🚀 ~ file: file.control.js:72 ~ uploadFile ~ file.originalname", file?.originalname)
     console.log("🚀 ~ file: file.control.js:72 ~ uploadFile ~ data", data)
 
     const data_ = JSON.parse(data)
-    const {bizId , templateId , stepId ,owner,type, title,isRequired } = data_  
+    const {bizId , templateId , stepId ,widgetId,owner,type, title,isRequired } = data_  
     if(file){
         const params = {
         Bucket: BUCKET_NAME,
@@ -91,7 +91,8 @@ const uploadFile = async (file, data) => {
         }
         await s3.upload(params).promise()
     }
-    const template=await templateService.addWidget(templateId,stepId,owner,type, title,file?`${file.originalname}`:null,isRequired)
+    const template= (type === "file" && file) ? await templateService.updateWidget(templateId,stepId,widgetId,file.originalname) 
+                                                : await templateService.addWidget(templateId,stepId,owner,type, title,file?`${file.originalname}`:null,isRequired)
        
     return template.steps.find(step => step._id.toString()===stepId)
 }
@@ -101,9 +102,11 @@ const uploadFile = async (file, data) => {
 // }
 
 //THIS FUNCTION NEED TO BE CHECKED, DOESNT WORK PROPERLY
-const uploadAnswer = async ({templateId,stepId,owner,type,title,isRequired}) => {
+const uploadAnswer = async ({templateId,stepId,widgetId, owner,type,title,isRequired,answer}) => {
     console.log("🚀 ~ file: file.control.js:94 ~ uploadAnswer ~ uploadAnswer")
-    const template=await templateService.addWidget(templateId,stepId,owner,type, title,null,isRequired)
+    const template= answer ?    
+                        await templateService.updateWidget(templateId,stepId,widgetId,answer) 
+                        : await templateService.addWidget(templateId,stepId,owner,type, title,"",isRequired)
     return template.steps.find(step => step._id.toString()===stepId)
 }
 
@@ -122,6 +125,7 @@ const getFile = async ({bizId,templateId,stepId, fileName}) => {
 
 //function that
 const getShow = async ({bizId,templateId,stepId, fileName}) => {
+    console.log("🚀 ~ file: file.control.js:132 ~ getShow ~ `${bizId}/${templateId}/${stepId}/${fileName}`", `${bizId}/${templateId}/${stepId}/${fileName}`)
     var params = {
         Bucket: BUCKET_NAME,
         Key: `${bizId}/${templateId}/${stepId}/${fileName}`
