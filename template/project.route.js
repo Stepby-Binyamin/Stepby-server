@@ -4,13 +4,12 @@ const projectService = require("./template.service");
 const { authJWT } = require("../auth/auth");
 
 
-router.get('/projectByUser', authJWT, async (req, res) => {
-    console.log("/projectByUser8", req.user._id);
+router.get('/projectsByUser', authJWT, async (req, res) => {
+    console.log("🚀 ~ file: project.route.js:22 ~ router.get ~ projectsByUser")
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get project by user'
     try {
-        const result = await projectService.projectByUser(req.user._id)
-        console.log("/projectByUser Result",result);  
+        const result = await projectService.projectsByUser(req.user._id)
         res.send(result);
 
     } catch (error) {
@@ -22,12 +21,11 @@ router.get('/projectByUser', authJWT, async (req, res) => {
 
 router.get('/projectById/:projectId', authJWT, async (req, res) => {
     try {
+        console.log("🚀 ~ file: project.route.js:32 ~ router.get ~ projectById")
         res.send(await projectService.projectById(req.params.projectId));
-
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
-
     }
 })
 
@@ -79,17 +77,6 @@ router.post("/createProject/:templateId", authJWT, async (req, res) => {
     }
 });
 
-router.put("/downSteps/:projectId", authJWT, async (req, res) => {
-    try {
-        res.send(await projectService.downSteps({ templateId: req.params.projectId, stepIndex: req.body.stepIndex }));
-    } catch (error) {
-        console.log(error.message);
-        res
-            .status(error.code || 500)
-            .send({ message: error.message || "something wrong :(" });
-    }
-})
-
 router.put('/newStep/:projectId', authJWT, async (req, res) => {
     // #swagger.tags = ['Projects']
     // #swagger.description = 'create step'
@@ -121,8 +108,8 @@ router.post('/duplicateProject/:projectId', authJWT, async (req, res) => {
     try {
         res.send(await projectService.duplicateTemplate(req.params.projectId));
     } catch (error) {
+        console.log("🚀 ~ file: project.route.js:111 ~ router.post ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
     }
 })
 
@@ -171,9 +158,21 @@ router.put("/currentStep/:projectId", authJWT, async (req, res) => {
 })
 
 router.put("/completeStep/:projectId", authJWT, async (req, res) => {
-    console.log("1212", req.params.projectId, req.body);
+    console.log("🚀 ~ file: project.route.js:162 ~ router.put ~ completeStep", req.params.projectId, req.body)
     try {
         res.send(await projectService.completeStep({ projectId: req.params.projectId, stepId: req.body.stepId }));
+    } catch (error) {
+        console.log("🚀 ~ file: project.route.js:166 ~ router.put ~ error", error)
+        console.log(error.message);
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
+router.put("/stepUndo/:projectId", authJWT, async (req, res) => {
+    console.log("stepUndo:", req.params.projectId, req.body);
+    try {
+        res.send(await projectService.stepUndo({ projectId: req.params.projectId, stepId: req.body.stepId }));
     } catch (error) {
         console.log(error.message);
         res

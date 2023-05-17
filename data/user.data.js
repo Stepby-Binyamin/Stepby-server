@@ -7,14 +7,18 @@ const userSchema = new mongoose.Schema({
     lastName: { // for biz
         type: String,
     },
-    fullName: { // for user - client
+    fullName: { // for client
         type: String, 
     },
     email: {
         type: String,
     },
-    bizName: { //each user can have only one businesse
+    bizName: {   //for biz
         type: String,
+    },
+    bizId:{   // for client
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
     },
     phoneNumber: {
         type: String,
@@ -49,6 +53,11 @@ const userSchema = new mongoose.Schema({
         type: Date,
     }
 });
-
+userSchema.index({
+    phoneNumber: 1,
+    permissions: 1,
+    bizId:1
+  }, 
+  { unique: true });
 const userData = mongoose.model("user",userSchema);
 module.exports = {userData};

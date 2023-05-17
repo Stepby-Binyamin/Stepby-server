@@ -4,13 +4,15 @@ const router = express.Router();
 const { authJWT } = require("../auth/auth");
 const { Router } = require("express");
 
-
+router.get("/test", (req, res)=>{
+    res.send("success");
+})
 
 router.get("/getStepById/:templateId/:stepId",/*  authJWT, */ async (req, res) => {
     try {
         res.send(await templateService.getStepById(req.params.templateId, req.params.stepId));
     } catch (error) {
-        console.log(error.message);
+        console.log("🚀 ~ file: template.route.js:15 ~ router.get ~ error", error)
         res
             .status(error.code || 500)
             .send({ message: error.message || "something wrong :(" });
@@ -36,11 +38,10 @@ router.post('/createTemplateAdmin', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'create template by admin'
     try {
-        res.send(await templateService.createTemplateAdmin({ ...req.body, userId: req.user._id, permission: req.user.permissions, phoneNumber: req.user.phoneNumber }));
+        res.send(await templateService.createTemplateAdmin({ ...req.body, userId: req.user._id, permission: req.user.permissions }));
     } catch (error) {
-        res.status(401).send("error");
-        console.log(error.message);
-
+        console.log("🚀 ~ file: template.route.js:43 ~ router.post ~ error", error)
+        res.status(401).send({message: error.message});
     }
 })
 
@@ -50,9 +51,8 @@ router.post('/duplicateTemplate/:templateId', authJWT, async (req, res) => {
     try {
         res.send(await templateService.duplicateTemplate({userId: req.user._id,templateId:req.params.templateId}));
     } catch (error) {
+        console.log("🚀 ~ file: template.route.js:55 ~ router.post ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
-
     }
 })
 
@@ -64,9 +64,8 @@ router.put('/newStep/:templateId', authJWT, async (req, res) => {
     try {
         res.send(await templateService.createStep({ ...req.body, templateId: req.params.templateId }));
     } catch (error) {
+        console.log("🚀 ~ file: template.route.js:68 ~ router.put ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
-
     }
 })
 
@@ -82,6 +81,18 @@ router.put('/edit-step/:templateId', authJWT, async (req, res) => {
         console.log(error.message);
     }
 })
+router.put("/replaceSteps", async (req, res) => {
+    // #swagger.tags = ['Projects']
+    // #swagger.description = 'change index of steps'
+    try {
+        res.send(await templateService.replaceSteps(req.body));
+    } catch (error) {
+        console.log("🚀 ~ file: template.route.js:92 ~ router.put ~ error", error)
+        res
+            .status(error.code || 500)
+            .send({ message: error.message || "something wrong :(" });
+    }
+})
 
 router.put('/addWidget', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
@@ -91,9 +102,8 @@ router.put('/addWidget', authJWT, async (req, res) => {
     try {
         res.send(await templateService.addWidget({ ...req.body}));
     } catch (error) {
+        console.log("🚀 ~ file: template.route.js:107 ~ router.put ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
-
     }
 })
 
@@ -105,9 +115,8 @@ router.delete('/deleteTemplate/:templateId', authJWT, async (req, res) => {
     try {
         res.send(await templateService.deleteTemplate(req.params.templateId));
     } catch (error) {
+        console.log("🚀 ~ file: template.route.js:121 ~ router.delete ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
-
     }
 })
 
@@ -117,9 +126,8 @@ router.delete('/deleteStep/:templateId', authJWT, async (req, res) => {
     try {
         res.send(await templateService.deleteStep({ ...req.body, templateId: req.params.templateId }));
     } catch (error) {
+        console.log("🚀 ~ file: template.route.js:133 ~ router.delete ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
-
     }
 })
 
@@ -129,9 +137,8 @@ router.put('/renameTemplate/:templateId', authJWT, async (req, res) => {
     try {
         res.send(await templateService.renameTemplate({ ...req.body, templateId: req.params.templateId }));
     } catch (error) {
+        console.log("🚀 ~ file: template.route.js:145 ~ router.put ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
-
     }
 })
 
@@ -141,9 +148,8 @@ router.put('/duplicateStep/:templateId', authJWT, async (req, res) => {
     try {
         res.send(await templateService.duplicateStep({ ...req.body, templateId: req.params.templateId }));
     } catch (error) {
+        console.log("🚀 ~ file: template.route.js:157 ~ router.put ~ error", error)
         res.status(401).send("error");
-        console.log(error.message);
-
     }
 })
 
@@ -157,16 +163,14 @@ router.put('/dataToStep/:templateId', authJWT, async (req, res) => {
     }
 })
 
-router.get('/templateByUser', authJWT, async (req, res) => {
+router.get('/templatesByUser', authJWT, async (req, res) => {
     // #swagger.tags = ['Templates']
     // #swagger.description = 'get template by user'
     try {
-        res.send(await templateService.templateByUser(req.user._id));
-
+        res.send(await templateService.templatesByUser(req.user._id));
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
-
     }
 })
 
@@ -181,27 +185,13 @@ router.get('/categoriesByUser', authJWT, async (req, res) => {
     }
 })
 
-router.put("/downSteps/:templateId", authJWT, async (req, res) => {
-    try {
-        res.send(await templateService.downSteps({ templateId: req.params.templateId, stepIndex: req.body.stepIndex }));
-    } catch (error) {
-        console.log(error.message);
-        res
-            .status(error.code || 500)
-            .send({ message: error.message || "something wrong :(" });
-    }
-})
-
 router.get('/templateById/:templateId', /* authJWT, */ async (req, res) => {
     try {
+        console.log("🚀 ~ file: template.route.js:206 ~ router.get ~ templateById")
         res.send(await templateService.projectById(req.params.templateId));
-
     } catch (error) {
         res.status(401).send("error");
         console.log(error.message);
-
     }
 })
-
-
 module.exports = router;

@@ -17,7 +17,7 @@ const verifyBeforeSMS = async (token, data) => {
     try {
         verifyToken = await jwt.validateToken(token)
     } catch (err) {
-        console.log(33333, err);
+        console.log("🚀 ~ file: user.service.js:20 ~ verifyBeforeSMS ~ err", err)
     } finally {
         if (!verifyToken) {
             console.log('lo tov')
@@ -61,7 +61,8 @@ const login = async (data) => {
 const newClient = async (data, user) => {
     const { fullName, phoneNumber, email } = data;
     if (!fullName || !phoneNumber || !email) throw new Error("missing data");
-    const clientId = await userModel.create({ fullName, phoneNumber, email, permissions: "client" });
+    //TODO check if the user not existing
+    const clientId = await userModel.create({ fullName, phoneNumber, email, permissions: "client", bizId:user._id });
     await userModel.update({ _id: user._id }, { $push: { clients: clientId._id} });
     return clientId;
 }
@@ -75,14 +76,14 @@ const editBizCategories = async (data,user)=>{
          await userModel.update({ _id: user._id }, { $push: { categories: cat._id } })
     }
     const result = await userModel.readOne({ _id: user._id });
-    console.log("🚀 ~ file: user.service.js ~ line 81 ~ editBizCategories ~ result", result)
+    // console.log("🚀 ~ file: user.service.js ~ line 81 ~ editBizCategories ~ result", result)
     return result
 }
 const editBiz = async (data, user) => {
     const acknowledged = await userModel.update({ _id: user._id }, data);
-    console.log("🚀 ~ file: user.service.js ~ line 86 ~ editBiz ~ acknowledged", acknowledged)
+    // console.log("🚀 ~ file: user.service.js ~ line 86 ~ editBiz ~ acknowledged", acknowledged)
     const result = await userModel.readOne({ _id: user._id });
-    console.log("🚀 ~ file: user.service.js ~ line 88 ~ editBiz ~ result", result)
+    // console.log("🚀 ~ file: user.service.js ~ line 88 ~ editBiz ~ result", result)
     return result
 }
 const removeBiz = async (data, user) => {
